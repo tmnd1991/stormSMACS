@@ -27,3 +27,6 @@ libraryDependencies += "org.apache.storm" % "storm-core" % "0.9.2-incubating" % 
 
 //HTTPCLIENT
 libraryDependencies += "uk.co.bigbeeconsultants" %% "bee-client" % "0.21.+"
+
+//CEILOMETER JSON WRAPPER
+libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.2"
