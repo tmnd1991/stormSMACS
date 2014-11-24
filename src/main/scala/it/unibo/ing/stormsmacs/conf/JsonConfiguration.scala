@@ -21,7 +21,7 @@ case class JsonConfiguration(name              : String,
                              genericNodes      : Option[Seq[GenericNode]],
                              fusekiNode        : FusekiNode,
                              debug             : Boolean,
-                             pollTime          : Int) extends Configuration{
+                             pollTime          : Long) extends Configuration{
   require(openstackNodes == None || openstackNodes.get.nonEmpty)
   require(cloudfoundryNodes == None || openstackNodes.get.nonEmpty)
   require(genericNodes == None || genericNodes.get.nonEmpty)

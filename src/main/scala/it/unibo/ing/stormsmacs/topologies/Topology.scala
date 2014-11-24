@@ -2,8 +2,8 @@ package it.unibo.ing.stormsmacs.topologies
 
 import java.io.{File, FileNotFoundException}
 
-import it.unibo.ing.stormsmacs.topologies.bolts.{OpenStackNodePersisterBolt, GenericNodePersisterBolt, CloudFoundryNodePersisterBolt}
-import it.unibo.ing.stormsmacs.topologies.spouts.{OpenStackNodeSpout, GenericNodeSpout, CloudFoundryNodeSpout}
+import it.unibo.ing.stormsmacs.topologies.bolts._
+import it.unibo.ing.stormsmacs.topologies.spouts.TimerSpout
 import org.slf4j.LoggerFactory
 
 import backtype.storm.LocalCluster
@@ -28,20 +28,27 @@ object Topology {
       val builder = new TopologyBuilder()
 
       logger.info("starting stormsmacs with conf : \n" + conf)
-
+      val timerSpoutName = "timer"
+      builder.setSpout(timerSpoutName, new TimerSpout(conf.pollTime))
       for(gn <- conf.genericNodeList){
-        builder.setSpout(gn.id, new GenericNodeSpout(gn,conf.pollTime))
-        builder.setBolt("generic_" + gn.id,new GenericNodePersisterBolt(conf.fusekiNode)).shuffleGrouping(gn.id)
+        val boltReaderName = "genericReader_" + gn.id
+        builder.setBolt(boltReaderName, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
+        val boltPersisterName = "genericPersister_" + gn.id
+        builder.setBolt(boltPersisterName,new GenericNodePersisterBolt(conf.fusekiNode)).shuffleGrouping(boltReaderName)
       }
 
       for(osn <- conf.openstackNodeList){
-        builder.setSpout(osn.id, new OpenStackNodeSpout(osn,conf.pollTime))
-        builder.setBolt("openstack_" + osn.id,new OpenStackNodePersisterBolt(conf.fusekiNode)).shuffleGrouping(osn.id)
+        val boltReaderName = "openstackReader_" + osn.id
+        builder.setBolt(boltReaderName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
+        val boltPersisterName = "openstackPersister_" + osn.id
+        builder.setBolt(boltPersisterName,new OpenStackNodePersisterBolt(conf.fusekiNode)).shuffleGrouping(boltReaderName)
       }
 
       for(cfn <- conf.cloudfoundryNodeList){
-        builder.setSpout(cfn.id, new CloudFoundryNodeSpout(cfn, conf.pollTime))
-        builder.setBolt("cloudfoundry_" + cfn.id,new CloudFoundryNodePersisterBolt(conf.fusekiNode)).shuffleGrouping(cfn.id)
+        val boltReaderName = "cloudfoundryReader_" + cfn.id
+        builder.setBolt(boltReaderName, new CloudFoundryNodeClientBolt(cfn)).allGrouping(timerSpoutName)
+        val boltPersisterName = "cloudfoundryPersister_" + cfn.id
+        builder.setBolt(boltPersisterName,new CloudFoundryNodePersisterBolt(conf.fusekiNode)).shuffleGrouping(boltReaderName)
       }
 
       val sConf = new StormConfig(debug = conf.debug)

@@ -7,7 +7,7 @@ abstract class Configuration{
   val genericNodes      : Option[Seq[GenericNode]]
   val fusekiNode        : FusekiNode
   val debug             : Boolean
-  val pollTime          : Int
+  val pollTime          : Long
   val openstackNodeList = openstackNodes.getOrElse(List())
   val cloudfoundryNodeList = cloudfoundryNodes.getOrElse(List())
   val genericNodeList = genericNodes.getOrElse(List())
