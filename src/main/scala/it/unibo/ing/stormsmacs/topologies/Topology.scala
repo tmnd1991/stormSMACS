@@ -6,7 +6,7 @@ import it.unibo.ing.stormsmacs.topologies.bolts._
 import it.unibo.ing.stormsmacs.topologies.spouts.TimerSpout
 import org.slf4j.LoggerFactory
 
-import backtype.storm.LocalCluster
+import backtype.storm.{StormSubmitter, LocalCluster}
 import backtype.storm.topology.TopologyBuilder
 
 import storm.scala.dsl.StormConfig
@@ -52,8 +52,12 @@ object Topology {
       }
 
       val sConf = new StormConfig(debug = conf.debug)
-      val cluster = new LocalCluster()
-      cluster.submitTopology(conf.name, sConf, builder.createTopology())
+      if (conf.debug){
+        new LocalCluster().submitTopology(conf.name, sConf, builder.createTopology())
+      }
+      else{
+        StormSubmitter.submitTopology(conf.name, sConf, builder.createTopology())
+      }
     }
     catch{
       case e : FileNotFoundException => logger.error("file " + jsonConfFile + " not Found")
