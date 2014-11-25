@@ -9,7 +9,7 @@ import it.unibo.ing.sigar.restful.model.SigarMeteredDataFormat._
 import it.unibo.ing.stormsmacs.conf.GenericNode
 import spray.json.JsonParser.ParsingException
 import spray.json._
-import storm.scala.dsl.{HttpRequesterSpout, Logging}
+import storm.scala.dsl.Logging
 import uk.co.bigbeeconsultants.http.header.MediaType
 
 /**
