@@ -16,31 +16,15 @@ import uk.co.bigbeeconsultants.http.header.MediaType
  * Created by tmnd on 18/11/14.
  */
 class CloudFoundryNodeClientBolt(node : CloudFoundryNode)
-    extends HttpRequesterBolt(List("monitData"), node.connectTimeout, node.readTimeout)
+    extends ClientBolt(List("MonitData"), node.connectTimeout, node.readTimeout)
     with Logging
 {
-  override def execute(t : Tuple) = t matchSeq {
-    case Seq(graphName: Date) => {
-      try{
-        val response = httpClient.myGet(node.url, MediaType.APPLICATION_JSON)
-        val body = response.body.asString
-        logger.info(body)
-        import spray.json.DefaultJsonProtocol._
-        val data = body.parseJson.convertTo[Seq[MonitInfo]]
-        using anchor t emit (graphName, data)
-      }
-      catch{
-        case e : IOException => {
-          logger.warn(e.getMessage)
-        }
-        case e : ParsingException => {
-          logger.error(e.getMessage)
-        }
-        case e : DeserializationException => {
-          logger.error(e.getMessage)
-        }
-      }
-    }
-    t.ack
+  override def emitData(t : Tuple, graphName : Date) = {
+    val response = httpClient.myGet(node.url, MediaType.APPLICATION_JSON)
+    val body = response.body.asString
+    logger.info(body)
+    import spray.json.DefaultJsonProtocol._
+    val data = body.parseJson.convertTo[Seq[MonitInfo]]
+    using anchor t emit (graphName, data)
   }
 }

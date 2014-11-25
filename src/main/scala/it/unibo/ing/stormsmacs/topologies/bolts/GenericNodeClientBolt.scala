@@ -15,30 +15,15 @@ import uk.co.bigbeeconsultants.http.header.MediaType
 /**
  * Created by tmnd on 18/11/14.
  */
-class GenericNodeClientBolt(node : GenericNode) extends HttpRequesterBolt(List("sigarData"), node.connectTimeout, node.readTimeout)
-with Logging
+class GenericNodeClientBolt(node : GenericNode)
+  extends ClientBolt(List("MonitData"), node.connectTimeout, node.readTimeout)
+  with Logging
 {
-  override def execute(t : Tuple) = t matchSeq{
-    case Seq(graphName: Date) => {
-      try {
-        val response = httpClient.myGet(node.url, MediaType.APPLICATION_JSON)
-        val body = response.body.asString
-        logger.info(body)
-        val data = body.parseJson.convertTo[SigarMeteredData]
-        t.emit(graphName, data)
-      }
-      catch {
-        case e: IOException => {
-          logger.warn(e.getMessage)
-        }
-        case e: ParsingException => {
-          logger.error(e.getMessage)
-        }
-        case e: DeserializationException => {
-          logger.error(e.getMessage)
-        }
-      }
-    }
-    t.ack
+  override def emitData(t: Tuple, graphName: Date) = {
+    val response = httpClient.myGet(node.url, MediaType.APPLICATION_JSON)
+    val body = response.body.asString
+    logger.info(body)
+    val data = body.parseJson.convertTo[SigarMeteredData]
+    using anchor t emit(graphName, data)
   }
 }

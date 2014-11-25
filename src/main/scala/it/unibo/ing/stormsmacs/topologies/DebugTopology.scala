@@ -19,7 +19,7 @@ object DebugTopology {
 
     val builder = new TopologyBuilder()
     builder.setSpout("timer", new TimerSpout(1000))
-    builder.setBolt("print" ,new PrintBolt(), 10).allGrouping("timer")
+    builder.setBolt("print" ,new PrintBolt(), 10).shuffleGrouping("timer")
     val sConf = new StormConfig(debug = true)
     val cluster = new LocalCluster()
     cluster.submitTopology("test", sConf, builder.createTopology())

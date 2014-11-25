@@ -12,34 +12,20 @@ import storm.scala.dsl.Logging
 import uk.co.bigbeeconsultants.http.header.MediaType
 
 /**
- * Created by tmnd on 18/11/14.
+ * @author Antonio Murgia
  */
 
 class OpenStackNodeClientBolt(node : OpenStackNode)
-  extends HttpRequesterBolt(List("ceilometerData"), node.connectTimeout, node.readTimeout)
+  extends ClientBolt(List("ceilometerData"), node.connectTimeout, node.readTimeout)
   with Logging{
   private var tokenProvider : TokenProvider = _
+
   setup{
     tokenProvider = KeystoneTokenProvider.getInstance(node.keystoneUrl, node.tenantName, node.username, node.password)
   }
-  override def execute(t: Tuple) = t matchSeq{
-    case Seq(graphName : Date) =>{
-      try {
-        val token = tokenProvider.token
-        using anchor t emit token
-      }
-      catch {
-        case e: IOException => {
-          logger.warn(e.getMessage)
-        }
-        case e: ParsingException => {
-          logger.error(e.getMessage)
-        }
-        case e: DeserializationException => {
-          logger.error(e.getMessage)
-        }
-      }
-    }
-    t.ack
+
+  override def emitData(t: Tuple, graphName: Date) = {
+    val token = tokenProvider.token
+    using anchor t emit(graphName, token)
   }
 }
