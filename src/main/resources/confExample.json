@@ -1,0 +1,20 @@
+{
+      "cloudfoundryNodes" : [{
+                                "id" : "cf_cf",
+                                "url" : "http://10.0.10.11:9876",
+                                "connect-timeout" : 10000,
+                                "read-timeout" : 10000
+                            }],
+      "genericNodes"      : [{
+                                "id" : "cf_generic",
+                                "url" : "http://10.0.10.11:9875",
+                                "connect-timeout" : 10000,
+                                "read-timeout" : 10000
+                            }],
+      "fusekiNode"           : {
+                                    "id"  : "mattuffello",
+                                    "url" : "http://localhost"
+                               },
+      val debug             : false,
+      val pollTime          : 4000
+}
