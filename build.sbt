@@ -30,3 +30,6 @@ libraryDependencies += "uk.co.bigbeeconsultants" %% "bee-client" % "0.21.+"
 
 //CEILOMETER JSON WRAPPER
 libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.2"
+
+//TESTING
+libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.2.2"

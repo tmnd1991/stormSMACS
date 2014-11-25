@@ -23,7 +23,7 @@ case class JsonConfiguration(name              : String,
                              debug             : Boolean,
                              pollTime          : Long) extends Configuration{
   require(openstackNodes == None || openstackNodes.get.nonEmpty)
-  require(cloudfoundryNodes == None || openstackNodes.get.nonEmpty)
+  require(cloudfoundryNodes == None || cloudfoundryNodes.get.nonEmpty)
   require(genericNodes == None || genericNodes.get.nonEmpty)
   require(fusekiNode != null)
   require(pollTime > 0)
