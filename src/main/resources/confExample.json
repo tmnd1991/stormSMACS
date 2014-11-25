@@ -15,6 +15,6 @@
                                     "id"  : "mattuffello",
                                     "url" : "http://localhost"
                                },
-      val debug             : false,
-      val pollTime          : 4000
+      debug             : false,
+      pollTime          : 4000
 }
