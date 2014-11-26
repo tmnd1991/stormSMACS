@@ -3,7 +3,7 @@ package it.unibo.ing.stormsmacs.topologies.bolts
 import java.io.IOException
 import java.util.Date
 import backtype.storm.tuple.Tuple
-import it.unibo.ing.openstack.{TokenProvider, KeystoneTokenProvider}
+import org.openstack.api.restful.keystone.v2.{TokenProvider, KeystoneTokenProvider}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf.OpenStackNode
 import spray.json.DeserializationException
