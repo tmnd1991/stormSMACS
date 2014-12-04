@@ -8,9 +8,9 @@ abstract class Configuration{
   val fusekiNode        : FusekiNode
   val debug             : Boolean
   val pollTime          : Long
-  val openstackNodeList = openstackNodes.getOrElse(List())
-  val cloudfoundryNodeList = cloudfoundryNodes.getOrElse(List())
-  val genericNodeList = genericNodes.getOrElse(List())
+  val openstackNodeList = openstackNodes.getOrElse(List.empty)
+  val cloudfoundryNodeList = cloudfoundryNodes.getOrElse(List.empty)
+  val genericNodeList = genericNodes.getOrElse(List.empty)
 
   override def toString = "openstackNodes =" + openstackNodeList.mkString("{\n",",\n\t","}\n") +
                           "cloudfoundryNodes =" + cloudfoundryNodeList.mkString("{\n",",\n\t","}\n") +

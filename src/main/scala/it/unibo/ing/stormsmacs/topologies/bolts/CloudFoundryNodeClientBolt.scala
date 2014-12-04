@@ -21,11 +21,13 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNode)
     with Logging
 {
   override def emitData(t : Tuple, graphName : Date) = {
-    val response = httpClient.GET(node.url.toURI)
-    val body = response.getContentAsString
-    logger.info(body)
-    import spray.json.DefaultJsonProtocol._
-    val data = body.parseJson.convertTo[Seq[MonitInfo]]
-    using anchor t emit (graphName, data)
+
+      val response = httpClient.GET(node.url.toURI)
+      val body = response.getContentAsString
+      logger.info(body)
+      import spray.json.DefaultJsonProtocol._
+      val data = body.parseJson.convertTo[Seq[MonitInfo]]
+      using anchor t emit (graphName, data)
+
   }
 }

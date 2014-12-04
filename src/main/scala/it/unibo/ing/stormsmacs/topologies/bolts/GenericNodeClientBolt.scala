@@ -19,10 +19,13 @@ class GenericNodeClientBolt(node : GenericNode)
   with Logging
 {
   override def emitData(t: Tuple, graphName: Date) = {
-    val response = httpClient.GET(node.url.toURI)
-    val body = response.getContentAsString
-    logger.info(body)
-    val data = body.parseJson.convertTo[SigarMeteredData]
-    using anchor t emit(graphName, data)
+
+      val response = httpClient.GET(node.url.toURI)
+      val body = response.getContentAsString
+      logger.info(body)
+      val data = body.parseJson.convertTo[SigarMeteredData]
+      using anchor t emit(graphName, data)
+
+
   }
 }

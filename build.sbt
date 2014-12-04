@@ -26,7 +26,7 @@ libraryDependencies += "com.github.velvia" %% "scala-storm" % "1.0"
 //                         "ch.qos.logback" % "logback-classic" % "1.0.+")
 
 //CEILOMETER JSON WRAPPER
-libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.3"
+libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.3" withSources()
 
 //HTTP CLIENT
 libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
