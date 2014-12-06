@@ -8,8 +8,10 @@ import spray.json.DefaultJsonProtocol
 import spray.json._
 
 import it.unibo.ing.utils.DateUtils
+
 /**
- * Created by tmnd on 03/11/14.
+ * @author Antonio Murgia
+ * @version 03/11/14
  */
 object JsonConversions extends DefaultJsonProtocol {
   implicit object durationJsonFormat extends JsonFormat[Duration]{

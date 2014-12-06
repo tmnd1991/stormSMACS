@@ -14,7 +14,9 @@ import storm.scala.dsl.StormConfig
 import it.unibo.ing.stormsmacs.conf._
 
 /**
- * Created by tmnd on 18/11/14.
+ * Main configurable Topology of StormSMACS
+ * @author Antonio Murgia
+ * @version 18/11/14
  */
 object Topology {
   val logger = LoggerFactory.getLogger(this.getClass)
@@ -52,11 +54,11 @@ object Topology {
       }
 
       val sConf = new StormConfig(debug = conf.debug)
-      if (conf.debug){
-        new LocalCluster().submitTopology(conf.name, sConf, builder.createTopology())
+      if (conf.remote){
+        StormSubmitter.submitTopology(conf.name, sConf, builder.createTopology())
       }
       else{
-        StormSubmitter.submitTopology(conf.name, sConf, builder.createTopology())
+        new LocalCluster().submitTopology(conf.name, sConf, builder.createTopology())
       }
     }
     catch{

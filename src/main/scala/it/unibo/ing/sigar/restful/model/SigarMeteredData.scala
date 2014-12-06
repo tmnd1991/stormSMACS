@@ -3,7 +3,8 @@ package it.unibo.ing.sigar.restful.model
 import spray.json.DefaultJsonProtocol
 
 /**
-  * Created by tmnd on 28/10/14.
+  * @author Antonio Murgia
+  * @version 28/10/14
   */
 case class SigarMeteredData(cpuPercent : Double,
                              freeMemPercent : Double,

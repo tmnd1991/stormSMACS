@@ -12,13 +12,13 @@ import org.slf4j.LoggerFactory
 import storm.scala.dsl.StormConfig
 
 /**
- * Created by tmnd on 24/11/14.
+ * @author Antonio Murgia
+ * @version 24/11/14
  */
 object DebugTopology {
   val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]) = {
-
     val builder = new TopologyBuilder()
     builder.setSpout("timer", new TimerSpout(1000))
     val keystoneURL = new URL("http://137.204.57.150:5000")
@@ -32,8 +32,8 @@ object DebugTopology {
         ceilometerURL,
         keystoneURL,
         username,
-        password, None, None)
-
+        password,
+        1000, None, None)
     ), 10).shuffleGrouping("timer")
     val sConf = new StormConfig(debug = true)
     val cluster = new LocalCluster()

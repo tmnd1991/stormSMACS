@@ -21,6 +21,7 @@ case class JsonConfiguration(name              : String,
                              genericNodes      : Option[Seq[GenericNode]],
                              fusekiNode        : FusekiNode,
                              debug             : Boolean,
+                             remote            : Boolean,
                              pollTime          : Long) extends Configuration{
   require(openstackNodes == None || openstackNodes.get.nonEmpty)
   require(cloudfoundryNodes == None || cloudfoundryNodes.get.nonEmpty)
@@ -41,7 +42,7 @@ object JsonConfigurationProtocol extends spray.json.DefaultJsonProtocol{
   import CloudFoundryNodeProtocol._
   import GenericNodeProtocol._
   import FusekiNodeProtocol._
-  implicit val jsonConfigurationFormat : JsonFormat[JsonConfiguration] = jsonFormat7(JsonConfiguration.apply)
+  implicit val jsonConfigurationFormat : JsonFormat[JsonConfiguration] = jsonFormat8(JsonConfiguration.apply)
   implicit object urlFormat extends JsonFormat[URL]{
     override def read(json: JsValue) = json match{
       case s : JsString => try{

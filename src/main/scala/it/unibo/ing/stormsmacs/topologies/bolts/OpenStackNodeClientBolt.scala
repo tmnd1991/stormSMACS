@@ -33,7 +33,7 @@ class OpenStackNodeClientBolt(node : OpenStackNode)
     cclient.shutdown()
   }
   def execute(t : Tuple) = {
-    t matchSeq {
+    t.matchSeq {
       case Seq(graphName: Date) => {
         try{
           val startTime = new Date(graphName.getTime - node.duration)

@@ -1,7 +1,8 @@
 package it.unibo.ing.monit.model
 
 /**
- * Created by tmnd on 31/10/14.
+ * @author Antonio Murgia
+ * @version 03/11/14
  */
 import scala.concurrent.duration._
 import java.util.Date
