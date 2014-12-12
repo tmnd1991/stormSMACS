@@ -4,7 +4,8 @@ import backtype.storm.tuple.Tuple
 import storm.scala.dsl.{Logging, StormBolt}
 
 /**
- * Created by tmnd on 24/11/14.
+ * @author Antonio Murgia
+ * @version 12/12/2014
  */
 class PrintBolt extends StormBolt(List()) with Logging{
   override def execute(t: Tuple) = {

@@ -33,3 +33,6 @@ libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
 
 //TESTING
 libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.2"
+
+//rdf library
+//libraryDependencies += "org.w3c" %% "banana_jvm" % "0.7.1-SNAPSHOT"

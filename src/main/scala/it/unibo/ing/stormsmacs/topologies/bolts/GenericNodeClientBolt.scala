@@ -14,8 +14,8 @@ import storm.scala.dsl.Logging
  * @author Antonio Murgia
  * @version 18/11/14
  */
-class GenericNodeClientBolt(node : GenericNode)
-  extends ClientBolt(List("MonitData"), node.connectTimeout, node.readTimeout)
+class GenericNodeClientBolt(val node : GenericNode)
+  extends ClientBolt(List("NodeName","GraphName","MonitData"), node.connectTimeout, node.readTimeout)
   with Logging
 {
   override def emitData(t: Tuple, graphName: Date) = {
@@ -24,8 +24,6 @@ class GenericNodeClientBolt(node : GenericNode)
       val body = response.getContentAsString
       logger.info(body)
       val data = body.parseJson.convertTo[SigarMeteredData]
-      using anchor t emit(graphName, data)
-
-
+      using anchor t emit(node.id, graphName, data)
   }
 }

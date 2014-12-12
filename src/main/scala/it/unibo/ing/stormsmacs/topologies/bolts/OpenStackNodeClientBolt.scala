@@ -14,32 +14,36 @@ import storm.scala.dsl.{StormBolt, Logging}
 
 /**
  * @author Antonio Murgia
+ * @version 12/12/2014
  */
 
 class OpenStackNodeClientBolt(node : OpenStackNode)
-  extends StormBolt(List("stat"))
+  extends StormBolt(List("NodeName","GraphName","Statistics"))
   with Logging{
 
 
   private var tokenProvider : TokenProvider = _
   private var cclient : CeilometerClient = _
   private var meters : Seq[Meter] = _
+
   setup{
     tokenProvider = KeystoneTokenProvider.getInstance(node.keystoneUrl, node.tenantName, node.username, node.password)
     cclient = new CeilometerClient(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
     meters = cclient.listMeters
   }
+
   shutdown{
     cclient.shutdown()
   }
+
   def execute(t : Tuple) = {
     t.matchSeq {
-      case Seq(graphName: Date) => {
+      case Seq(nodeName : String, graphName: Date) => {
         try{
           val startTime = new Date(graphName.getTime - node.duration)
           for (m <- meters)
             for(s <- cclient.getStatistics(m, startTime, graphName))
-              using anchor t emit(graphName, m.name, s)
+              using anchor t emit(nodeName, graphName, m.name, s)
         }
         catch{
           case e : IOException => {

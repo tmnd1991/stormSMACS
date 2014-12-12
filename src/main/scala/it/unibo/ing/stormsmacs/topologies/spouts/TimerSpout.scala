@@ -5,12 +5,13 @@ package it.unibo.ing.stormsmacs.topologies.spouts
  */
 
 import backtype.storm.utils.Utils
+import it.unibo.ing.utils.DateUtils
 import storm.scala.dsl.StormSpout
 import java.util.Date
 
 class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")){
   override def nextTuple() = {
-    emit(new Date())
+    emit(new Date)
     Utils.sleep(pollTime)
   }
 }

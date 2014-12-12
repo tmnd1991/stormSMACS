@@ -4,7 +4,8 @@ import org.eclipse.jetty.client.HttpClient
 import storm.scala.dsl.{StormBolt}
 
 /**
- * Created by tmnd on 24/11/14.
+ * @author Antonio Murgia
+ * @version 24/11/2014
  */
 abstract class HttpRequesterBolt (outputFields: List[String],
                          connectTimeout : Int,
