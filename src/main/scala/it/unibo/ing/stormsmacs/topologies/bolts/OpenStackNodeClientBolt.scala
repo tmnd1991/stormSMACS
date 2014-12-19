@@ -6,7 +6,7 @@ import backtype.storm.tuple.Tuple
 import org.openstack.api.restful.keystone.v2.{TokenProvider, KeystoneTokenProvider}
 import org.openstack.api.restful.ceilometer.v2.elements.Meter
 import org.openstack.clients.ceilometer.v2.CeilometerClient
-import it.unibo.ing.stormsmacs.conf.OpenStackNode
+import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
 import spray.json.DeserializationException
 import spray.json.JsonParser.ParsingException
 import storm.scala.dsl.{StormBolt, Logging}
@@ -17,47 +17,26 @@ import storm.scala.dsl.{StormBolt, Logging}
  * @version 12/12/2014
  */
 
-class OpenStackNodeClientBolt(node : OpenStackNode)
-  extends StormBolt(List("NodeName","GraphName","Statistics"))
+class OpenStackNodeClientBolt(node : OpenStackNodeConf)
+  extends StormBolt(List("NodeName","GraphName","Meter"))
   with Logging{
 
-
-  private var tokenProvider : TokenProvider = _
   private var cclient : CeilometerClient = _
-  private var meters : Seq[Meter] = _
 
   setup{
-    tokenProvider = KeystoneTokenProvider.getInstance(node.keystoneUrl, node.tenantName, node.username, node.password)
-    cclient = new CeilometerClient(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
-    meters = cclient.listMeters
-  }
-
-  shutdown{
-    cclient.shutdown()
+    cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
   }
 
   def execute(t : Tuple) = {
     t.matchSeq {
-      case Seq(nodeName : String, graphName: Date) => {
-        try{
-          val startTime = new Date(graphName.getTime - node.duration)
+      case Seq(graphName: Date) => {
+        val meters = cclient.tryListMeters
+        if(meters.isDefined){
           for (m <- meters)
-            for(s <- cclient.getStatistics(m, startTime, graphName))
-              using anchor t emit(nodeName, graphName, m.name, s)
-        }
-        catch{
-          case e : IOException => {
-            logger.error(e.getMessage)
-          }
-          case e : ParsingException => {
-            logger.error(e.getMessage)
-          }
-          case e : DeserializationException => {
-            logger.error(e.getMessage)
-          }
+            using anchor t emit(node, graphName, _)
+          t.ack
         }
       }
     }
-    t.ack
   }
 }

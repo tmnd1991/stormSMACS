@@ -20,6 +20,7 @@ abstract class ClientBolt(outputFields : List[String], connectTimeout : Int, rea
       case Seq(graphName: Date) => {
         try {
           emitData(t, graphName)
+          t.ack
         }
         catch {
           case e : InterruptedException => {
@@ -43,7 +44,6 @@ abstract class ClientBolt(outputFields : List[String], connectTimeout : Int, rea
         }
       }
     }
-    t.ack
   }
 
   def emitData(t : Tuple, graphName : Date) : Unit

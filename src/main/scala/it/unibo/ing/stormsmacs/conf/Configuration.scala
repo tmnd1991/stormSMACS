@@ -27,10 +27,10 @@ package it.unibo.ing.stormsmacs.conf
  */
 abstract class Configuration{
   val name              : String
-  val openstackNodes    : Option[Seq[OpenStackNode]]
-  val cloudfoundryNodes : Option[Seq[CloudFoundryNode]]
-  val genericNodes      : Option[Seq[GenericNode]]
-  val fusekiNode        : FusekiNode
+  val openstackNodes    : Option[Seq[OpenStackNodeConf]]
+  val cloudfoundryNodes : Option[Seq[CloudFoundryNodeConf]]
+  val genericNodes      : Option[Seq[GenericNodeConf]]
+  val fusekiNode        : FusekiNodeConf
   val remote            : Boolean
   val debug             : Boolean
   val pollTime          : Long

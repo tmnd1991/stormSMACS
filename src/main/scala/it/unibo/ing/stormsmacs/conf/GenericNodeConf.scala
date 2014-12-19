@@ -9,7 +9,7 @@ import java.net.URL
  * @param read_timeout  read timeout in ms default is 1000ms
  */
 
-case class GenericNode (id : String,
+case class GenericNodeConf (id : String,
                        url : URL,
                        private val connect_timeout : Option[Int],
                        private val read_timeout : Option[Int]){
@@ -23,6 +23,6 @@ case class GenericNode (id : String,
 object GenericNodeProtocol extends spray.json.DefaultJsonProtocol{
   import spray.json._
   import it.unibo.ing.stormsmacs.conf.JsonConfigurationProtocol._
-  implicit val genericNodeFormat = jsonFormat4(GenericNode)
+  implicit val genericNodeFormat = jsonFormat4(GenericNodeConf)
 }
 

@@ -5,7 +5,7 @@ import java.net.URL
 
 import backtype.storm.LocalCluster
 import backtype.storm.topology.TopologyBuilder
-import it.unibo.ing.stormsmacs.conf.OpenStackNode
+import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
 import it.unibo.ing.stormsmacs.topologies.bolts.{OpenStackNodeClientBolt, PrintBolt}
 import it.unibo.ing.stormsmacs.topologies.spouts.TimerSpout
 import org.slf4j.LoggerFactory
@@ -27,7 +27,7 @@ object DebugTopology {
     val username = "amurgia"
     val password = "PUs3dAs?"
     builder.setBolt("print" ,new OpenStackNodeClientBolt(
-      OpenStackNode.apply("bb",
+      OpenStackNodeConf.apply("bb",
         tenantName,
         ceilometerURL,
         keystoneURL,

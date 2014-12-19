@@ -12,7 +12,7 @@ resolvers ++= Seq("clojars" at "http://clojars.org/repo/",
                   "clojure-releases" at "http://build.clojure.org/releases")
 
 //STORM
-libraryDependencies += "org.apache.storm" % "storm-core" % "0.9.2-incubating" % "provided" exclude("junit", "junit")
+libraryDependencies += "org.apache.storm" % "storm-core" % "0.9.2-incubating" % "provided" exclude("junit", "junit") withSources()
 
 //JSON PARSING
 libraryDependencies += "io.spray" %%  "spray-json" % "1.3.1"
@@ -26,7 +26,7 @@ libraryDependencies += "com.github.velvia" %% "scala-storm" % "1.0"
 //                         "ch.qos.logback" % "logback-classic" % "1.0.+")
 
 //CEILOMETER JSON WRAPPER
-libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.3" withSources()
+libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.4" withSources()
 
 //HTTP CLIENT
 libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
@@ -35,4 +35,4 @@ libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
 libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.2"
 
 //rdf library
-//libraryDependencies += "org.w3c" %% "banana_jvm" % "0.7.1-SNAPSHOT"
+libraryDependencies += "org.apache.jena" % "jena-core" % "2.12.1"

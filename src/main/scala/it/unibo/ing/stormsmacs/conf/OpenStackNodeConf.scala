@@ -14,7 +14,7 @@ import java.net.URL
  * @param connect_timeout connect timeout in ms default is 2000ms
  * @param read_timeout  read timeout in ms default is 1000ms
  */
-case class OpenStackNode(id : String,
+case class OpenStackNodeConf(id : String,
                         tenantName: String,
                         ceilometerUrl	: URL,
                         keystoneUrl : URL,
@@ -30,5 +30,5 @@ case class OpenStackNode(id : String,
 object OpenStackNodeProtocol extends spray.json.DefaultJsonProtocol{
   import spray.json._
   import it.unibo.ing.stormsmacs.conf.JsonConfigurationProtocol._
-  implicit val openstackNodeFormat = jsonFormat9(OpenStackNode)
+  implicit val openstackNodeFormat = jsonFormat9(OpenStackNodeConf)
 }

@@ -16,10 +16,10 @@ package it.unibo.ing.stormsmacs.conf
  * @param pollTime           poll time of monitoring
  */
 case class JsonConfiguration(name              : String,
-                             openstackNodes    : Option[Seq[OpenStackNode]],
-                             cloudfoundryNodes : Option[Seq[CloudFoundryNode]],
-                             genericNodes      : Option[Seq[GenericNode]],
-                             fusekiNode        : FusekiNode,
+                             openstackNodes    : Option[Seq[OpenStackNodeConf]],
+                             cloudfoundryNodes : Option[Seq[CloudFoundryNodeConf]],
+                             genericNodes      : Option[Seq[GenericNodeConf]],
+                             fusekiNode        : FusekiNodeConf,
                              debug             : Boolean,
                              remote            : Boolean,
                              pollTime          : Long) extends Configuration{

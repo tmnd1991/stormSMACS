@@ -9,7 +9,7 @@ import java.net.URL
  * @param read_timeout  read timeout in ms default is 1000ms
  */
 
-case class CloudFoundryNode (id : String,
+case class CloudFoundryNodeConf (id : String,
                         url : URL,
                         private val connect_timeout : Option[Int],
                         private val read_timeout : Option[Int]){
@@ -22,5 +22,5 @@ case class CloudFoundryNode (id : String,
 object CloudFoundryNodeProtocol extends spray.json.DefaultJsonProtocol{
   import spray.json._
   import it.unibo.ing.stormsmacs.conf.JsonConfigurationProtocol._
-  implicit val cloudfoundryNodeFormat = jsonFormat4(CloudFoundryNode)
+  implicit val cloudfoundryNodeFormat = jsonFormat4(CloudFoundryNodeConf)
 }
