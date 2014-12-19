@@ -1,8 +1,9 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode
+
+import java.util.Date
 
 import backtype.storm.tuple.Tuple
-import java.util.Date
-import it.unibo.ing.stormsmacs.conf.{OpenStackNodeConf, FusekiNodeConf}
+import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, OpenStackNodeConf}
 import org.openstack.api.restful.ceilometer.v2.elements.Statistics
 import storm.scala.dsl.{Logging, StormBolt}
 

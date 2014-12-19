@@ -1,4 +1,4 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.Debug
 
 import backtype.storm.tuple.Tuple
 import storm.scala.dsl.{Logging, StormBolt}

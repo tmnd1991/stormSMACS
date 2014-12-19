@@ -1,13 +1,12 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode
 
-import java.io.IOException
 import java.util.Date
 
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.monit.model.JsonConversions._
 import it.unibo.ing.monit.model.MonitInfo
 import it.unibo.ing.stormsmacs.conf.CloudFoundryNodeConf
-import spray.json.JsonParser.ParsingException
+import it.unibo.ing.stormsmacs.topologies.bolts.ClientBolt
 import spray.json._
 import storm.scala.dsl.Logging
 

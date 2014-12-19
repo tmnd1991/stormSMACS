@@ -6,7 +6,8 @@ import java.net.URL
 import backtype.storm.LocalCluster
 import backtype.storm.topology.TopologyBuilder
 import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
-import it.unibo.ing.stormsmacs.topologies.bolts.{OpenStackNodeClientBolt, PrintBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.Debug.PrintBolt
+import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.OpenStackNodeClientBolt
 import it.unibo.ing.stormsmacs.topologies.spouts.TimerSpout
 import org.slf4j.LoggerFactory
 import storm.scala.dsl.StormConfig

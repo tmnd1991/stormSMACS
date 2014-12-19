@@ -1,10 +1,9 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode
 
 import java.util.Date
 
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.monit.model.MonitInfo
-import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf.{CloudFoundryNodeConf, FusekiNodeConf}
 import myUtils.DateUtils
 import storm.scala.dsl.{Logging, StormBolt}

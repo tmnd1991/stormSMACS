@@ -2,7 +2,7 @@ package it.unibo.ing.rdf
 
 import com.hp.hpl.jena.rdf.model.{RDFWriter, Model}
 import spray.json.{JsValue, JsonWriter}
-
+import scala.language.implicitConversions
 import scala.annotation.implicitNotFound
 
 /**

@@ -1,15 +1,11 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode
 
-import java.io.IOException
 import java.util.Date
+
 import backtype.storm.tuple.Tuple
-import org.openstack.api.restful.keystone.v2.{TokenProvider, KeystoneTokenProvider}
-import org.openstack.api.restful.ceilometer.v2.elements.Meter
-import org.openstack.clients.ceilometer.v2.CeilometerClient
 import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
-import spray.json.DeserializationException
-import spray.json.JsonParser.ParsingException
-import storm.scala.dsl.{StormBolt, Logging}
+import org.openstack.clients.ceilometer.v2.CeilometerClient
+import storm.scala.dsl.{Logging, StormBolt}
 
 
 /**
@@ -33,7 +29,7 @@ class OpenStackNodeClientBolt(node : OpenStackNodeConf)
         val meters = cclient.tryListMeters
         if(meters.isDefined){
           for (m <- meters)
-            using anchor t emit(node, graphName, _)
+            using anchor t emit(node, graphName, m)
           t.ack
         }
       }
