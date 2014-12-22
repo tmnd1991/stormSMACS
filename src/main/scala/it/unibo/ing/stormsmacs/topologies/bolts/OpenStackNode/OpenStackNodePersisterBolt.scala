@@ -1,8 +1,9 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode
+
+import java.util.Date
 
 import backtype.storm.tuple.Tuple
-import java.util.Date
-import it.unibo.ing.stormsmacs.conf.{OpenStackNodeConf, FusekiNodeConf}
+import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, OpenStackNodeConf}
 import org.openstack.api.restful.ceilometer.v2.elements.Statistics
 import storm.scala.dsl.{Logging, StormBolt}
 
@@ -10,7 +11,9 @@ import storm.scala.dsl.{Logging, StormBolt}
  * @author Antonio Murgia
  * @version 12/12/2014
  */
-class OpenStackNodePersisterBolt(fusekiEndpoint : FusekiNodeConf) extends StormBolt(List()) with Logging {
+class OpenStackNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
+  extends StormBolt(List())
+  with Logging {
   override def execute(t: Tuple) = {
     t matchSeq{
       case Seq(node : OpenStackNodeConf,

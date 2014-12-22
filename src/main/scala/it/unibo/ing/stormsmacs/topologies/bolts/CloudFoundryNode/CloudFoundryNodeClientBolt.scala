@@ -1,13 +1,12 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode
 
-import java.io.IOException
 import java.util.Date
 
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.monit.model.JsonConversions._
 import it.unibo.ing.monit.model.MonitInfo
 import it.unibo.ing.stormsmacs.conf.CloudFoundryNodeConf
-import spray.json.JsonParser.ParsingException
+import it.unibo.ing.stormsmacs.topologies.bolts.ClientBolt
 import spray.json._
 import storm.scala.dsl.Logging
 
@@ -26,7 +25,8 @@ class CloudFoundryNodeClientBolt(val node : CloudFoundryNodeConf)
     logger.info(body)
     import spray.json.DefaultJsonProtocol._
     val data = body.parseJson.convertTo[Seq[MonitInfo]]
-    using anchor t emit (node, graphName, data)
+    for(d <- data)
+      using anchor t emit (node, graphName, d)
     //no need to ack because it's already acked in ClientBolt if not failed obviously
   }
 }

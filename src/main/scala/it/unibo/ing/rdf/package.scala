@@ -1,5 +1,8 @@
 package it.unibo.ing
 
+
+import scala.language.implicitConversions
+
 /**
  * Created by tmnd on 15/12/14.
  */

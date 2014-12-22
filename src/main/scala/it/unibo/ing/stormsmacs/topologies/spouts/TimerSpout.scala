@@ -5,7 +5,6 @@ package it.unibo.ing.stormsmacs.topologies.spouts
  */
 
 import backtype.storm.utils.Utils
-import it.unibo.ing.utils.DateUtils
 import storm.scala.dsl.StormSpout
 import java.util.Date
 

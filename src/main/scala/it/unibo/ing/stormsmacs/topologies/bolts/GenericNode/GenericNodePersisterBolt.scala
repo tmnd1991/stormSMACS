@@ -1,12 +1,12 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.GenericNode
 
 import java.util.Date
+
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
-import it.unibo.ing.stormsmacs.conf.{GenericNodeConf, FusekiNodeConf}
+import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, GenericNodeConf}
 import myUtils.DateUtils
-import storm.scala.dsl.StormBolt
-import storm.scala.dsl.Logging
+import storm.scala.dsl.{Logging, StormBolt}
 
 /**
  * @author Antonio Murgia

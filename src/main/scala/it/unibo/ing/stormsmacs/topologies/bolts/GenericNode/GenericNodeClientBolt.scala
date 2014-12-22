@@ -1,4 +1,4 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.GenericNode
 
 import java.util.Date
 
@@ -6,7 +6,7 @@ import backtype.storm.tuple.Tuple
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.sigar.restful.model.SigarMeteredDataFormat._
 import it.unibo.ing.stormsmacs.conf.GenericNodeConf
-
+import it.unibo.ing.stormsmacs.topologies.bolts.ClientBolt
 import spray.json._
 import storm.scala.dsl.Logging
 

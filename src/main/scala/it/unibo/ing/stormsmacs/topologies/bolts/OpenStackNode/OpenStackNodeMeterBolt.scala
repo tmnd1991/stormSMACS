@@ -1,10 +1,10 @@
-package it.unibo.ing.stormsmacs.topologies.bolts
+package it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode
 
 import java.util.Date
 
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
-import org.openstack.api.restful.ceilometer.v2.elements.{Statistics, Meter}
+import org.openstack.api.restful.ceilometer.v2.elements.{Meter, Statistics}
 import org.openstack.clients.ceilometer.v2.CeilometerClient
 import storm.scala.dsl.{Logging, StormBolt}
 
@@ -12,7 +12,7 @@ import storm.scala.dsl.{Logging, StormBolt}
  * Created by tmnd on 18/12/14.
  */
 class OpenStackNodeMeterBolt()
-  extends StormBolt(List("NodeName","GraphName","Meter"))
+  extends StormBolt(List("NodeName", "GraphName", "MeterName", "Statistics"))
   with Logging{
 
   override def execute(t: Tuple) =
