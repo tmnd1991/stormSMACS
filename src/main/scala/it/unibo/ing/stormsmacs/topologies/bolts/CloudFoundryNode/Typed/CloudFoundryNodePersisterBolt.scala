@@ -3,6 +3,7 @@ package it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed
 import java.io.ByteArrayOutputStream
 import java.util.Date
 
+import it.unibo.ing.utils.RDFUtils
 import virtuoso.jena.driver._
 import storm.scala.dsl.NonEmittingTypedBolt
 import com.hp.hpl.jena.rdf.model.Model
@@ -18,7 +19,7 @@ import it.unibo.ing.rdf._
  */
 class CloudFoundryNodePersisterBolt(fusekiEndpoint : FusekiNodeConf) extends NonEmittingTypedBolt[(CloudFoundryNodeConf, Date, MonitInfo)]{
   override def typedExecute(t: (CloudFoundryNodeConf, Date, MonitInfo)): Unit = {
-    val graphName = "<http://stormsmacs/sample/" + DateUtils.format(t._2,"yyyy-MM-dd_HH:mm:ss>")
+    val graphName = RDFUtils.graphName(t._2)
     val data = CFNodeData(t._1.url, t._3)
     val model = data.toRdf(t._1.toString)
     writeToRDFStore(graphName, model)
