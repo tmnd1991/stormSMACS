@@ -4,6 +4,11 @@ package it.unibo.ing.monit.model
  * @author Antonio Murgia
  * @version 03/11/14
  */
+
+import com.hp.hpl.jena.rdf.model.{ModelFactory, Model}
+import it.unibo.ing.rdf.{Properties, RdfWriter}
+import it.unibo.ing.utils.DateUtils
+
 import scala.concurrent.duration._
 import java.util.Date
 

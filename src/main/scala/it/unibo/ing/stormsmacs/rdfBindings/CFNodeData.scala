@@ -5,22 +5,65 @@ package it.unibo.ing.stormsmacs.rdfBindings
  * @version 15/12/14
  */
 import java.net.URL
-import com.hp.hpl.jena.graph.GraphMaker
 import com.hp.hpl.jena.graph.impl.SimpleGraphMaker
 import com.hp.hpl.jena.rdf.model.{Model, ModelFactory}
-import com.hp.hpl.jena.vocabulary.VCARD
-import it.unibo.ing.monit.model.MonitInfo
+import it.unibo.ing.monit.model.{MonitSystemInfo, MonitProcessInfo, MonitInfo}
+import it.unibo.ing.rdf._
 import it.unibo.ing.rdf.RdfWriter
+import it.unibo.ing.utils.DateUtils
 
-case class CFNodeData(graphName : String, url : URL, infos : Seq[MonitInfo]) {
+case class CFNodeData(url : URL, info : MonitInfo) {
 }
 object CFNodeDataRdfConversion{
+  import scala.collection.JavaConversions._
+
+  implicit object MonitProcessInfoRdfWriter extends RdfWriter[MonitProcessInfo] {
+    override def write(obj: MonitProcessInfo, absPath: String): Model = {
+      val m = ModelFactory.createDefaultModel()
+      m.setNsPrefixes(Properties.prefixes)
+      val r = m.createResource(absPath + "/" + obj.name)
+      r.addProperty(Properties.hasStatus, obj.status.toString)
+      r.addProperty(Properties.dataCollected, DateUtils.format(obj.data_collected))
+      r.addProperty(Properties.hasChildren, obj.children.toString)
+      r.addProperty(Properties.hasMonitoringStatus, obj.monitoring_status.toString)
+      r.addProperty(Properties.hasParentPid, obj.parent_pid.toString)
+      r.addProperty(Properties.hasPid, obj.pid.toString)
+      r.addProperty(Properties.hasUptime, obj.uptime.toString)
+      r.addProperty(Properties.portResponseTime, obj.port_response_time.toString)
+      r.addProperty(Properties.totalCPUperc, obj.cpu_percent_total.toString)
+      r.addProperty(Properties.totalMemoryKb, obj.memory_kb_total.toString)
+      r.addProperty(Properties.totalMemoryPerc, obj.memory_perc.toString)
+      r.addProperty(Properties.unixSocketResponseTime, obj.unix_socket_response_time.toString)
+      r.addProperty(Properties.usingCPUperc, obj.cpu_percent.toString)
+      r.addProperty(Properties.usingMemoryPerc, obj.memory_perc.toString)
+      m
+    }
+  }
+
+  implicit object MonitSystemInfoRdfWriter extends RdfWriter[MonitSystemInfo]{
+    override def write(obj: MonitSystemInfo, absPath: String): Model = ???
+  }
+
+  implicit object MonitInfoRdfWriter extends RdfWriter[MonitInfo]{
+    override def write(obj: MonitInfo, abspath : String = ""): Model = {
+      obj match{
+        case m : MonitProcessInfo => m.toRdf(abspath)
+        case m : MonitSystemInfo  => m.toRdf(abspath)
+      }
+    }
+  }
+
   implicit object CFNodeDataRDFWriter extends RdfWriter[CFNodeData]{
-    override def write(obj: CFNodeData): Model = {
-      val graph = new SimpleGraphMaker().createGraph(obj.graphName)
+    override def write(obj: CFNodeData, absPath: String): Model = {
+      val graph = new SimpleGraphMaker().createGraph()
       val model = ModelFactory.createModelForGraph(graph)
-      val r = model.createResource(obj.url.toString).addProperty(VCARD.FN, obj.infos.toString())
+      val r = model.createResource(obj.url.toString)
+      val infoM = obj.info.toRdf(obj.url.toString)
+      model.setNsPrefixes(infoM.getNsPrefixMap)
+      model.add(infoM)
       model
     }
   }
+
+
 }

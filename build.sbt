@@ -18,7 +18,7 @@ libraryDependencies += "org.apache.storm" % "storm-core" % "0.9.2-incubating" % 
 libraryDependencies += "io.spray" %%  "spray-json" % "1.3.1"
 
 //SCALASTORM DSL
-libraryDependencies += "com.github.velvia" %% "scala-storm" % "2.0"
+libraryDependencies += "com.github.velvia" %% "scala-storm" % "2.0" withSources()
 
 //LOGGING
 //libraryDependencies ++= Seq("org.slf4j" % "slf4j-api" % "1.7.+",
@@ -36,3 +36,6 @@ libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.2"
 
 //rdf library
 libraryDependencies += "org.apache.jena" % "jena-core" % "2.12.1"
+
+//sparql queryengine
+libraryDependencies += "org.apache.jena" % "jena-arq" % "2.12.1"

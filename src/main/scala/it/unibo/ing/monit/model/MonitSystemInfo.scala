@@ -6,6 +6,9 @@ package it.unibo.ing.monit.model
  */
 
 import java.util.Date
+
+import com.hp.hpl.jena.rdf.model.ModelFactory
+
 case class MonitSystemInfo(name : String,
                            status : MonitStatus,
                            monitoring_status : MonitMonitoringStatus,
@@ -28,25 +31,25 @@ case class MonitSystemInfo(name : String,
     "data collected -> " + data_collected + "\n"
   }
 }
-object MonitSystemInfo{
-  def applyOpt(name : Option[String],
-            status : Option[MonitStatus],
-            monitoring_status : Option[MonitMonitoringStatus],
-            load_average : Option[LoadAverage],
-            cpu : Option[CpuUsage],
-            memory_usage_perc : Option[Double],
-            memory_usage : Option[Int],
-            swap_usage : Option[Int],
-            swap_usage_perc : Option[Double],
-            data_collected : Option[Date]) : MonitSystemInfo =
+object MonitSystemInfo {
+  def applyOpt(name: Option[String],
+               status: Option[MonitStatus],
+               monitoring_status: Option[MonitMonitoringStatus],
+               load_average: Option[LoadAverage],
+               cpu: Option[CpuUsage],
+               memory_usage_perc: Option[Double],
+               memory_usage: Option[Int],
+               swap_usage: Option[Int],
+               swap_usage_perc: Option[Double],
+               data_collected: Option[Date]): MonitSystemInfo =
     apply(name.get,
-          status.get,
-          monitoring_status.get,
-          load_average.get,
-          cpu.get,
-          memory_usage_perc.get,
-          memory_usage.get,
-          swap_usage.get,
-          swap_usage_perc.get,
-          data_collected.get)
+      status.get,
+      monitoring_status.get,
+      load_average.get,
+      cpu.get,
+      memory_usage_perc.get,
+      memory_usage.get,
+      swap_usage.get,
+      swap_usage_perc.get,
+      data_collected.get)
 }

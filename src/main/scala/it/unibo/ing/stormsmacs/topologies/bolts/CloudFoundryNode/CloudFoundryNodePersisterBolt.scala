@@ -16,10 +16,11 @@ class CloudFoundryNodePersisterBolt(fusekiEndpoint : FusekiNodeConf) extends Sto
   override def execute(t: Tuple) = {
     t matchSeq {
       case Seq(node : CloudFoundryNodeConf, date: Date, mData: MonitInfo) => {
-        val graphName = "<http://java.util.date/" + DateUtils.format(date) + ">"
-        logger.debug(mData.toString)
+
+        //CFNode
         t.ack
       }
     }
+
   }
 }

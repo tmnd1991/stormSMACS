@@ -10,10 +10,10 @@ import scala.annotation.implicitNotFound
  */
 @implicitNotFound(msg = "Cannot find RdfWriter type class for ${T}")
 trait RdfWriter[T] {
-  def write(obj : T) : Model
+  def write(obj : T, absPath : String = "") : Model
 }
 object RdfWriter {
-  implicit def func2Writer[T](f: T => Model): RdfWriter[T] = new RdfWriter[T] {
-    def write(obj: T) = f(obj)
+  implicit def func2Writer[T](f: (T,String) => Model): RdfWriter[T] = new RdfWriter[T] {
+    def write(obj: T, absPath : String = "") = f(obj, absPath)
   }
 }
