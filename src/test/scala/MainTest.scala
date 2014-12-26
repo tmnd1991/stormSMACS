@@ -6,14 +6,15 @@ import java.io.File
 import java.util.Date
 
 import it.unibo.ing.monit.model.{MonitResponseTime, MonitMonitoringStatus, MonitStatus, MonitProcessInfo}
+import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf.JsonConfiguration
-import it.unibo.ing.stormsmacs.rdfBindings.CFNodeData
+import it.unibo.ing.stormsmacs.rdfBindings.{GenericNodeData, CFNodeData}
 import java.net.URL
 import org.scalatest._
 import it.unibo.ing.rdf._
-import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfConversion._
-
 import scala.concurrent.duration.Duration
+import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfConversion._
+import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeDataRdfFormat._
 
 class MainTest extends FlatSpec with Matchers{
   /*
@@ -39,9 +40,11 @@ class MainTest extends FlatSpec with Matchers{
     None,
     None)
   )
+  val genericNode = GenericNodeData( new URL("http://192.168.1.10"),
+    SigarMeteredData(20,10,10,10,10,10,10,10,10,10.1,12,"cip", "nop"))
 
-  node.toRdf(node.url.toString).write(System.out)
-  node.toRdf(node.url.toString).write(System.out, "N-TRIPLE")
+  node.toRdf().write(System.out, "N-TRIPLE")
+  genericNode.toRdf().write(System.out, "N-TRIPLE")
 }
 
 /**
