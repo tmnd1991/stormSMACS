@@ -73,7 +73,7 @@ object Topology {
                                       boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
       val meterBolt = new OpenStackNodeMeterBolt()
       builder.setBolt[(OpenStackNodeConf, Date, Meter)](boltClientName, sampleClient,
-                                                        boltMeterName, meterBolt).fieldsGrouping(boltClientName, new Fields("NodeName"))
+                                                        boltMeterName, meterBolt).shuffleGrouping(boltClientName)
       builder.setBolt[(OpenStackNodeConf, Date, String, Statistics)](boltMeterName, meterBolt,
                                                                     boltPersisterName, new OpenStackNodePersisterBolt(fusekiNode)).
         shuffleGrouping(boltMeterName)

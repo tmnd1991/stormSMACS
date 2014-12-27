@@ -17,7 +17,7 @@ import com.hp.hpl.jena.rdf.model.Model
 import scala.concurrent.duration.Duration
 
 class VirtuosoTest  extends FlatSpec with Matchers{
-  /*val graphName = "<http://stormsmacs/sample/" + DateUtils.format(new Date(),"yyyy-MM-dd_HH:mm:ss>")
+  val graphName = "<http://stormsmacs/sample/" + DateUtils.format(new Date(),"yyyy-MM-dd_HH:mm:ss>")
   val node = CFNodeData(new URL("http://192.168.1.10"),
     new MonitProcessInfo("pippo",
       MonitStatus.RUNNING,
@@ -41,7 +41,6 @@ class VirtuosoTest  extends FlatSpec with Matchers{
   val set = new VirtGraph ("jdbc:virtuoso://localhost:1111", "dba", "dba")
   val vur = VirtuosoUpdateFactory.create(str, set)
   vur.exec
-  */
 }
 
 
