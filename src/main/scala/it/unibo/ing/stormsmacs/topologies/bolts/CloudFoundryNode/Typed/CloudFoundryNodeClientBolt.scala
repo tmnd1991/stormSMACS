@@ -10,11 +10,8 @@ import java.util.Date
 /**
  * Created by tmnd91 on 24/12/14.
  */
-class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf,
-                                 connectTimeout : Int,
-                                 readTimeout : Int,
-                                 followRedirects : Boolean)
-  extends HttpRequesterBolt[Tuple1[Date],(CloudFoundryNodeConf, Date, MonitInfo)](connectTimeout, readTimeout, followRedirects,"Node","GraphName","MonitData")
+class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf)
+  extends HttpRequesterBolt[Tuple1[Date],(CloudFoundryNodeConf, Date, MonitInfo)](node.connectTimeout, node.readTimeout, false,"Node","GraphName","MonitData")
   with Logging
 {
   override def typedExecute(t: Tuple1[Date]): Seq[(CloudFoundryNodeConf, Date, MonitInfo)] = {

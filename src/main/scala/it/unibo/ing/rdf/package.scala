@@ -22,7 +22,7 @@ package object rdf {
     def rdfSerialization(language : String = null) : String = {
       val boa = new ByteArrayOutputStream()
       m.write(boa, language)
-      val s = new String(boa.toByteArray, "UTF_8")
+      val s = new String(boa.toByteArray, "UTF8")
       boa.close()
       s
     }

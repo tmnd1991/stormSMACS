@@ -1,4 +1,4 @@
-package it.unibo.ing.stormsmacs.topologies.bolts.Typed
+package it.unibo.ing.stormsmacs.topologies.spouts.Typed
 
 import storm.scala.dsl.TypedSpout
 

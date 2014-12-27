@@ -12,21 +12,16 @@ resolvers ++= Seq("clojars" at "http://clojars.org/repo/",
                   "clojure-releases" at "http://build.clojure.org/releases")
 
 //STORM
-libraryDependencies += "org.apache.storm" % "storm-core" % "0.9.2-incubating" % "provided" exclude("junit", "junit") withSources()
+libraryDependencies += "org.apache.storm" % "storm-core" % "0.9.3" % "provided" exclude("junit", "junit") withSources()
 
 //JSON PARSING
 libraryDependencies += "io.spray" %%  "spray-json" % "1.3.1"
 
 //SCALASTORM DSL
-libraryDependencies += "com.github.velvia" %% "scala-storm" % "2.0" withSources()
-
-//LOGGING
-//libraryDependencies ++= Seq("org.slf4j" % "slf4j-api" % "1.7.+",
-//                         "ch.qos.logback" % "logback-core"    % "1.0.+",
-//                         "ch.qos.logback" % "logback-classic" % "1.0.+")
+libraryDependencies += "com.github.velvia" %% "scala-storm" % "2.0" withSources() intransitive()
 
 //CEILOMETER JSON WRAPPER
-libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.5" withSources()
+libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.5" withSources() intransitive()
 
 //HTTP CLIENT
 libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
@@ -35,7 +30,7 @@ libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
 libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.2"
 
 //rdf library
-libraryDependencies += "org.apache.jena" % "jena-core" % "2.12.1"
+libraryDependencies += "org.apache.jena" % "jena-core" % "2.12.1" exclude("org.slf4j","slf4j-api") exclude("junit", "junit") intransitive()
 
 //sparql queryengine
-libraryDependencies += "org.apache.jena" % "jena-arq" % "2.12.1"
+libraryDependencies += "org.apache.jena" % "jena-arq" % "2.12.1" exclude("org.slf4j","jcl-over-slf4j") exclude("org.apache.commons", "commons-csv")

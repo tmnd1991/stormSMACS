@@ -21,7 +21,7 @@ class OpenStackNodePersisterBolt(fusekiEndpoint: FusekiNodeConf) extends NonEmit
     val url = new URL(t._1.ceilometerUrl.getProtocol + "://" +t._1.ceilometerUrl.getHost)
     val data = OpenStackStatisticsData(url, t._3, t._4)
     val model = data.toRdf()
-    model
+    writeToRDFStore(graphName, model)
   }
   private def writeToRDFStore(graphName : String, data : Model) : Unit = {
     val dataAsString = data.rdfSerialization("N-TRIPLE")

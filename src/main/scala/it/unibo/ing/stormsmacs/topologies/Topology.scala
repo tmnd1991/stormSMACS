@@ -1,22 +1,20 @@
 package it.unibo.ing.stormsmacs.topologies
 
 import java.io.{File, FileNotFoundException}
-
-import backtype.storm.command.list
-import backtype.storm.tuple.Fields
-import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.{CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.{GenericNodePersisterBolt, GenericNodeClientBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.{OpenStackNodePersisterBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts._
-import it.unibo.ing.stormsmacs.topologies.spouts.TimerSpout
+import java.util.Date
 import org.slf4j.LoggerFactory
-
+import backtype.storm.tuple.Fields
 import backtype.storm.{StormSubmitter, LocalCluster}
-import backtype.storm.topology.TopologyBuilder
-
-import storm.scala.dsl.StormConfig
-
+import storm.scala.dsl.{TypedTopologyBuilder, StormConfig}
+import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
+import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterBolt, GenericNodeClientBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
 import it.unibo.ing.stormsmacs.conf._
+import org.openstack.api.restful.ceilometer.v2.elements.{Statistics, Meter}
+import it.unibo.ing.sigar.restful.model.SigarMeteredData
+import it.unibo.ing.monit.model.MonitInfo
+
 
 /**
  * Main configurable Topology of StormSMACS
@@ -32,18 +30,19 @@ object Topology {
     try{
       val conf = readConfFromJsonFile(jsonConfFile)
 
-      val builder = new TopologyBuilder()
+      val builder = new TypedTopologyBuilder()
 
       logger.info("starting stormsmacs with conf : \n" + conf)
 
       val timerSpoutName = "timer"
-      builder.setSpout(timerSpoutName, new TimerSpout(conf.pollTime))
+      val timerSpout = new TimerSpout(conf.pollTime)
+      builder.setSpout(timerSpoutName, timerSpout)
 
-      configureGenericNodes(builder, conf.fusekiNode, conf.genericNodeList, timerSpoutName)
+      configureOpenstackNodes(builder, conf.fusekiNode, conf.openstackNodeList, timerSpout, timerSpoutName)
 
-      configureOpenstackNodes(builder, conf.fusekiNode, conf.openstackNodeList, timerSpoutName)
+      configureGenericNodes(builder, conf.fusekiNode, conf.genericNodeList, timerSpout, timerSpoutName)
 
-      configureCloudFoundryNodes(builder, conf.fusekiNode, conf.cloudfoundryNodeList, timerSpoutName)
+      configureCloudFoundryNodes(builder, conf.fusekiNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName)
 
       val sConf = new StormConfig(debug = conf.debug)
       if (conf.remote){
@@ -59,44 +58,65 @@ object Topology {
     }
   }
 
-  private def configureOpenstackNodes( builder : TopologyBuilder,
+  private def configureOpenstackNodes( builder : TypedTopologyBuilder,
                                        fusekiNode : FusekiNodeConf,
                                        list: Seq[OpenStackNodeConf],
+                                       timerSpout : TimerSpout,
                                        timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
       val boltClientName = "openstackClientBolt"
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
+      val sampleClient = new OpenStackNodeClientBolt(list.head)
       for(osn <- list)
-        builder.setBolt(boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
-      builder.setBolt(boltMeterName, new OpenStackNodeMeterBolt()).fieldsGrouping(boltClientName, new Fields("NodeName"))
-      builder.setBolt(boltPersisterName,new OpenStackNodePersisterBolt(fusekiNode)).shuffleGrouping(boltMeterName)
+        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
+                                      boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
+      val meterBolt = new OpenStackNodeMeterBolt()
+      builder.setBolt[(OpenStackNodeConf, Date, Meter)](boltClientName, sampleClient,
+                                                        boltMeterName, meterBolt).fieldsGrouping(boltClientName, new Fields("NodeName"))
+      builder.setBolt[(OpenStackNodeConf, Date, String, Statistics)](boltMeterName, meterBolt,
+                                                                    boltPersisterName, new OpenStackNodePersisterBolt(fusekiNode)).
+        shuffleGrouping(boltMeterName)
     }
   }
 
-  private def configureGenericNodes(builder : TopologyBuilder,
+  private def configureGenericNodes(builder : TypedTopologyBuilder,
                                     fusekiNode : FusekiNodeConf,
                                     list: Seq[GenericNodeConf],
+                                    timerSpout : TimerSpout,
                                     timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
       val boltReaderName = "genericReaderBolt"
       val boltPersisterName = "genericPersister"
+      val sampleClient = new GenericNodeClientBolt(list.head)
       for(gn <- list)
-        builder.setBolt(boltReaderName, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
-      builder.setBolt(boltPersisterName,new GenericNodePersisterBolt(fusekiNode)).shuffleGrouping(boltReaderName)
+        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
+                                      boltReaderName, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
+      val persisterBolt = new GenericNodePersisterBolt(fusekiNode)
+      builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
+                                                                boltPersisterName,persisterBolt).
+        shuffleGrouping(boltReaderName)
     }
   }
 
-  private def configureCloudFoundryNodes(builder : TopologyBuilder,
+  private def configureCloudFoundryNodes(builder : TypedTopologyBuilder,
                                          fusekiNode : FusekiNodeConf,
                                          list: Seq[CloudFoundryNodeConf],
+                                         timerSpout : TimerSpout,
                                          timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
+      val sampleClient = new CloudFoundryNodeClientBolt(list.head)
       for(cfn <- list)
-        builder.setBolt(boltReaderName, new CloudFoundryNodeClientBolt(cfn)).allGrouping(timerSpoutName)
-      builder.setBolt(boltPersisterName,new CloudFoundryNodePersisterBolt(fusekiNode)).shuffleGrouping(boltReaderName)
+        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
+                                      boltReaderName, new CloudFoundryNodeClientBolt(cfn)).allGrouping(timerSpoutName)
+      builder.setBolt[(CloudFoundryNodeConf, Date, MonitInfo)](boltReaderName, sampleClient,
+                                                               boltPersisterName,new CloudFoundryNodePersisterBolt(fusekiNode)).
+        shuffleGrouping(boltReaderName)
+
+
+
     }
   }
 

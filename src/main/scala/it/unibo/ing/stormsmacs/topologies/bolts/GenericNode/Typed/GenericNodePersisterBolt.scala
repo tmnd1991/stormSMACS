@@ -20,7 +20,7 @@ class GenericNodePersisterBolt(fusekiEndpoint : FusekiNodeConf) extends NonEmitt
     val graphName = RDFUtils.graphName(t._2)
     val data = GenericNodeData(t._1.url, t._3)
     val model = data.toRdf()
-    model
+    writeToRDFStore(graphName, model)
   }
   private def writeToRDFStore(graphName : String, data : Model) : Unit = {
     val dataAsString = data.rdfSerialization("N-TRIPLE")

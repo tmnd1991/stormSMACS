@@ -7,10 +7,9 @@ package it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed
 import java.util.Date
 
 import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
-import it.unibo.ing.stormsmacs.topologies.bolts.Typed.TimerSpout
 import org.openstack.api.restful.ceilometer.v2.elements.Meter
 import org.openstack.clients.ceilometer.v2.CeilometerClient
-import storm.scala.dsl.{TypedTopologyBuilder, Logging, TypedBolt}
+import storm.scala.dsl.{Logging, TypedBolt}
 
 class OpenStackNodeClientBolt(node : OpenStackNodeConf)
   extends TypedBolt[Tuple1[Date],(OpenStackNodeConf, Date, Meter)]("NodeName","GraphName","Meter")

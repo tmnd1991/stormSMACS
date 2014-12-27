@@ -15,9 +15,9 @@ import org.scalatest.{Matchers, FlatSpec}
 import virtuoso.jena.driver.{VirtuosoUpdateFactory, VirtGraph}
 import com.hp.hpl.jena.rdf.model.Model
 import scala.concurrent.duration.Duration
-import ext._
+
 class VirtuosoTest  extends FlatSpec with Matchers{
-  val graphName = "<http://stormsmacs/sample/" + DateUtils.format(new Date(),"yyyy-MM-dd_HH:mm:ss>")
+  /*val graphName = "<http://stormsmacs/sample/" + DateUtils.format(new Date(),"yyyy-MM-dd_HH:mm:ss>")
   val node = CFNodeData(new URL("http://192.168.1.10"),
     new MonitProcessInfo("pippo",
       MonitStatus.RUNNING,
@@ -35,23 +35,14 @@ class VirtuosoTest  extends FlatSpec with Matchers{
       new Date(),
       None,
       None))
-  val dataAsString = node.toRdf("http://192.168.1.10").rdfSerialization("N-TRIPLE")
+  val dataAsString = node.toRdf().rdfSerialization("N-TRIPLE")
   val str = "INSERT INTO GRAPH " + graphName + " { " + dataAsString + "}"
   println(str)
   val set = new VirtGraph ("jdbc:virtuoso://localhost:1111", "dba", "dba")
   val vur = VirtuosoUpdateFactory.create(str, set)
   vur.exec
+  */
 }
 
-object ext{
-  implicit class RichModel(m : Model){
-    def rdfSerialization(language : String = null) : String = {
-      val boa = new ByteArrayOutputStream()
-      m.write(boa, language)
-      val s = new String(boa.toByteArray, "UTF8")
-      boa.close()
-      s
-    }
-  }
-}
+
 

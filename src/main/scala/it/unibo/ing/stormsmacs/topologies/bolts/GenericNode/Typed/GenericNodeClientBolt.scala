@@ -16,15 +16,6 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
   extends HttpRequesterBolt[Tuple1[Date], (GenericNodeConf, Date, SigarMeteredData)](node.connectTimeout, node.readTimeout, false, "Node","GraphName","MonitData")
   with Logging
 {
-  /*
-  override def emitData(t: Tuple, graphName: Date) = {
-    val response = httpClient.GET(node.url.toURI)
-    val body = response.getContentAsString
-    logger.info(body)
-    val data = body.parseJson.convertTo[SigarMeteredData]
-    using anchor t emit(node, graphName, data)
-  }
-  */
   override def typedExecute(t: Tuple1[Date]): Seq[(GenericNodeConf, Date, SigarMeteredData)] = {
     val response = httpClient.GET(node.url.toURI)
     val body = response.getContentAsString
