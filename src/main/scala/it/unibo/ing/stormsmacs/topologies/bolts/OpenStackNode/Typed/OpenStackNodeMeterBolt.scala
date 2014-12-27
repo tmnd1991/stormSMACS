@@ -22,6 +22,7 @@ class OpenStackNodeMeterBolt
       val start = new Date(t._2.getTime - t._1.duration)
       for(stat <- cclient.getStatistics(t._3, start, t._2))
       using anchor st emit(t._1, t._2, t._3.name, stat)
+      st.ack
     }
     catch{
       case e : Throwable =>{
