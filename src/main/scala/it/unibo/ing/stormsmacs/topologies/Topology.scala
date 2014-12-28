@@ -2,9 +2,11 @@ package it.unibo.ing.stormsmacs.topologies
 
 import java.io.{File, FileNotFoundException}
 import java.util.Date
+import com.twitter.chill.ScalaKryoInstantiator
+import it.unibo.ing.stormsmacs.serializers._
 import org.slf4j.LoggerFactory
 import backtype.storm.tuple.Fields
-import backtype.storm.{StormSubmitter, LocalCluster}
+import backtype.storm.{Config, StormSubmitter, LocalCluster}
 import storm.scala.dsl.{TypedTopologyBuilder, StormConfig}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
 import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
@@ -13,7 +15,7 @@ import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNo
 import it.unibo.ing.stormsmacs.conf._
 import org.openstack.api.restful.ceilometer.v2.elements.{Statistics, Meter}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
-import it.unibo.ing.monit.model.MonitInfo
+import it.unibo.ing.monit.model.{MonitSystemInfo, MonitProcessInfo, MonitInfo}
 
 
 /**
@@ -29,7 +31,6 @@ object Topology {
     val jsonConfFile = args(0)
     try{
       val conf = readConfFromJsonFile(jsonConfFile)
-
       val builder = new TypedTopologyBuilder()
 
       logger.info("starting stormsmacs with conf : \n" + conf)
@@ -45,6 +46,7 @@ object Topology {
       configureCloudFoundryNodes(builder, conf.fusekiNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName)
 
       val sConf = new StormConfig(debug = conf.debug)
+      registerSerializers(sConf)
       if (conf.remote){
         StormSubmitter.submitTopology(conf.name, sConf, builder.createTopology())
       }
@@ -123,5 +125,15 @@ object Topology {
   def readConfFromJsonFile(filename : String) = {
     val jsonText = io.Source.fromFile(new File(filename)).mkString
     JsonConfiguration.readJsonConf(jsonText)
+  }
+  private def registerSerializers(conf : Config) : Unit = {
+    conf.registerSerialization(classOf[CloudFoundryNodeConf], classOf[CloudFoundryNodeConfSerializer])
+    conf.registerSerialization(classOf[GenericNodeConf], classOf[GenericNodeConfSerializer])
+    conf.registerSerialization(classOf[Meter], classOf[MeterSerializer])
+    conf.registerSerialization(classOf[MonitProcessInfo], classOf[MonitProcessInfoSerializer])
+    conf.registerSerialization(classOf[MonitSystemInfo], classOf[MonitSystemInfoSerializer])
+    conf.registerSerialization(classOf[OpenStackNodeConf], classOf[OpenStackNodeConfSerializer])
+    conf.registerSerialization(classOf[SigarMeteredData], classOf[SigarMeteredDataSerializer])
+    conf.registerSerialization(classOf[Statistics], classOf[StatisticsSerializer])
   }
 }
