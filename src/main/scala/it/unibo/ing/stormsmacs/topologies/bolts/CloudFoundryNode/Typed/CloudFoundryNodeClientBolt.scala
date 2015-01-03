@@ -20,7 +20,6 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf)
     try{
       val response = httpClient.GET(node.url.toURI)
       val body = response.getContentAsString
-      logger.info(body)
       import spray.json.DefaultJsonProtocol._
       val data = body.parseJson.convertTo[Seq[MonitInfo]]
       for (d <- data)

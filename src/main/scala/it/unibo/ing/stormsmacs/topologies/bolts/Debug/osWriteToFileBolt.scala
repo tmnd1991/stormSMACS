@@ -1,5 +1,6 @@
-package it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed
+package it.unibo.ing.stormsmacs.topologies.bolts.Debug
 
+import java.io.PrintWriter
 import java.util.Date
 import java.net.URL
 import backtype.storm.tuple.Tuple
@@ -16,10 +17,16 @@ import virtuoso.jena.driver.{VirtuosoUpdateFactory, VirtGraph}
 /**
  * Created by tmnd91 on 22/12/14.
  */
-class OpenStackNodePersisterBolt(fusekiEndpoint: FusekiNodeConf)
+class osWriteToFileBolt(file: String)
   extends TypedBolt[(OpenStackNodeConf, Date, String, Statistics), Nothing]
   with Logging{
-
+  private var _writer : PrintWriter = null
+  setup{
+    _writer = new PrintWriter(file)
+  }
+  shutdown{
+    _writer.close
+  }
   override def typedExecute(t: (OpenStackNodeConf, Date, String, Statistics), st: Tuple) : Unit = {
     try{
       val graphName = RDFUtils.graphName(t._2)
@@ -38,11 +45,7 @@ class OpenStackNodePersisterBolt(fusekiEndpoint: FusekiNodeConf)
   }
 
   private def writeToRDFStore(graphName : String, data : Model) : Unit = {
-    val dataAsString = data.rdfSerialization("N-TRIPLE")
-    val set: VirtGraph = new VirtGraph (fusekiEndpoint.url, fusekiEndpoint.username, fusekiEndpoint.password)
-    val str = "INSERT DATA { GRAPH " + graphName + " { " + dataAsString + "} }"
-    val vur = VirtuosoUpdateFactory.create(str, set)
-    vur.exec()
+    data.write(_writer,"N-TRIPLE")
   }
 
 }

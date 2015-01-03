@@ -40,7 +40,7 @@ class CloudFoundryNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
   private def writeToRDFStore(graphName : String, data : Model) : Unit = {
     val dataAsString = data.rdfSerialization("N-TRIPLE")
     val set = new VirtGraph (fusekiEndpoint.url, fusekiEndpoint.username, fusekiEndpoint.password)
-    val str = "INSERT INTO GRAPH " + graphName + " { " + dataAsString + "}"
+    val str = "INSERT DATA { GRAPH " + graphName + " { " + dataAsString + "} }"
     val vur = VirtuosoUpdateFactory.create(str, set)
     vur.exec()
   }

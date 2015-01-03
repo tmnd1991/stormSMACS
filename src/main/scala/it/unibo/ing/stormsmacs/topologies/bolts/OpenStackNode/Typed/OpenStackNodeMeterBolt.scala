@@ -10,7 +10,8 @@ import storm.scala.dsl.TypedBolt
 import storm.scala.dsl.Logging
 
 /**
- * Created by tmnd91 on 22/12/14.
+ * @author Antonio Murgia
+ * @version 22/12/14
  */
 class OpenStackNodeMeterBolt
   extends TypedBolt[(OpenStackNodeConf, Date, Meter),(OpenStackNodeConf, Date, String, Statistics)](
@@ -20,8 +21,9 @@ class OpenStackNodeMeterBolt
     try{
       val cclient = CeilometerClient.getInstance(t._1.ceilometerUrl, t._1.keystoneUrl, t._1.tenantName, t._1.username, t._1.password, t._1.connectTimeout, t._1.readTimeout)
       val start = new Date(t._2.getTime - t._1.duration)
-      for(stat <- cclient.getStatistics(t._3, start, t._2))
-      using anchor st emit(t._1, t._2, t._3.name, stat)
+      val stats = cclient.getStatistics(t._3, start, t._2)
+      for(stat <- stats)
+        using anchor st emit(t._1, t._2, t._3.name, stat)
       st.ack
     }
     catch{

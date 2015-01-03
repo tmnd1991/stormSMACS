@@ -2,7 +2,6 @@ package it.unibo.ing.stormsmacs.topologies
 
 import java.io.{File, FileNotFoundException}
 import java.util.Date
-import com.twitter.chill.ScalaKryoInstantiator
 import it.unibo.ing.stormsmacs.serializers._
 import org.slf4j.LoggerFactory
 import backtype.storm.tuple.Fields

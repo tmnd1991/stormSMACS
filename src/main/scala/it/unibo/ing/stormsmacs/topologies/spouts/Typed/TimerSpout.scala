@@ -11,8 +11,8 @@ import java.util.Date
  */
 
 class TimerSpout(pollTime : Long) extends TypedSpout[Tuple1[Date]](false,"GraphName"){
-  override def nextTypedTuple: List[Tuple1[Date]] = {
+  override def nextTuple = {
+    emit(new Date())
     Utils.sleep(pollTime)
-    List(Tuple1(new Date))
   }
 }
