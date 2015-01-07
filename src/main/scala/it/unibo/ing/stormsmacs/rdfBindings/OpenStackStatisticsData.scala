@@ -75,7 +75,10 @@ object OpenStackStatisticsDataRdfFormat{
       r.addProperty(Properties.resourceId, obj.info.resource_id)
       r.addProperty(Properties.source, obj.info.source)
       r.addProperty(Properties.timestamp, TimestampUtils.format(obj.info.timestamp))
-      r.addProperty(Properties.userId, obj.info.user_id)
+      r.addProperty(Properties.userId, if (obj.info.user_id.isDefined)
+                                          obj.info.user_id.get
+                                       else
+                                          "null")
       //obj.info.resource_metadata i will not map this right now
       m
     }

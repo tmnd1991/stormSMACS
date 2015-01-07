@@ -22,6 +22,7 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
       val response = httpClient.GET(node.url.toURI)
       val body = response.getContentAsString
       using anchor st emit (node, t._1, body.parseJson.convertTo[SigarMeteredData])
+      st.ack
     }
     catch{
       case e : Throwable => logger.error(e.getStackTrace.mkString("\n"))

@@ -21,9 +21,14 @@ class OpenStackNodeClientBolt(node : OpenStackNodeConf)
     cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
   }
   override def typedExecute(t: Tuple1[Date], st : Tuple) = {
-    for (meter <- cclient.listMeters.distinctBy(_.name)){
-      using anchor st emit(node, t._1, meter)
+    val meters = cclient.tryListMeters
+    if (meters.isDefined){
+      for (meter <- meters.get.distinctBy(_.name))
+        using anchor st emit(node, t._1, meter)
+      st.ack
     }
+    else
+      st.fail
   }
 }
 

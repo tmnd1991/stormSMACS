@@ -21,10 +21,14 @@ class OpenStackNodeMeterBolt
     try{
       val cclient = CeilometerClient.getInstance(t._1.ceilometerUrl, t._1.keystoneUrl, t._1.tenantName, t._1.username, t._1.password, t._1.connectTimeout, t._1.readTimeout)
       val start = new Date(t._2.getTime - t._1.duration)
-      val stats = cclient.getStatistics(t._3, start, t._2)
-      for(stat <- stats)
-        using anchor st emit(t._1, t._2, t._3.name, stat)
-      st.ack
+      val stats = cclient.tryGetStatistics(t._3.name, start, t._2)
+      if (stats.isDefined){
+        for(stat <- stats)
+            using anchor st emit(t._1, t._2, t._3.name, stat)
+          st.ack
+      }
+      else
+        st.fail
     }
     catch{
       case e : Throwable =>{
