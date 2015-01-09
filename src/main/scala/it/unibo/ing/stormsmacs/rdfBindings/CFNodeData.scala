@@ -4,14 +4,14 @@ package it.unibo.ing.stormsmacs.rdfBindings
  * @author Murgia Antonio
  * @version 15/12/14
  */
-import java.net.URL
+import java.net.{URI, URL}
 import com.hp.hpl.jena.graph.impl.SimpleGraphMaker
 import com.hp.hpl.jena.rdf.model.{Model, ModelFactory}
 import com.hp.hpl.jena.vocabulary.RDF
 import it.unibo.ing.monit.model.{MonitSystemInfo, MonitProcessInfo, MonitInfo}
 import it.unibo.ing.rdf._
 import it.unibo.ing.rdf.RdfWriter
-import it.unibo.ing.utils.DateUtils
+import it.unibo.ing.utils._
 
 case class CFNodeData(url : URL, info : MonitInfo) {
 }
@@ -22,7 +22,7 @@ object CFNodeDataRdfConversion{
     override def write(obj: MonitProcessInfo, absPath: String): Model = {
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
-      val r = m.createResource(absPath + "/" + obj.name)
+      val r = m.createResource((new URI(absPath) / obj.name).toString)
       r.addProperty(Properties.status, obj.status.toString)
       r.addProperty(Properties.dataCollected, DateUtils.format(obj.data_collected))
       r.addProperty(Properties.children, obj.children.toString)
@@ -45,7 +45,7 @@ object CFNodeDataRdfConversion{
     override def write(obj: MonitSystemInfo, absPath: String): Model = {
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
-      val r = m.createResource(absPath + "/" + obj.name)
+      val r = m.createResource((new URI(absPath) / obj.name).toString)
       r.addProperty(Properties.dataCollected, DateUtils.format(obj.data_collected))
       r.addProperty(Properties.cpuUsage, obj.cpu.toString)
       r.addProperty(Properties.averageLoad, obj.load_average.toString)

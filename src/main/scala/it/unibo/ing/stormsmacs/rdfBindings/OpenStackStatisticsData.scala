@@ -36,7 +36,7 @@ object OpenStackSampleDataRdfFormat{
       sample.addProperty(Properties.userId, obj.info.user_id)
       sample.addProperty(Properties.volume, "" + obj.info.volume)
       //the resource
-      val resource = m.createResource(obj.url.toString + "/" + obj.resource.resource_id)
+      val resource = m.createResource((obj.url / obj.resource.resource_id).toString)
       if (obj.resource.project_id isDefined)
         resource.addProperty(Properties.projectId, obj.resource.project_id.get)
       resource.addProperty(Properties.source, obj.resource.source)
