@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 import java.util.Date
 
 import backtype.storm.tuple.Tuple
-import it.unibo.ing.utils.RDFUtils
+import it.unibo.ing.stormsmacs.GraphNamer
 import virtuoso.jena.driver._
 import storm.scala.dsl.{StormTuple, Logging, TypedBolt}
 import com.hp.hpl.jena.rdf.model.Model
@@ -23,7 +23,7 @@ class CloudFoundryNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
   with Logging{
   override def typedExecute(t: (CloudFoundryNodeConf, Date, MonitInfo), st : Tuple): Unit = {
     try{
-      val graphName = RDFUtils.graphName(t._2)
+      val graphName = GraphNamer.graphName(t._2)
       val data = CFNodeData(t._1.url, t._3)
       val model = data.toRdf(t._1.toString)
       writeToRDFStore(graphName, model)

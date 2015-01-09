@@ -5,11 +5,11 @@ import java.util.Date
 import java.net.URL
 import backtype.storm.tuple.Tuple
 import com.hp.hpl.jena.rdf.model.Model
+import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, OpenStackNodeConf}
 import it.unibo.ing.stormsmacs.rdfBindings.{OpenStackSampleData}
 import it.unibo.ing.stormsmacs.rdfBindings.OpenStackSampleData
 import it.unibo.ing.stormsmacs.rdfBindings.OpenStackSampleDataRdfFormat._
-import it.unibo.ing.utils.RDFUtils
 import it.unibo.ing.rdf._
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Statistics}
 import storm.scala.dsl.{Logging, StormTuple, TypedBolt}
@@ -30,7 +30,7 @@ class osWriteToFileBolt(file: String)
   }
   override def typedExecute(t: (OpenStackNodeConf, Date, Resource, Sample), st: Tuple) : Unit = {
     try{
-      val graphName = RDFUtils.graphName(t._2)
+      val graphName = GraphNamer.graphName(t._2)
       val url = new URL(t._1.ceilometerUrl.getProtocol + "://" +t._1.ceilometerUrl.getHost)
       val data = OpenStackSampleData(url, t._3, t._4)
       val model = data.toRdf()

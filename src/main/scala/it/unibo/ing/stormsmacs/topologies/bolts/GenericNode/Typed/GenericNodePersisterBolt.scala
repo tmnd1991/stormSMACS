@@ -5,10 +5,10 @@ import java.util.Date
 import backtype.storm.tuple.Tuple
 import com.hp.hpl.jena.rdf.model.Model
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
+import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, GenericNodeConf}
 import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeData
 import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeDataRdfFormat._
-import it.unibo.ing.utils.RDFUtils
 import it.unibo.ing.rdf._
 import storm.scala.dsl.{Logging, StormTuple, TypedBolt}
 import virtuoso.jena.driver.{VirtuosoUpdateFactory, VirtGraph}
@@ -22,7 +22,7 @@ class GenericNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
 {
   override def typedExecute(t: (GenericNodeConf, Date, SigarMeteredData), st : Tuple): Unit = {
     try{
-      val graphName = RDFUtils.graphName(t._2)
+      val graphName = GraphNamer.graphName(t._2)
       val data = GenericNodeData(t._1.url, t._3)
       val model = data.toRdf()
       writeToRDFStore(graphName, model)

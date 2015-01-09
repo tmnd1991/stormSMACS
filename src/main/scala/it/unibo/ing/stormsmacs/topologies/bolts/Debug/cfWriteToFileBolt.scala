@@ -6,10 +6,10 @@ import java.util.Date
 import backtype.storm.tuple.Tuple
 import com.hp.hpl.jena.rdf.model.Model
 import it.unibo.ing.monit.model.MonitInfo
+import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.CloudFoundryNodeConf
 import it.unibo.ing.stormsmacs.rdfBindings.CFNodeData
 import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfConversion._
-import it.unibo.ing.utils.RDFUtils
 import storm.scala.dsl.{Logging, TypedBolt}
 import it.unibo.ing.rdf._
 
@@ -24,7 +24,7 @@ with Logging{
   }
   override def typedExecute(t: (CloudFoundryNodeConf, Date, MonitInfo), st : Tuple): Unit = {
     try{
-      val graphName = RDFUtils.graphName(t._2)
+      val graphName = GraphNamer.graphName(t._2)
       val data = CFNodeData(t._1.url, t._3)
       val model = data.toRdf(t._1.toString)
       writeToRDFStore(graphName, model)
