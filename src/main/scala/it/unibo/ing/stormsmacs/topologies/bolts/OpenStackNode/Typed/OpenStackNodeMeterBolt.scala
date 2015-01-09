@@ -4,7 +4,7 @@ import java.util.Date
 
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
-import org.openstack.api.restful.ceilometer.v2.elements.{Statistics, Meter}
+import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Statistics, Meter}
 import org.openstack.clients.ceilometer.v2.CeilometerClient
 import storm.scala.dsl.TypedBolt
 import storm.scala.dsl.Logging
@@ -14,17 +14,17 @@ import storm.scala.dsl.Logging
  * @version 22/12/14
  */
 class OpenStackNodeMeterBolt
-  extends TypedBolt[(OpenStackNodeConf, Date, Meter),(OpenStackNodeConf, Date, String, Statistics)](
-    "NodeName", "GraphName", "MeterName", "Statistics")
+  extends TypedBolt[(OpenStackNodeConf, Date, Resource),(OpenStackNodeConf, Date, Resource, Sample)](
+    "NodeName", "GraphName", "Resource", "Sample")
   with Logging{
-  override def typedExecute(t: (OpenStackNodeConf, Date, Meter), st : Tuple) = {
+  override def typedExecute(t: (OpenStackNodeConf, Date, Resource), st : Tuple) = {
     try{
       val cclient = CeilometerClient.getInstance(t._1.ceilometerUrl, t._1.keystoneUrl, t._1.tenantName, t._1.username, t._1.password, t._1.connectTimeout, t._1.readTimeout)
       val start = new Date(t._2.getTime - t._1.duration)
-      val stats = cclient.tryGetStatistics(t._3.name, start, t._2)
-      if (stats.isDefined){
-        for(stat <- stats)
-            using anchor st emit(t._1, t._2, t._3.name, stat)
+      val samples = cclient.tryGetSamplesOfResource(t._3.resource_id, start, t._2)
+      if (samples.isDefined){
+        for(sample <- samples)
+            using anchor st emit(t._1, t._2, t._3, sample)
           st.ack
       }
       else

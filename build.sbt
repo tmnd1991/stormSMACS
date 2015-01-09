@@ -20,6 +20,9 @@ libraryDependencies += "io.spray" %%  "spray-json" % "1.3.1"
 //SCALASTORM DSL
 libraryDependencies += "com.github.velvia" %% "scala-storm" % "2.0" withSources() intransitive()
 
+//SOME UTILS
+libraryDependencies += "it.unibo.ing" %% "utils" % "1.0" withSources() intransitive()
+
 //CEILOMETER JSON WRAPPER
 libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.5" withSources() intransitive()
 

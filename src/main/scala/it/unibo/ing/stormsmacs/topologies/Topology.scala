@@ -12,7 +12,7 @@ import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFou
 import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterBolt, GenericNodeClientBolt}
 import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
 import it.unibo.ing.stormsmacs.conf._
-import org.openstack.api.restful.ceilometer.v2.elements.{Statistics, Meter}
+import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Statistics, Meter}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.monit.model.{MonitSystemInfo, MonitProcessInfo, MonitInfo}
 
@@ -73,9 +73,9 @@ object Topology {
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
                                       boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
       val meterBolt = new OpenStackNodeMeterBolt()
-      builder.setBolt[(OpenStackNodeConf, Date, Meter)](boltClientName, sampleClient,
+      builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
                                                         boltMeterName, meterBolt).shuffleGrouping(boltClientName)
-      builder.setBolt[(OpenStackNodeConf, Date, String, Statistics)](boltMeterName, meterBolt,
+      builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
                                                                     boltPersisterName, new OpenStackNodePersisterBolt(fusekiNode)).
         shuffleGrouping(boltMeterName)
     }

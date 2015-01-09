@@ -66,6 +66,7 @@ object Properties {
   val counterUnit            = m.createProperty(NS + "counterUnit")
   val counterVolume          = m.createProperty(NS + "counterVolume")
   val messageId              = m.createProperty(NS + "messageId")
+  def newProperty(s : String) = m.createProperty(NS + s)
 }
 
 
