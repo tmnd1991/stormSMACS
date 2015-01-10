@@ -9,7 +9,7 @@ import it.unibo.ing.utils._
  */
 object GraphNamer {
   def graphName(d : Date)(implicit base : URI = new URI("http://stormsmacs/tests/")) = {
-    val uri = base / DateUtils.format(d,"yyyy-MM-ddTHH:mm:ssZ")
+    val uri = base / DateUtils.format(d,"yyyy-MM-dd'T'HH:mm:ss'Z'")
     "<" + uri.toString + ">"
   }
 }

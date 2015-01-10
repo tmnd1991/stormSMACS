@@ -18,23 +18,15 @@ class OpenStackNodeMeterBolt
     "NodeName", "GraphName", "Resource", "Sample")
   with Logging{
   override def typedExecute(t: (OpenStackNodeConf, Date, Resource), st : Tuple) = {
-    try{
-      val cclient = CeilometerClient.getInstance(t._1.ceilometerUrl, t._1.keystoneUrl, t._1.tenantName, t._1.username, t._1.password, t._1.connectTimeout, t._1.readTimeout)
-      val start = new Date(t._2.getTime - t._1.duration)
-      val samples = cclient.tryGetSamplesOfResource(t._3.resource_id, start, t._2)
-      if (samples.isDefined){
-        for(sample <- samples)
-            using anchor st emit(t._1, t._2, t._3, sample)
-          st.ack
-      }
-      else
-        st.fail
+    val cclient = CeilometerClient.getInstance(t._1.ceilometerUrl, t._1.keystoneUrl, t._1.tenantName, t._1.username, t._1.password, t._1.connectTimeout, t._1.readTimeout)
+    val start = new Date(t._2.getTime - t._1.duration)
+    val samples = cclient.tryGetSamplesOfResource(t._3.resource_id, start, t._2)
+    if (samples.isDefined){
+      for(sample <- samples.get)
+          using anchor st emit(t._1, t._2, t._3, sample)
+        st.ack
     }
-    catch{
-      case e : Throwable =>{
-        logger.error(e.getStackTrace.mkString("\n"))
-        st.fail
-      }
-    }
+    else
+      st.fail
   }
 }

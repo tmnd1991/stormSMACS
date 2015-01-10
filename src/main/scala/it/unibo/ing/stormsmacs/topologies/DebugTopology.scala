@@ -9,9 +9,9 @@ import backtype.storm.tuple.Fields
 import backtype.storm.{StormSubmitter, LocalCluster}
 import storm.scala.dsl.{TypedTopologyBuilder, StormConfig}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
-import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterBolt, GenericNodeClientBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodePersisterFusekiBolt, CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterFusekiBolt, GenericNodePersisterBolt, GenericNodeClientBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterFusekiBolt, OpenStackNodePersisterBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
 import it.unibo.ing.stormsmacs.conf._
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Statistics, Meter}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
@@ -31,14 +31,14 @@ object DebugTopology {
       Some(List(OpenStackNodeConf("os", "ceilometer_project",
                                   new URL("http://137.204.57.150:8777"),
                                   new URL("http://137.204.57.150:5000"),
-                                  "amurgia","PUs3dAs?", 36000000,
+                                  "amurgia","PUs3dAs?", 60000,
                                   Some(10000), Some(10000)))),
       Some(List(CloudFoundryNodeConf("cd", new URL("http://localhost:9876"),Some(10000), Some(10000)))),
       Some(List(GenericNodeConf("gn", new URL("http://localhost:9875"), Some(10000), Some(10000)))),
       FusekiNodeConf("virtuoso","jdbc:virtuoso://localhost:1111","dba","dba"),
       false,
       false,
-      3600000
+      60000
     )
 
 
@@ -81,6 +81,7 @@ object DebugTopology {
       val boltClientName = "openstackClientBolt"
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
+      val persisterBolt = new OpenStackNodePersisterFusekiBolt(FusekiNodeConf.apply("fuseki","http://localhost:3030/ds","",""))
       val sampleClient = new OpenStackNodeClientBolt(list.head)
       for(osn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
@@ -89,7 +90,7 @@ object DebugTopology {
       builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
         boltMeterName, meterBolt,3).fieldsGrouping(boltClientName, new Fields("NodeName"))
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
-        boltPersisterName, new osWriteToFileBolt("os.txt")).
+        boltPersisterName, persisterBolt).
         shuffleGrouping(boltMeterName)
     }
   }
@@ -106,7 +107,7 @@ object DebugTopology {
       for(gn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltReaderName, new GenericNodeClientBolt(gn),3).allGrouping(timerSpoutName)
-      val persisterBolt = new genWriteToFileBolt("gen.txt")
+      val persisterBolt = new GenericNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds","",""))
       builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
         boltPersisterName,persisterBolt).
         shuffleGrouping(boltReaderName)
@@ -122,15 +123,13 @@ object DebugTopology {
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
       val sampleClient = new CloudFoundryNodeClientBolt(list.head)
+      val persisterBolt = new CloudFoundryNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds","",""))
       for(cfn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltReaderName, new CloudFoundryNodeClientBolt(cfn),3).allGrouping(timerSpoutName)
       builder.setBolt[(CloudFoundryNodeConf, Date, MonitInfo)](boltReaderName, sampleClient,
-        boltPersisterName,new cfWriteToFileBolt("cf.txt"),3).
+        boltPersisterName,persisterBolt,3).
         shuffleGrouping(boltReaderName)
-
-
-
     }
   }
 
