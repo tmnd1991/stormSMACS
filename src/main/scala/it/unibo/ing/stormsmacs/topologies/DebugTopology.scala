@@ -32,7 +32,7 @@ object DebugTopology {
                                   new URL("http://137.204.57.150:8777"),
                                   new URL("http://137.204.57.150:5000"),
                                   "amurgia","PUs3dAs?", 60000,
-                                  Some(10000), Some(10000)))),
+                                  Some(30000), Some(30000)))),
       Some(List(CloudFoundryNodeConf("cd", new URL("http://localhost:9876"),Some(10000), Some(10000)))),
       Some(List(GenericNodeConf("gn", new URL("http://localhost:9875"), Some(10000), Some(10000)))),
       FusekiNodeConf("virtuoso","jdbc:virtuoso://localhost:1111","dba","dba"),
@@ -88,7 +88,7 @@ object DebugTopology {
           boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
       val meterBolt = new OpenStackNodeMeterBolt()
       builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
-        boltMeterName, meterBolt,3).fieldsGrouping(boltClientName, new Fields("NodeName"))
+        boltMeterName, meterBolt,3).shuffleGrouping(boltClientName)
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
         boltPersisterName, persisterBolt).
         shuffleGrouping(boltMeterName)

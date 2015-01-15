@@ -8,7 +8,6 @@ import it.unibo.ing.stormsmacs.GraphNamer
 import virtuoso.jena.driver._
 import storm.scala.dsl.{StormTuple, Logging, TypedBolt}
 import com.hp.hpl.jena.rdf.model.Model
-import myUtils.DateUtils
 import it.unibo.ing.monit.model.MonitInfo
 import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, CloudFoundryNodeConf}
 import it.unibo.ing.stormsmacs.rdfBindings.CFNodeData

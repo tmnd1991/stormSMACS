@@ -21,21 +21,9 @@ object OpenStackSampleDataRdfFormat{
     override def write(obj: OpenStackSampleData, absPath: String): Model = {
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
-      //the sample
-      val sample = m.createResource((obj.url / obj.info.id).toString).
-        addProperty(RDF.`type`, "Openstack Resource Sample").
-        addProperty(Properties.sampleType, "" + obj.info.`type`).
-        addProperty(Properties.sampleId, "" + obj.info.id).
-        addProperty(Properties.projectId, obj.info.project_id).
-        addProperty(Properties.recordedAt, TimestampUtils.format(obj.info.recorded_at)).
-        addProperty(Properties.resourceId, obj.info.resource_id).
-        addProperty(Properties.source, obj.info.source).
-        addProperty(Properties.timestamp, TimestampUtils.format(obj.info.timestamp)).
-        addProperty(Properties.unit, obj.info.unit).
-        addProperty(Properties.userId, obj.info.user_id).
-        addProperty(Properties.volume, "" + obj.info.volume)
       //the resource
-      val resource = m.createResource((obj.url / obj.resource.resource_id).toString).
+      val resourceURL = (obj.url / obj.resource.resource_id).toString
+      val resource = m.createResource(resourceURL).
         addProperty(RDF.`type`, "Openstack Resource")
       if (obj.resource.project_id isDefined)
         resource.addProperty(Properties.projectId, obj.resource.project_id.get)
@@ -44,6 +32,21 @@ object OpenStackSampleDataRdfFormat{
       for (t <- obj.resource.metadata)
         if (t._2 nonEmpty)
           resource.addProperty(Properties.newProperty(t._1), t._2)
+      //the sample
+      val sample = m.createResource((obj.url / obj.info.id).toString).
+        addProperty(RDF.`type`, "Openstack Resource Sample").
+        addProperty(Properties.sampleType, "" + obj.info.`type`).
+        addProperty(Properties.sampleId, "" + obj.info.id).
+        addProperty(Properties.projectId, obj.info.project_id).
+        addProperty(Properties.recordedAt, TimestampUtils.format(obj.info.recorded_at)).
+        addProperty(Properties.resourceId, resourceURL).
+        addProperty(Properties.source, obj.info.source).
+        addProperty(Properties.timestamp, TimestampUtils.format(obj.info.timestamp)).
+        addProperty(Properties.unit, obj.info.unit).
+        addProperty(Properties.userId, obj.info.user_id).
+        addProperty(Properties.volume, "" + obj.info.volume)
+
+
       return m
     }
   }

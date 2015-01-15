@@ -21,7 +21,7 @@ class MainTest extends FlatSpec with Matchers{
   val jsonConfFile = "/confExample.json"
   val jsonText = io.Source.fromFile(new File(jsonConfFile)).mkString
   val conf = JsonConfiguration.readJsonConf(jsonText)
-  */
+
   val node = CFNodeData( new URL("http://192.168.1.10"),
   new MonitProcessInfo("pippo",
     MonitStatus.RUNNING,
@@ -45,6 +45,7 @@ class MainTest extends FlatSpec with Matchers{
 
   node.toRdf().write(System.out, "N-TRIPLE")
   genericNode.toRdf().write(System.out, "N-TRIPLE")
+  */
 }
 
 /**

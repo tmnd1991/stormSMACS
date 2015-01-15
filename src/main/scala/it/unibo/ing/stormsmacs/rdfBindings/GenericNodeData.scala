@@ -32,7 +32,7 @@ object GenericNodeDataRdfFormat{
       r.addProperty(Properties.coreNumber, "" + obj.info.numberOfCores)
       r.addProperty(Properties.osName, "" + obj.info.osName)
       r.addProperty(Properties.numberOfProcesses, "" + obj.info.processes)
-      r.addProperty(Properties.uptime, "" + obj.info.uptime)
+      r.addProperty(Properties.uptimeMs, "" + obj.info.uptime)
       m
     }
   }

@@ -27,8 +27,9 @@ class OpenStackNodeClientBolt(node : OpenStackNodeConf)
         using anchor st emit(node, t._1, r)
       st.ack
     }
-    else
+    else{
       st.fail
+    }
   }
 }
 

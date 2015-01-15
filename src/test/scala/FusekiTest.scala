@@ -19,6 +19,7 @@ import scala.concurrent.duration.Duration
  * Created by tmnd91 on 03/01/15.
  */
 class FusekiTest extends FlatSpec with Matchers{
+  /*
   "we " should " be able to insert" in{
     val httpClient = new HttpClient()
     httpClient.setConnectTimeout(1000)
@@ -57,6 +58,10 @@ class FusekiTest extends FlatSpec with Matchers{
     val set = new VirtGraph ("jdbc:virtuoso://localhost:1111", "dba", "dba")
     val vur = VirtuosoUpdateFactory.create(str, set)
     vur.exec
+    val str2 = "CLEAR GRAPH " + graphName
+    val vur2 = VirtuosoUpdateFactory.create(str, set)
+    vur2.exec
     true should be (true)
   }
+  */
 }

@@ -39,9 +39,9 @@ class OpenStackNodePersisterFusekiBolt(fusekiEndpoint: FusekiNodeConf)
     try {
       val graphName = GraphNamer.graphName(t._2)
       val url = new URL(t._1.ceilometerUrl.getProtocol + "://" + t._1.ceilometerUrl.getHost)
-
       val data = OpenStackSampleData(url, t._3, t._4)
       val model = data.toRdf()
+      logger.info("starting to write")
       writeToRDFStore(graphName, model)
       st.ack
     }
@@ -55,13 +55,13 @@ class OpenStackNodePersisterFusekiBolt(fusekiEndpoint: FusekiNodeConf)
 
   private def writeToRDFStore(graphName: String, data: Model): Unit = {
     val dataAsString = data.rdfSerialization("N-TRIPLE")
-
-    val str = "INSERT DATA { GRAPH " + graphName + " { " + dataAsString + "} }"
+    val str = s"INSERT DATA { GRAPH $graphName { $dataAsString } }"
+    logger.info(s"query -> ${str}")
     val resp = httpClient.POST(fusekiEndpoint.url / "update").
       header("Content-Type", "application/sparql-update").
       content(new StringContentProvider(str)).
       send()
     if ((resp.getStatus/100) != 2)
-      throw new Exception(s"Cannot sparql update: {resp.getStatus} -> {resp.getContentAsString}")
+      throw new Exception(s"Cannot sparql update: ${resp.getStatus} -> ${resp.getContentAsString}")
   }
 }
