@@ -20,7 +20,6 @@ case class OpenStackNodeConf(id : String,
                         keystoneUrl : URL,
                         username : String,
                         password : String,
-                        duration : Long,
                         private val connect_timeout : Option[Int],
                         private val read_timeout : Option[Int]){
   def connectTimeout = connect_timeout.getOrElse(2000)
@@ -30,5 +29,5 @@ case class OpenStackNodeConf(id : String,
 object OpenStackNodeProtocol extends spray.json.DefaultJsonProtocol{
   import spray.json._
   import it.unibo.ing.stormsmacs.conf.JsonConfigurationProtocol._
-  implicit val openstackNodeFormat = jsonFormat9(OpenStackNodeConf)
+  implicit val openstackNodeFormat = jsonFormat8(OpenStackNodeConf)
 }

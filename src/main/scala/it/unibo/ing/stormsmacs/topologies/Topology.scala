@@ -38,7 +38,7 @@ object Topology {
       val timerSpout = new TimerSpout(conf.pollTime)
       builder.setSpout(timerSpoutName, timerSpout)
 
-      configureOpenstackNodes(builder, conf.fusekiNode, conf.openstackNodeList, timerSpout, timerSpoutName)
+      configureOpenstackNodes(conf.pollTime, builder, conf.fusekiNode, conf.openstackNodeList, timerSpout, timerSpoutName)
 
       configureGenericNodes(builder, conf.fusekiNode, conf.genericNodeList, timerSpout, timerSpoutName)
 
@@ -59,7 +59,8 @@ object Topology {
     }
   }
 
-  private def configureOpenstackNodes( builder : TypedTopologyBuilder,
+  private def configureOpenstackNodes( pollTime : Long,
+                                       builder : TypedTopologyBuilder,
                                        fusekiNode : FusekiNodeConf,
                                        list: Seq[OpenStackNodeConf],
                                        timerSpout : TimerSpout,
@@ -72,7 +73,7 @@ object Topology {
       for(osn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
                                       boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
-      val meterBolt = new OpenStackNodeMeterBolt()
+      val meterBolt = new OpenStackNodeMeterBolt(pollTime)
       builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
                                                         boltMeterName, meterBolt).shuffleGrouping(boltClientName)
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,

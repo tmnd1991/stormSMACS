@@ -31,7 +31,7 @@ object DebugTopology {
       Some(List(OpenStackNodeConf("os", "ceilometer_project",
                                   new URL("http://137.204.57.150:8777"),
                                   new URL("http://137.204.57.150:5000"),
-                                  "amurgia","PUs3dAs?", 60000,
+                                  "amurgia","PUs3dAs?",
                                   Some(30000), Some(30000)))),
       Some(List(CloudFoundryNodeConf("cd", new URL("http://localhost:9876"),Some(10000), Some(10000)))),
       Some(List(GenericNodeConf("gn", new URL("http://localhost:9875"), Some(10000), Some(10000)))),
@@ -86,7 +86,7 @@ object DebugTopology {
       for(osn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
-      val meterBolt = new OpenStackNodeMeterBolt()
+      val meterBolt = new OpenStackNodeMeterBolt(60000)
       builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
         boltMeterName, meterBolt,3).shuffleGrouping(boltClientName)
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,

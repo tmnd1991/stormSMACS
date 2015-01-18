@@ -13,14 +13,14 @@ import storm.scala.dsl.Logging
  * @author Antonio Murgia
  * @version 22/12/14
  */
-class OpenStackNodeMeterBolt
+class OpenStackNodeMeterBolt(pollTime: Long)
   extends TypedBolt[(OpenStackNodeConf, Date, Resource),(OpenStackNodeConf, Date, Resource, Sample)](
     "NodeName", "GraphName", "Resource", "Sample")
   with Logging{
   override def typedExecute(t: (OpenStackNodeConf, Date, Resource), st : Tuple) = {
     val cclient = CeilometerClient.getInstance(t._1.ceilometerUrl, t._1.keystoneUrl, t._1.tenantName, t._1.username, t._1.password, t._1.connectTimeout, t._1.readTimeout)
 
-    val start = new Date(t._2.getTime - t._1.duration)
+    val start = new Date(t._2.getTime - pollTime)
     val samples = cclient.tryGetSamplesOfResource(t._3.resource_id, start, t._2)
     if (samples.isDefined){
       for(sample <- samples.get)

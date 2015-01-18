@@ -31,8 +31,15 @@ case class JsonConfiguration(name              : String,
 }
 object JsonConfiguration{
   import spray.json._
+  import spray.json.MyMod._
   import it.unibo.ing.stormsmacs.conf.JsonConfigurationProtocol._
   def readJsonConf(s : String) : Configuration = s.parseJson.convertTo[JsonConfiguration]
+  def tryReadJsonConf(s : String) : Option[Configuration] = {
+    s.tryParseJson match{
+      case Some(v : JsValue) => v.tryConvertTo[JsonConfiguration]
+      case _                 => None
+    }
+  }
 }
 object JsonConfigurationProtocol extends spray.json.DefaultJsonProtocol{
   import spray.json._
@@ -53,7 +60,6 @@ object JsonConfigurationProtocol extends spray.json.DefaultJsonProtocol{
       }
       case _ => throw new Exception()
     }
-
     override def write(obj: URL) = JsString(obj.toString)
   }
 }

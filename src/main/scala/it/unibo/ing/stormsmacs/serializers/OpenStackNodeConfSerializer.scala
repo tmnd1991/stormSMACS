@@ -13,7 +13,6 @@ class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
     output.writeInt(t.connectTimeout, true)
     output.writeInt(t.readTimeout, true)
     output.writeString(t.ceilometerUrl.toString)
-    output.writeLong(t.duration, true)
     output.writeString(t.id)
     output.writeString(t.keystoneUrl.toString)
     output.writeString(t.password)
@@ -26,7 +25,6 @@ class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
       connect_timeout = Some(input.readInt(true)),
       read_timeout = Some(input.readInt(true)),
       ceilometerUrl = new URL(input.readString()),
-      duration = input.readLong(true),
       id = input.readString(),
       keystoneUrl = new URL(input.readString()),
       password = input.readString(),

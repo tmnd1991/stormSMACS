@@ -1,0 +1,50 @@
+{
+      "name"              : "test",
+      "cloudfoundryNodes" : [{
+                                "id" : "cf_cf",
+                                "url" : "http://10.0.10.11:9876",
+                                "connect-timeout" : 10000,
+                                "read-timeout" : 10000
+                            }],
+      "genericNodes"      : [{
+                                "id" : "cf_generic",
+                                "url" : "http://10.0.10.15:9875",
+                                "connect-timeout" : 10000,
+                                "read-timeout" : 10000
+                            },
+                            {
+                                "id" : "nimbus_generic",
+                                "url" : "http://10.0.10.13:9875",
+                                "connect-timeout" : 10000,
+                                "read-timeout" : 10000
+                            },
+                            {
+                                "id" : "zk_fuseki_generic",
+                                "url" : "http://10.0.10.12:9875",
+                                "connect-timeout" : 10000,
+                                "read-timeout" : 10000
+                            },
+                            {
+                                "id" : "supervisor1_generic",
+                                "url" : "http://10.0.10.14:9875",
+                                "connect-timeout" : 10000,
+                                "read-timeout" : 10000
+                            }],
+      "openstackNodes"    : [{
+                                "id" : "openstack",
+                                "tenantName" : "ceilometer_project",
+                                "ceilometerUrl"	: "http://137.204.57.150:8777",
+                                "keystoneUrl" : "http://137.204.57.150:5000",
+                                "username" : "amurgia",
+                                "password" : "PUs3dAs?"
+                            }],
+      "fusekiNode"        : {
+                                "id"  : "fuseki",
+                                "url" : "http://10.0.10.13:3030/ds/update",
+                                "username": "",
+                                "password": ""
+                            },
+      "remote"            : false,
+      "debug"             : false,
+      "pollTime"          : 60000
+}
