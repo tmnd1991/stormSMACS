@@ -29,6 +29,12 @@
                                 "url" : "http://10.0.10.14:9875",
                                 "connect-timeout" : 10000,
                                 "read-timeout" : 10000
+                            },
+                            {
+                            "id" : "supervisor2_generic",
+                            "url" : "http://10.0.10.17:9875",
+                            "connect-timeout" : 10000,
+                            "read-timeout" : 10000
                             }],
       "openstackNodes"    : [{
                                 "id" : "openstack",
@@ -44,7 +50,7 @@
                                 "username": "",
                                 "password": ""
                             },
-      "remote"            : false,
+      "remote"            : true,
       "debug"             : false,
       "pollTime"          : 60000
 }
