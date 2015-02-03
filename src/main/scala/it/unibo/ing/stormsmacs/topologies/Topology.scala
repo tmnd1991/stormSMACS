@@ -72,7 +72,7 @@ object Topology {
       val sampleClient = new OpenStackNodeClientBolt(list.head)
       for(osn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
-                                      boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
+                                      boltClientName + osn.id, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
       val meterBolt = new OpenStackNodeMeterBolt(pollTime)
       builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
                                                         boltMeterName, meterBolt).shuffleGrouping(boltClientName)
@@ -93,7 +93,7 @@ object Topology {
       val sampleClient = new GenericNodeClientBolt(list.head)
       for(gn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
-                                      boltReaderName, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
+                                      boltReaderName + gn.id, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
       val persisterBolt = new GenericNodePersisterBolt(fusekiNode)
       builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
                                                                 boltPersisterName,persisterBolt).
@@ -112,7 +112,7 @@ object Topology {
       val sampleClient = new CloudFoundryNodeClientBolt(list.head)
       for(cfn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
-                                      boltReaderName, new CloudFoundryNodeClientBolt(cfn)).allGrouping(timerSpoutName)
+                                      boltReaderName + cfn.id, new CloudFoundryNodeClientBolt(cfn)).allGrouping(timerSpoutName)
       builder.setBolt[(CloudFoundryNodeConf, Date, MonitInfo)](boltReaderName, sampleClient,
                                                                boltPersisterName,new CloudFoundryNodePersisterBolt(fusekiNode)).
         shuffleGrouping(boltReaderName)
