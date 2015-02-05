@@ -5,6 +5,7 @@ import it.unibo.ing.monit.model.MonitInfo
 import it.unibo.ing.monit.model.JsonConversions._
 import it.unibo.ing.stormsmacs.conf.CloudFoundryNodeConf
 import it.unibo.ing.stormsmacs.topologies.bolts.Typed.HttpRequesterBolt
+import org.eclipse.jetty.client.ContentExchange
 import storm.scala.dsl.{StormTuple, Logging}
 import spray.json._
 import java.util.Date
@@ -18,8 +19,13 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf)
 {
   override def typedExecute(t: Tuple1[Date], st : Tuple) {
     try{
-      val response = httpClient.GET(node.url.toURI)
-      val body = response.getContentAsString
+      val exchange = new ContentExchange()
+      exchange.setURI(node.url.toURI)
+      exchange.setMethod("GET")
+      exchange.setTimeout(node.readTimeout)
+      httpClient.send(exchange)
+      val state = exchange.waitForDone()
+      val body = exchange.getResponseContent
       import spray.json.DefaultJsonProtocol._
       val data = body.parseJson.convertTo[Seq[MonitInfo]]
       for (d <- data)

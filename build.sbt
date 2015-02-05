@@ -27,7 +27,8 @@ libraryDependencies += "it.unibo.ing" %% "utils" % "1.0" withSources() intransit
 libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapiwrapper" % "0.5" withSources() intransitive()
 
 //HTTP CLIENT
-libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
+//libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
+libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "8.1.16.v20140903" withJavadoc()
 
 //TESTING
 libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.2"

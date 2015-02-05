@@ -16,8 +16,7 @@ abstract class HttpRequesterBolt[I<:Product,O<:Product] (connectTimeout : Int,
   setup {
     httpClient = new HttpClient()
     httpClient.setConnectTimeout(connectTimeout)
-    httpClient.setFollowRedirects(false)
-    httpClient.setStopTimeout(readTimeout)
+    httpClient.setMaxRedirects(1)
     httpClient.start()
   }
 

@@ -1,5 +1,6 @@
 package it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed
 
+import java.net.URI
 import java.util.Date
 
 import backtype.storm.tuple.Tuple
@@ -11,8 +12,8 @@ import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.{CloudFoundryNodeConf, FusekiNodeConf}
 import it.unibo.ing.stormsmacs.rdfBindings.CFNodeData
 import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfConversion._
-import org.eclipse.jetty.client.HttpClient
-import org.eclipse.jetty.client.util.StringContentProvider
+import org.eclipse.jetty.client.{ContentExchange, HttpClient}
+import org.eclipse.jetty.io.ByteArrayBuffer
 import storm.scala.dsl.{Logging, TypedBolt}
 
 /**
@@ -26,8 +27,7 @@ class CloudFoundryNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   setup {
     httpClient = new HttpClient()
     httpClient.setConnectTimeout(1000)
-    httpClient.setFollowRedirects(false)
-    httpClient.setStopTimeout(1000)
+    httpClient.setMaxRedirects(1)
     httpClient.start()
   }
   shutdown{
@@ -55,11 +55,14 @@ class CloudFoundryNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   private def writeToRDFStore(graphName : String, data : Model) : Unit = {
     val dataAsString = data.rdfSerialization("N-TRIPLE")
     val str = "INSERT DATA { GRAPH " + graphName + " { " + dataAsString + "} }"
-    val resp = httpClient.POST(fusekiEndpoint.url / "update").
-      header("Content-Type", "application/sparql-update").
-      content(new StringContentProvider(str)).
-      send()
-    if ((resp.getStatus/100) != 2)
+    val exchange = new ContentExchange()
+    exchange.setURI(new URI(fusekiEndpoint.url / "update"))
+    exchange.setMethod("POST")
+    exchange.setRequestContentType("application/sparql-update")
+    exchange.setRequestContent(new ByteArrayBuffer(str))
+    httpClient.send(exchange)
+    val state = exchange.waitForDone()
+    if ((state/100) != 2)
       throw new Exception(s"Cannot sparql update: {resp.getStatus} -> {resp.getContentAsString}")
   }
 }

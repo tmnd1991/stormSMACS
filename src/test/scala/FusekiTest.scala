@@ -7,7 +7,6 @@ import it.unibo.ing.stormsmacs.rdfBindings.CFNodeData
 import it.unibo.ing.utils._
 import org.apache.commons.codec.binary.Base64
 import org.eclipse.jetty.client.HttpClient
-import org.eclipse.jetty.client.util.StringContentProvider
 import org.scalatest.{Matchers, FlatSpec}
 import virtuoso.jena.driver.{VirtuosoUpdateFactory, VirtGraph}
 import it.unibo.ing.rdf._

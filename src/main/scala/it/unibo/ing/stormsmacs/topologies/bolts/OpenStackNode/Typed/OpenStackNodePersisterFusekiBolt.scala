@@ -1,6 +1,6 @@
 package it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed
 
-import java.net.URL
+import java.net.{URI, URL}
 import java.util.Date
 import backtype.storm.tuple.Tuple
 import com.hp.hpl.jena.rdf.model.Model
@@ -10,8 +10,8 @@ import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.{OpenStackNodeConf, FusekiNodeConf}
 import it.unibo.ing.stormsmacs.rdfBindings.OpenStackSampleData
 import it.unibo.ing.stormsmacs.rdfBindings.OpenStackSampleDataRdfFormat._
-import org.eclipse.jetty.client.HttpClient
-import org.eclipse.jetty.client.util.StringContentProvider
+import org.eclipse.jetty.client.{ContentExchange, HttpClient}
+import org.eclipse.jetty.io.ByteArrayBuffer
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
 import storm.scala.dsl.{Logging, TypedBolt}
 
@@ -25,8 +25,7 @@ class OpenStackNodePersisterFusekiBolt(fusekiEndpoint: FusekiNodeConf)
   setup {
     httpClient = new HttpClient()
     httpClient.setConnectTimeout(1000)
-    httpClient.setFollowRedirects(false)
-    httpClient.setStopTimeout(1000)
+    httpClient.setMaxRedirects(1)
     httpClient.start()
   }
   shutdown{
@@ -57,11 +56,14 @@ class OpenStackNodePersisterFusekiBolt(fusekiEndpoint: FusekiNodeConf)
     val dataAsString = data.rdfSerialization("N-TRIPLE")
     val str = s"INSERT DATA { GRAPH $graphName { $dataAsString } }"
     logger.info(s"query -> ${str}")
-    val resp = httpClient.POST(fusekiEndpoint.url / "update").
-      header("Content-Type", "application/sparql-update").
-      content(new StringContentProvider(str)).
-      send()
-    if ((resp.getStatus/100) != 2)
-      throw new Exception(s"Cannot sparql update: ${resp.getStatus} -> ${resp.getContentAsString}")
+    val exchange = new ContentExchange()
+    exchange.setURI(new URI(fusekiEndpoint.url / "update"))
+    exchange.setMethod("POST")
+    exchange.setRequestContentType("application/sparql-update")
+    exchange.setRequestContent(new ByteArrayBuffer(str))
+    httpClient.send(exchange)
+    val state = exchange.waitForDone()
+    if ((state/100) != 2)
+      throw new Exception(s"Cannot sparql update: ${state} -> ${exchange.getResponseContent}")
   }
 }

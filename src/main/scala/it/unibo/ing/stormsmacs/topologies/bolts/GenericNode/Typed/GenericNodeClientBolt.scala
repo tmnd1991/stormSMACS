@@ -6,6 +6,7 @@ import backtype.storm.tuple.Tuple
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf.GenericNodeConf
 import it.unibo.ing.stormsmacs.topologies.bolts.Typed.HttpRequesterBolt
+import org.eclipse.jetty.client.ContentExchange
 import storm.scala.dsl.Logging
 import spray.json._
 import it.unibo.ing.sigar.restful.model.SigarMeteredDataFormat._
@@ -19,8 +20,12 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
 {
   override def typedExecute(t: Tuple1[Date], st : Tuple): Unit = {
     try{
-      val response = httpClient.GET(node.url.toURI)
-      val body = response.getContentAsString
+      val exchange = new ContentExchange()
+      exchange.setURI(node.url.toURI)
+      exchange.setMethod("GET")
+      httpClient.send(exchange)
+      val state = exchange.waitForDone()
+      val body = exchange.getResponseContent
       using anchor st emit (node, t._1, body.parseJson.convertTo[SigarMeteredData])
       st.ack
     }
