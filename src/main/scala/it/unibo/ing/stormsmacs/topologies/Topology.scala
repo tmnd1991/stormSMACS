@@ -8,9 +8,9 @@ import backtype.storm.tuple.Fields
 import backtype.storm.{Config, StormSubmitter, LocalCluster}
 import storm.scala.dsl.{TypedTopologyBuilder, StormConfig}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
-import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterBolt, GenericNodeClientBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodePersisterFusekiBolt, CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterFusekiBolt, GenericNodePersisterBolt, GenericNodeClientBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterFusekiBolt, OpenStackNodePersisterBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
 import it.unibo.ing.stormsmacs.conf._
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Statistics, Meter}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
@@ -80,7 +80,7 @@ object Topology {
         meterBoltDeclarer.shuffleGrouping(name)
       }
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
-                                                                    boltPersisterName, new OpenStackNodePersisterBolt(fusekiNode)).
+                                                                    boltPersisterName, new OpenStackNodePersisterFusekiBolt(fusekiNode)).
         shuffleGrouping(boltMeterName)
     }
   }
@@ -94,7 +94,7 @@ object Topology {
       val boltReaderName = "genericReaderBolt"
       val boltPersisterName = "genericPersister"
       val sampleClient = new GenericNodeClientBolt(list.head)
-      val persisterBolt = new GenericNodePersisterBolt(fusekiNode)
+      val persisterBolt = new GenericNodePersisterFusekiBolt(fusekiNode)
       val persisterDeclarer = builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
         boltPersisterName,persisterBolt)
       for(gn <- list){
@@ -117,7 +117,7 @@ object Topology {
       val boltPersisterName = "cloudfoundryPersister"
       val sampleClient = new CloudFoundryNodeClientBolt(list.head)
       val persisterDeclarer = builder.setBolt[(CloudFoundryNodeConf, Date, MonitInfo)](boltReaderName, sampleClient,
-        boltPersisterName,new CloudFoundryNodePersisterBolt(fusekiNode))
+        boltPersisterName,new CloudFoundryNodePersisterFusekiBolt(fusekiNode))
       for(cfn <- list){
         val name = boltReaderName + "_" + cfn.id
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
