@@ -40,7 +40,6 @@ class OpenStackNodePersisterFusekiBolt(fusekiEndpoint: FusekiNodeConf)
       val url = new URL(t._1.ceilometerUrl.getProtocol + "://" + t._1.ceilometerUrl.getHost)
       val data = OpenStackSampleData(url, t._3, t._4)
       val model = data.toRdf()
-      logger.info("starting to write")
       writeToRDFStore(graphName, model)
       st.ack
     }
@@ -55,7 +54,6 @@ class OpenStackNodePersisterFusekiBolt(fusekiEndpoint: FusekiNodeConf)
   private def writeToRDFStore(graphName: String, data: Model): Unit = {
     val dataAsString = data.rdfSerialization("N-TRIPLE")
     val str = s"INSERT DATA { GRAPH $graphName { $dataAsString } }"
-    logger.info(s"query -> ${str}")
     val exchange = new ContentExchange()
     exchange.setURI(new URI(fusekiEndpoint.url / "update"))
     exchange.setMethod("POST")
