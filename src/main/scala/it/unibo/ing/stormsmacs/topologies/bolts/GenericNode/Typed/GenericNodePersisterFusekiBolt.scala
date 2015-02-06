@@ -61,6 +61,6 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
     httpClient.send(exchange)
     val state = exchange.waitForDone()
     if ((exchange.getStatus/100) != 2)
-      throw new Exception(s"Cannot sparql update: ${resp.getStatus} -> ${resp.getContentAsString}")
+      throw new Exception(s"Cannot sparql update: ${exchange.getStatus} -> ${exchange.getResponseContent}")
   }
 }
