@@ -63,7 +63,7 @@ class OpenStackNodePersisterFusekiBolt(fusekiEndpoint: FusekiNodeConf)
     exchange.setRequestContent(new ByteArrayBuffer(str))
     httpClient.send(exchange)
     val state = exchange.waitForDone()
-    if ((exchange.getStatus/100) != 2)
-      throw new Exception(s"Cannot sparql update: ${state} -> ${exchange.getResponseContent}")
+    if ((exchange.getResponseStatus/100) != 2)
+      throw new Exception(s"Cannot sparql update: ${exchange.getResponseStatus} -> ${exchange.getResponseContent}")
   }
 }
