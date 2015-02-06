@@ -45,7 +45,7 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
     }
     catch{
       case e: Throwable => {
-        logger.error(e.getStackTrace.mkString("\n"))
+        logger.error(e.getMessage + "\n" + e.getStackTrace.mkString("\n"))
         st.fail
       }
     }
