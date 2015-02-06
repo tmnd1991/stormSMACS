@@ -25,7 +25,6 @@ class OpenStackNodeMeterBolt(pollTime: Long)
     if (samples.isDefined){
       for(sample <- samples.get)
           using anchor st emit(t._1, t._2, t._3, sample)
-        st.ack
     }
     else
       st.fail
