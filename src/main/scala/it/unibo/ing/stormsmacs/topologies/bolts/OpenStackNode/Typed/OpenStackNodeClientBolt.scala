@@ -21,15 +21,12 @@ class OpenStackNodeClientBolt(node : OpenStackNodeConf)
     cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
   }
   override def typedExecute(t: Tuple1[Date], st : Tuple) = {
-    val resources = cclient.tryListAllResources
-    if (resources.isDefined){
-      for (r <- resources.get)
-        using anchor st emit(node, t._1, r)
-      st.ack
+    cclient.tryListAllResources match{
+      case Some(Nil) => st.ack
+      case Some(res : Seq[Resource]) => for (r <- res) using anchor st emit(node, t._1, r)
+      case _ => st.fail
     }
-    else{
-      st.fail
-    }
+    //this method looks so cute!
   }
 }
 

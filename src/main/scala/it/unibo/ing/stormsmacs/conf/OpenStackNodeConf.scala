@@ -22,9 +22,9 @@ case class OpenStackNodeConf(id : String,
                         password : String,
                         private val connect_timeout : Option[Int],
                         private val read_timeout : Option[Int]){
-  def connectTimeout = connect_timeout.getOrElse(2000)
-  def readTimeout = read_timeout.getOrElse(1000)
-  override def toString = "GenericNode[ " + id + " @ " + ceilometerUrl.toString + "\n" +
+  def connectTimeout = connect_timeout.getOrElse(10000)
+  def readTimeout = read_timeout.getOrElse(10000)
+  override def toString = "OpenstackNode[ " + id + " @ " + ceilometerUrl.toString + "\n" +
     "c timeout -> " + connectTimeout + "\n" +
     "r timeout -> " + readTimeout + "]"
 }
