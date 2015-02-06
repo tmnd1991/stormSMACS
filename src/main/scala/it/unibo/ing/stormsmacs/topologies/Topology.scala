@@ -70,12 +70,15 @@ object Topology {
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
       val sampleClient = new OpenStackNodeClientBolt(list.head)
-      for(osn <- list)
-        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
-                                      boltClientName + osn.id, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
       val meterBolt = new OpenStackNodeMeterBolt(pollTime)
-      builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
-                                                        boltMeterName, meterBolt).shuffleGrouping(boltClientName)
+      val meterBoltDeclarer = builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
+        boltMeterName, meterBolt)
+      for(osn <- list){
+        val name = boltClientName + "_" + osn.id
+        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
+                                      name, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
+        meterBoltDeclarer.shuffleGrouping(name)
+      }
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
                                                                     boltPersisterName, new OpenStackNodePersisterBolt(fusekiNode)).
         shuffleGrouping(boltMeterName)
@@ -91,13 +94,16 @@ object Topology {
       val boltReaderName = "genericReaderBolt"
       val boltPersisterName = "genericPersister"
       val sampleClient = new GenericNodeClientBolt(list.head)
-      for(gn <- list)
-        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
-                                      boltReaderName + gn.id, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
       val persisterBolt = new GenericNodePersisterBolt(fusekiNode)
-      builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
-                                                                boltPersisterName,persisterBolt).
-        shuffleGrouping(boltReaderName)
+      val persisterDeclarer = builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
+        boltPersisterName,persisterBolt)
+      for(gn <- list){
+        val name = boltReaderName + "_" + gn.id
+        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
+                                      name, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
+        persisterDeclarer.shuffleGrouping(name)
+      }
+
     }
   }
 
@@ -110,15 +116,14 @@ object Topology {
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
       val sampleClient = new CloudFoundryNodeClientBolt(list.head)
-      for(cfn <- list)
+      val persisterDeclarer = builder.setBolt[(CloudFoundryNodeConf, Date, MonitInfo)](boltReaderName, sampleClient,
+        boltPersisterName,new CloudFoundryNodePersisterBolt(fusekiNode))
+      for(cfn <- list){
+        val name = boltReaderName + "_" + cfn.id
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
-                                      boltReaderName + cfn.id, new CloudFoundryNodeClientBolt(cfn)).allGrouping(timerSpoutName)
-      builder.setBolt[(CloudFoundryNodeConf, Date, MonitInfo)](boltReaderName, sampleClient,
-                                                               boltPersisterName,new CloudFoundryNodePersisterBolt(fusekiNode)).
-        shuffleGrouping(boltReaderName)
-
-
-
+                                      name, new CloudFoundryNodeClientBolt(cfn)).allGrouping(timerSpoutName)
+        persisterDeclarer.shuffleGrouping(name)
+      }
     }
   }
 
