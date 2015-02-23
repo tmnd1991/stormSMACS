@@ -24,7 +24,7 @@ class OpenStackNodeClientBolt(node : OpenStackNodeConf)
     cclient.tryListAllResources match{
       case Some(Nil) => st.ack
       case Some(res : Seq[Resource]) => for (r <- res) using anchor st emit(node, t._1, r)
-      case _ => st.fail
+      case None => st.fail
     }
     //this method looks so cute!
   }
