@@ -6,7 +6,7 @@ organization := "it.unibo.ing"
 
 scalaVersion := "2.11.4"
 
-scalacOptions := Seq("-feature")
+scalacOptions := Seq("-feature", "-deprecation")
 
 resolvers ++= Seq("clojars" at "http://clojars.org/repo/",
                   "clojure-releases" at "http://build.clojure.org/releases")

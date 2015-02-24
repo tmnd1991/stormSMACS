@@ -1,8 +1,10 @@
 package it.unibo.ing.rdf
 import scala.collection.JavaConverters._
 import com.hp.hpl.jena.rdf.model.ModelFactory
+
 /**
- * Created by tmnd91 on 24/12/14.
+ * @author Antonio Murgia
+ * @version 24/12/14
  */
 object Properties {
   private val m = ModelFactory.createDefaultModel()

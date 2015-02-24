@@ -5,8 +5,10 @@ import spray.json.{JsValue, JsonWriter}
 import scala.language.implicitConversions
 import scala.annotation.implicitNotFound
 
+
 /**
- * Created by tmnd on 15/12/14.
+ * @author Antonio Murgia
+ * @version 15/12/14
  */
 @implicitNotFound(msg = "Cannot find RdfWriter type class for ${T}")
 trait RdfWriter[T] {
