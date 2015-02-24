@@ -8,7 +8,8 @@ import com.hp.hpl.jena.rdf.model.Model
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.GenericNodeConf
-import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeData
+import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeSample
+import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeResource
 import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeDataRdfFormat._
 import it.unibo.ing.rdf._
 import storm.scala.dsl.{Logging, TypedBolt}
@@ -29,9 +30,12 @@ with Logging
   override def typedExecute(t: (GenericNodeConf, Date, SigarMeteredData), st : Tuple): Unit = {
     try{
       val graphName = GraphNamer.graphName(t._2)
-      val data = GenericNodeData(t._1.url, t._3)
-      val model = data.toRdf()
-      writeToRDFStore(graphName, model)
+      val sample = GenericNodeSample(t._1.url, t._3)
+      val resource = GenericNodeResource(t._1.url, t._3)
+      val sampleModel = sample.toRdf
+      val resourceModel = resource.toRdf
+      writeToRDFStore("Resource", resourceModel)
+      writeToRDFStore(graphName, sampleModel)
       st.ack
     }
     catch{

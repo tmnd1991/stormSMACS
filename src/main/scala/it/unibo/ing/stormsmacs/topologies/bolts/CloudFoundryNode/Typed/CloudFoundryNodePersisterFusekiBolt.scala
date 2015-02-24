@@ -7,11 +7,11 @@ import backtype.storm.tuple.Tuple
 import com.hp.hpl.jena.rdf.model.Model
 import it.unibo.ing.monit.model.MonitInfo
 import it.unibo.ing.rdf._
+import it.unibo.ing.stormsmacs.rdfBindings.{CFNodeResource, CFNodeSample}
+import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfFormat._
 import it.unibo.ing.utils._
 import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.{CloudFoundryNodeConf, FusekiNodeConf}
-import it.unibo.ing.stormsmacs.rdfBindings.CFNodeData
-import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfConversion._
 import org.apache.http.HttpStatus
 import org.eclipse.jetty.client.{ContentExchange, HttpClient}
 import org.eclipse.jetty.io.ByteArrayBuffer
@@ -40,9 +40,10 @@ class CloudFoundryNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   override def typedExecute(t: (CloudFoundryNodeConf, Date, MonitInfo), st : Tuple): Unit = {
     try{
       val graphName = GraphNamer.graphName(t._2)
-      val data = CFNodeData(t._1.url, t._3)
-      val model = data.toRdf
-      writeToRDFStore(graphName, model)
+      val sampleData = CFNodeSample(t._1.url, t._3)
+      val resourceData = CFNodeResource(t._1.url, t._3)
+      writeToRDFStore(graphName, sampleData.toRdf)
+      writeToRDFStore("Resources", resourceData.toRdf)
       st.ack
     }
     catch{

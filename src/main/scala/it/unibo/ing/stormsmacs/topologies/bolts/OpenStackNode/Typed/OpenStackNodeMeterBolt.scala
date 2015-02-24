@@ -54,7 +54,7 @@ class OpenStackNodeMeterBolt(fusekiEndpoint : FusekiNodeConf, pollTime: Long)
     if (!(_persistedResources contains r)){
       val data = OpenStackResourceData(url,r)
       val dataAsString = data.toRdf.rdfSerialization("N-TRIPLE")
-      val str = s"INSERT DATA { GRAPH RESOURCES { $dataAsString } }"
+      val str = s"INSERT DATA { GRAPH Resources { $dataAsString } }"
       val exchange = new ContentExchange()
       exchange.setURI(new URI(fusekiEndpoint.url / "update"))
       exchange.setMethod("POST")

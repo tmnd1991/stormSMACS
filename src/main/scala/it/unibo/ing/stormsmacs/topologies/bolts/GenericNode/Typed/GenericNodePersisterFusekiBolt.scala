@@ -10,7 +10,7 @@ import it.unibo.ing.utils._
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, GenericNodeConf}
-import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeData
+import it.unibo.ing.stormsmacs.rdfBindings.{GenericNodeResource, GenericNodeSample}
 import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeDataRdfFormat._
 import org.eclipse.jetty.client.{ContentExchange, HttpClient}
 import org.eclipse.jetty.io.ByteArrayBuffer
@@ -38,9 +38,12 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   override def typedExecute(t: (GenericNodeConf, Date, SigarMeteredData), st : Tuple): Unit = {
     try{
       val graphName = GraphNamer.graphName(t._2)
-      val data = GenericNodeData(t._1.url, t._3)
-      val model = data.toRdf
-      writeToRDFStore(graphName, model)
+      val sampleData = GenericNodeSample(t._1.url, t._3)
+      val resourceData = GenericNodeResource(t._1.url, t._3)
+      val sampleModel = sampleData.toRdf
+      val resourceModel = resourceData.toRdf
+      writeToRDFStore("Resources", resourceModel)
+      writeToRDFStore(graphName, sampleModel)
       st.ack
     }
     catch{
