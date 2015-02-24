@@ -7,9 +7,8 @@ import backtype.storm.tuple.Tuple
 import com.hp.hpl.jena.rdf.model.Model
 import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, OpenStackNodeConf}
-import it.unibo.ing.stormsmacs.rdfBindings.{OpenStackSampleData}
 import it.unibo.ing.stormsmacs.rdfBindings.OpenStackSampleData
-import it.unibo.ing.stormsmacs.rdfBindings.OpenStackSampleDataRdfFormat._
+import it.unibo.ing.stormsmacs.rdfBindings.OpenStackRdfFormats._
 import it.unibo.ing.rdf._
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Statistics}
 import storm.scala.dsl.{Logging, StormTuple, TypedBolt}
@@ -32,8 +31,8 @@ class osWriteToFileBolt(file: String)
     try{
       val graphName = GraphNamer.graphName(t._2)
       val url = new URL(t._1.ceilometerUrl.getProtocol + "://" +t._1.ceilometerUrl.getHost)
-      val data = OpenStackSampleData(url, t._3, t._4)
-      val model = data.toRdf()
+      val data = OpenStackSampleData(url, t._3.resource_id, t._4)
+      val model = data.toRdf
       writeToRDFStore(graphName, model)
       st.ack
     }

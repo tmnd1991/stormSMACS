@@ -86,7 +86,7 @@ object DebugTopology {
       for(osn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
-      val meterBolt = new OpenStackNodeMeterBolt(60000)
+      val meterBolt = new OpenStackNodeMeterBolt(fusekiNode, 60000)
       builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
         boltMeterName, meterBolt,3).shuffleGrouping(boltClientName)
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,

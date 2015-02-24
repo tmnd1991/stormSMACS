@@ -36,6 +36,6 @@ package rdf {
   class SerializationException(msg: String) extends RuntimeException(msg)
 
   private[rdf] class PimpedAny[T](any: T) {
-    def toRdf(absPath : String = "")(implicit writer: RdfWriter[T]) : Model = writer.write(any, absPath)
+    def toRdf(implicit writer: RdfWriter[T]) : Model = writer.write(any)
   }
 }

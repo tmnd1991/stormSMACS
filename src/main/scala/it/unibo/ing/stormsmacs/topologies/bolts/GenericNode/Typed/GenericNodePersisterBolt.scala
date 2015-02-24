@@ -24,7 +24,7 @@ class GenericNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
     try{
       val graphName = GraphNamer.graphName(t._2)
       val data = GenericNodeData(t._1.url, t._3)
-      val model = data.toRdf()
+      val model = data.toRdf
       writeToRDFStore(graphName, model)
       st.ack
     }

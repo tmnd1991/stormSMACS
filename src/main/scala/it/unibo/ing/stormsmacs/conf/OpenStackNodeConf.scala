@@ -5,7 +5,7 @@ import java.net.URL
 /**
  * @author Antonio Murgia
  * @constructor Representation of a OpenstackNode
- * @param id    id of the node (arbitrary, just an internal rappresentantion, should be unique)
+ * @param id    id of the node (arbitrary, just an internal representantion, should be unique)
  * @param tenantName  Openstack tenantName
  * @param ceilometerUrl  valid url address of the ceilometer endpoint
  * @param keystoneUrl url of the keystone endpoint

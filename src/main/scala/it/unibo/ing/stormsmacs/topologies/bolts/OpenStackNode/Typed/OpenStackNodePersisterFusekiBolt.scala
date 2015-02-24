@@ -9,7 +9,7 @@ import it.unibo.ing.utils._
 import it.unibo.ing.stormsmacs.GraphNamer
 import it.unibo.ing.stormsmacs.conf.{OpenStackNodeConf, FusekiNodeConf}
 import it.unibo.ing.stormsmacs.rdfBindings.OpenStackSampleData
-import it.unibo.ing.stormsmacs.rdfBindings.OpenStackSampleDataRdfFormat._
+import it.unibo.ing.stormsmacs.rdfBindings.OpenStackRdfFormats._
 import org.eclipse.jetty.client.{ContentExchange, HttpClient}
 import org.eclipse.jetty.io.ByteArrayBuffer
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
@@ -38,8 +38,8 @@ class OpenStackNodePersisterFusekiBolt(fusekiEndpoint: FusekiNodeConf)
     try {
       val graphName = GraphNamer.graphName(t._2)
       val url = new URL(t._1.ceilometerUrl.getProtocol + "://" + t._1.ceilometerUrl.getHost)
-      val data = OpenStackSampleData(url, t._3, t._4)
-      val model = data.toRdf()
+      val data = OpenStackSampleData(url, t._3.resource_id, t._4)
+      val model = data.toRdf
       writeToRDFStore(graphName, model)
       st.ack
     }

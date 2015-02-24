@@ -38,7 +38,7 @@ object Properties {
   val unixSocketResponseDestination = m.createProperty(NS + "unixSocketResponseDestination")
   val unixSocketResponseMode = m.createProperty(NS + "unixSocketResponseMode")
   val cpuName                = m.createProperty(NS + "cpuName")
-  val CPUPercentageUsage     = m.createProperty(NS + "CPUPercentageUsage")
+  val percentageUsage     = m.createProperty(NS + "percentageUsage")
   val bytesReadFromDisk      = m.createProperty(NS + "bytesReadFromDisk")
   val readsFromDisk          = m.createProperty(NS + "readsFromDisk")
   val bytesWroteToDisk       = m.createProperty(NS + "bytesWroteToDisk")

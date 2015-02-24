@@ -41,7 +41,7 @@ class CloudFoundryNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
     try{
       val graphName = GraphNamer.graphName(t._2)
       val data = CFNodeData(t._1.url, t._3)
-      val model = data.toRdf(t._1.toString)
+      val model = data.toRdf
       writeToRDFStore(graphName, model)
       st.ack
     }

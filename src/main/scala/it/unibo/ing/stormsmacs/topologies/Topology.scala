@@ -70,7 +70,7 @@ object Topology {
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
       val sampleClient = new OpenStackNodeClientBolt(list.head)
-      val meterBolt = new OpenStackNodeMeterBolt(pollTime)
+      val meterBolt = new OpenStackNodeMeterBolt(fusekiNode, pollTime)
       val meterBoltDeclarer = builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
         boltMeterName, meterBolt)
       for(osn <- list){
