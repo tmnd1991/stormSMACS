@@ -3,7 +3,7 @@ import java.util.Date
 
 import it.unibo.ing.monit.model.{MonitMonitoringStatus, MonitStatus, MonitProcessInfo}
 import it.unibo.ing.stormsmacs.GraphNamer
-import it.unibo.ing.stormsmacs.rdfBindings.CFNodeData
+import it.unibo.ing.stormsmacs.rdfBindings._
 import it.unibo.ing.utils._
 import org.apache.commons.codec.binary.Base64
 import org.eclipse.jetty.client.{HttpExchange, ContentExchange, HttpClient}
@@ -11,7 +11,7 @@ import org.eclipse.jetty.io.ByteArrayBuffer
 import org.scalatest.{Matchers, FlatSpec}
 import virtuoso.jena.driver.{VirtuosoUpdateFactory, VirtGraph}
 import it.unibo.ing.rdf._
-import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfConversion._
+import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfFormat._
 
 import scala.concurrent.duration.Duration
 

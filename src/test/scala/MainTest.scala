@@ -8,12 +8,12 @@ import java.util.Date
 import it.unibo.ing.monit.model.{MonitResponseTime, MonitMonitoringStatus, MonitStatus, MonitProcessInfo}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf.JsonConfiguration
-import it.unibo.ing.stormsmacs.rdfBindings.{GenericNodeData, CFNodeData}
+import it.unibo.ing.stormsmacs.rdfBindings._
 import java.net.URL
 import org.scalatest._
 import it.unibo.ing.rdf._
 import scala.concurrent.duration.Duration
-import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfConversion._
+import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfFormat._
 import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeDataRdfFormat._
 
 class MainTest extends FlatSpec with Matchers{

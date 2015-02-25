@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream
 import java.net.URL
 
 import it.unibo.ing.monit.model.{MonitMonitoringStatus, MonitStatus, MonitProcessInfo}
-import it.unibo.ing.stormsmacs.rdfBindings.CFNodeData
+import it.unibo.ing.stormsmacs.rdfBindings._
 import it.unibo.ing.utils.DateUtils
 import java.util.Date
 import org.scalatest.{Matchers, FlatSpec}
