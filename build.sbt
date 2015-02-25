@@ -34,7 +34,7 @@ libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "8.1.16.v20140903"
 libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.2"
 
 //rdf library
-libraryDependencies += "org.apache.jena" % "jena-core" % "2.12.1" exclude("org.slf4j","slf4j-api") exclude("junit", "junit") intransitive()
+libraryDependencies += "org.apache.jena" % "jena-core" % "2.11.2" exclude("org.slf4j","slf4j-api") exclude("junit", "junit") intransitive()
 
 //sparql queryengine
-libraryDependencies += "org.apache.jena" % "jena-arq" % "2.12.1" exclude("org.slf4j","jcl-over-slf4j") exclude("org.apache.commons", "commons-csv")
+libraryDependencies += "org.apache.jena" % "jena-arq" % "2.11.2" exclude("org.slf4j","jcl-over-slf4j") exclude("org.apache.commons", "commons-csv")
