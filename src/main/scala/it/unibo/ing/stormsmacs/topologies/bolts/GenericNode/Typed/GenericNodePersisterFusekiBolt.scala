@@ -37,13 +37,12 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   }
   override def typedExecute(t: (GenericNodeConf, Date, SigarMeteredData), st : Tuple): Unit = {
     try{
-      val graphName = GraphNamer.graphName(t._2)
       val sampleData = GenericNodeSample(t._1.url, t._3)
       val resourceData = GenericNodeResource(t._1.url, t._3)
       val sampleModel = sampleData.toRdf
       val resourceModel = resourceData.toRdf
       writeToRDFStore(GraphNamer.resourcesGraphName, resourceModel)
-      writeToRDFStore(graphName, sampleModel)
+      writeToRDFStore(GraphNamer.graphName(t._2), sampleModel)
       st.ack
     }
     catch{
@@ -56,6 +55,7 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   private def writeToRDFStore(graphName : String, data : Model) : Unit = {
     val dataAsString = data.rdfSerialization("N-TRIPLE")
     val str = s"INSERT DATA { GRAPH $graphName { $dataAsString } }"
+
     val exchange = new ContentExchange()
     exchange.setURI(new URI(fusekiEndpoint.url / "update"))
     exchange.setMethod("POST")
@@ -63,7 +63,9 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
     exchange.setRequestContent(new ByteArrayBuffer(str))
     httpClient.send(exchange)
     val state = exchange.waitForDone()
-    if ((exchange.getResponseStatus/100) != 2)
+    if ((exchange.getResponseStatus/100) != 2){
+      logger.info(str)
       throw new Exception(s"Cannot sparql update: ${exchange.getResponseStatus} -> ${exchange.getResponseContent}")
+    }
   }
 }
