@@ -24,7 +24,7 @@ import it.unibo.ing.monit.model.{MonitSystemInfo, MonitProcessInfo, MonitInfo}
  */
 object Topology {
   val logger = LoggerFactory.getLogger(this.getClass)
-
+  val arityOfPersister = 3
   def main(args: Array[String]) = {
     require(args.length == 1)
     val jsonConfFile = args(0)
@@ -66,6 +66,7 @@ object Topology {
                                        timerSpout : TimerSpout,
                                        timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
+      val persisterTasks = list.size/arityOfPersister
       val boltClientName = "openstackClientBolt"
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
@@ -80,7 +81,7 @@ object Topology {
         meterBoltDeclarer.shuffleGrouping(name)
       }
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
-                                                                    boltPersisterName, new OpenStackNodePersisterFusekiBolt(fusekiNode)).
+                                                                    boltPersisterName, new OpenStackNodePersisterFusekiBolt(fusekiNode),persisterTasks).
         shuffleGrouping(boltMeterName)
     }
   }
@@ -91,12 +92,13 @@ object Topology {
                                     timerSpout : TimerSpout,
                                     timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
+      val persisterTasks = list.size/arityOfPersister
       val boltReaderName = "genericReaderBolt"
       val boltPersisterName = "genericPersister"
       val sampleClient = new GenericNodeClientBolt(list.head)
       val persisterBolt = new GenericNodePersisterFusekiBolt(fusekiNode)
       val persisterDeclarer = builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
-        boltPersisterName,persisterBolt)
+        boltPersisterName,persisterBolt,persisterTasks)
       for(gn <- list){
         val name = boltReaderName + "_" + gn.id
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
@@ -113,11 +115,12 @@ object Topology {
                                          timerSpout : TimerSpout,
                                          timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
+      val persisterTasks = list.size/arityOfPersister
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
       val sampleClient = new CloudFoundryNodeClientBolt(list.head)
       val persisterDeclarer = builder.setBolt[(CloudFoundryNodeConf, Date, MonitInfo)](boltReaderName, sampleClient,
-        boltPersisterName,new CloudFoundryNodePersisterFusekiBolt(fusekiNode))
+        boltPersisterName,new CloudFoundryNodePersisterFusekiBolt(fusekiNode), persisterTasks)
       for(cfn <- list){
         val name = boltReaderName + "_" + cfn.id
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
