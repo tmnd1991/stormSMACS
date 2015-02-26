@@ -26,7 +26,7 @@ class CloudFoundryNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
       val sampleData = CFNodeSample(t._1.url, t._3)
       val resourceData = CFNodeResource(t._1.url, t._3)
       writeToRDFStore(graphName, sampleData.toRdf)
-      writeToRDFStore("Resources", resourceData.toRdf)
+      writeToRDFStore(GraphNamer.resourcesGraphName, resourceData.toRdf)
       st.ack
     }
     catch{

@@ -27,7 +27,7 @@ class GenericNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
       val resourceData = GenericNodeResource(t._1.url, t._3)
       val sampleModel = sampleData.toRdf
       val resourceModel = resourceData.toRdf
-      writeToRDFStore("Resources", resourceModel)
+      writeToRDFStore(GraphNamer.resourcesGraphName, resourceModel)
       writeToRDFStore(graphName, sampleModel)
       st.ack
     }

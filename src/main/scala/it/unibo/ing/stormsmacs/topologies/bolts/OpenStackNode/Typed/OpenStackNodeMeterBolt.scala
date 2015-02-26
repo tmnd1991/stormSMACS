@@ -14,6 +14,8 @@ import org.openstack.clients.ceilometer.v2.CeilometerClient
 import storm.scala.dsl.TypedBolt
 import storm.scala.dsl.Logging
 
+import it.unibo.ing.stormsmacs.GraphNamer
+
 /**
  * @author Antonio Murgia
  * @version 22/12/14
@@ -57,7 +59,7 @@ class OpenStackNodeMeterBolt(fusekiEndpoint : FusekiNodeConf, pollTime: Long)
     if (!(_persistedResources contains r)){
       val data = OpenStackResourceData(url,r)
       val dataAsString = data.toRdf.rdfSerialization("N-TRIPLE")
-      val str = s"INSERT DATA { GRAPH Resources { $dataAsString } }"
+      val str = s"INSERT DATA { GRAPH ${GraphNamer.resourcesGraphName} { $dataAsString } }"
       val exchange = new ContentExchange()
       exchange.setURI(new URI(fusekiEndpoint.url / "update"))
       exchange.setMethod("POST")

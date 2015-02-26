@@ -12,4 +12,8 @@ object GraphNamer {
     val uri = base / DateUtils.format(d,"yyyy-MM-dd'T'HH:mm:ss'Z'")
     "<" + uri.toString + ">"
   }
+  def resourcesGraphName(implicit base : URI = new URI("http://stormsmacs/tests/")) = {
+    val uri = base / "Resources"
+    "<" + uri.toString + ">"
+  }
 }
