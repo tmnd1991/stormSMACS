@@ -66,7 +66,7 @@ object Topology {
                                        timerSpout : TimerSpout,
                                        timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
-      val persisterTasks = list.size/arityOfPersister
+      val persisterTasks = calctasks(list.size, arityOfPersister)
       val boltClientName = "openstackClientBolt"
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
@@ -92,7 +92,7 @@ object Topology {
                                     timerSpout : TimerSpout,
                                     timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
-      val persisterTasks = list.size/arityOfPersister
+      val persisterTasks =  calctasks(list.size, arityOfPersister)
       val boltReaderName = "genericReaderBolt"
       val boltPersisterName = "genericPersister"
       val sampleClient = new GenericNodeClientBolt(list.head)
@@ -115,7 +115,7 @@ object Topology {
                                          timerSpout : TimerSpout,
                                          timerSpoutName : String) : Unit = {
     if (list.nonEmpty){
-      val persisterTasks = list.size/arityOfPersister
+      val persisterTasks =  calctasks(list.size, arityOfPersister)
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
       val sampleClient = new CloudFoundryNodeClientBolt(list.head)
@@ -144,4 +144,7 @@ object Topology {
     conf.registerSerialization(classOf[SigarMeteredData], classOf[SigarMeteredDataSerializer])
     conf.registerSerialization(classOf[Statistics], classOf[StatisticsSerializer])
   }
+
+  private def calctasks(nodes : Int, arity : Int): Int = (math ceil (nodes.toFloat / arity)) toInt
+
 }
