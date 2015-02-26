@@ -10,6 +10,7 @@ object Properties {
   private val m = ModelFactory.createDefaultModel()
   val NS : String = "http://ing.unibo.it/smacs/predicates#"
   val prefixes : java.util.Map[String, String] = Map("sp"->NS).asJava
+  val name                   = m.createProperty(NS + "name")
   val memoryUsage            = m.createProperty(NS + "hasMemoryUsage")
   val memoryUsagePercentage  = m.createProperty(NS + "hasMemoryUsagePercentage")
   val averageLoad            = m.createProperty(NS + "averageLoad")

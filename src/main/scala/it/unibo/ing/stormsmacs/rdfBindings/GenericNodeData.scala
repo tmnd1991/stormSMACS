@@ -20,10 +20,11 @@ object GenericNodeDataRdfFormat{
     override def write(obj: GenericNodeSample): Model = {
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
-      val cpuCores = m.createResource((obj.url / obj.info.cpuName / "coreNumbers").toString).
+      val cpuName = m.createResource((obj.url / "cpu").toString).addProperty(Properties.name, obj.info.cpuName)
+      val cpuCores = m.createResource((obj.url / "cpu" / "coreNumbers").toString).
         addProperty(RDF.value, "" + obj.info.numberOfCores).
         addProperty(RDF.`type`, "Sample")
-      val cpuUsage = m.createResource((obj.url / obj.info.cpuName / "percentUsage").toString).
+      val cpuUsage = m.createResource((obj.url /  "cpu"  / "percentUsage").toString).
         addProperty(RDF.value, "" + obj.info.cpuPercent.toInt).
         addProperty(RDF.`type`, "Sample")
 
@@ -74,11 +75,11 @@ object GenericNodeDataRdfFormat{
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
 
-      val cpuCores = m.createResource((obj.url / obj.info.cpuName / "coreNumbers").toString).
+      val cpuCores = m.createResource((obj.url / "cpu" / "coreNumbers").toString).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge")
 
-      val cpuUsage = m.createResource((obj.url / obj.info.cpuName / "percentUsage").toString).
+      val cpuUsage = m.createResource((obj.url / "cpu" / "percentUsage").toString).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "%")
