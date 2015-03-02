@@ -1,6 +1,6 @@
 package it.unibo.ing.stormsmacs
 
-import java.net.URI
+import java.net.{URL, URI}
 import java.util.Date
 import it.unibo.ing.utils._
 
@@ -15,5 +15,8 @@ object GraphNamer {
   def resourcesGraphName(implicit base : URI = new URI("http://stormsmacs/tests/")) = {
     val uri = base / "Resources"
     "<" + uri.toString + ">"
+  }
+  def cleanURL(u : URL) : URL = {
+    new URL(u.getProtocol + "://" +u.getHost)
   }
 }

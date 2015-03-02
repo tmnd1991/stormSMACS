@@ -1,63 +1,30 @@
 package it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed
 
-import java.net.URI
-import java.util.Date
-
-import backtype.storm.tuple.Tuple
 import com.hp.hpl.jena.rdf.model.Model
-import it.unibo.ing.rdf._
-import it.unibo.ing.utils._
-import it.unibo.ing.sigar.restful.model.SigarMeteredData
-import it.unibo.ing.stormsmacs.GraphNamer
-import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, GenericNodeConf}
-import it.unibo.ing.stormsmacs.rdfBindings.{GenericNodeResource, GenericNodeSample}
-import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeDataRdfFormat._
-import org.eclipse.jetty.client.{ContentExchange, HttpClient}
-import org.eclipse.jetty.io.ByteArrayBuffer
-import storm.scala.dsl.{Logging, TypedBolt}
+import it.unibo.ing.stormsmacs.conf.FusekiNodeConf
+import it.unibo.ing.stormsmacs.topologies.bolts.FusekiPersister
+import org.eclipse.jetty.client.HttpClient
 
 /**
  * Created by tmnd91 on 24/12/14.
  */
 class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
-  extends TypedBolt[(GenericNodeConf, Date, SigarMeteredData), Nothing]
-  with Logging
+  extends GenericNodePersisterBolt(fusekiEndpoint) with FusekiPersister
 {
   private var httpClient: HttpClient = _
-  private var persisted : Set[Int] = _
+
   setup {
     httpClient = new HttpClient()
     httpClient.setConnectTimeout(1000)
     httpClient.setMaxRedirects(1)
     httpClient.start()
-    persisted = Set()
   }
   shutdown{
     if (httpClient.isStarted)
       httpClient.stop()
     httpClient = null
-    persisted = null
   }
-  override def typedExecute(t: (GenericNodeConf, Date, SigarMeteredData), st : Tuple): Unit = {
-    try{
-      val sampleData = GenericNodeSample(t._1.url, t._3)
-      val sampleModel = sampleData.toRdf
-      writeToRDFStore(GraphNamer.graphName(t._2), sampleModel)
-      if (!(persisted contains t._1.url.toString.hashCode)) {
-        val resourceData = GenericNodeResource(t._1.url, t._3)
-        val resourceModel = resourceData.toRdf
-        writeToRDFStore(GraphNamer.resourcesGraphName, resourceModel)
-        persisted += t._1.url.toString.hashCode
-      }
-      st.ack
-    }
-    catch{
-      case e: Throwable => {
-        logger.error(e.getMessage + "\n" + e.getStackTrace.mkString("\n"))
-        st.fail
-      }
-    }
-  }
+  /*
   private def writeToRDFStore(graphName : String, data : Model) : Unit = {
     val dataAsString = data.rdfSerialization("N-TRIPLE")
     val str = s"INSERT DATA { GRAPH $graphName { $dataAsString } }"
@@ -74,4 +41,6 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
       throw new Exception(s"Cannot sparql update: ${exchange.getResponseStatus} -> ${exchange.getResponseContent}")
     }
   }
+  */
+  override protected def writeToRDF(graphName: String, data: Model) : Unit = writeToRDFStore(fusekiEndpoint, httpClient, graphName, data)
 }

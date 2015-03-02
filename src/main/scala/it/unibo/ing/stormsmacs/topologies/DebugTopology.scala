@@ -10,8 +10,8 @@ import backtype.storm.{StormSubmitter, LocalCluster}
 import storm.scala.dsl.{TypedTopologyBuilder, StormConfig}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
 import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodePersisterFusekiBolt, CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterFusekiBolt, GenericNodePersisterBolt, GenericNodeClientBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterFusekiBolt, OpenStackNodePersisterBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterFusekiBolt, GenericNodePersisterVirtuosoBolt, GenericNodeClientBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterFusekiBolt, OpenStackNodePersisterVirtuosoBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
 import it.unibo.ing.stormsmacs.conf._
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Statistics, Meter}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
