@@ -24,25 +24,31 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   with Logging
 {
   private var httpClient: HttpClient = _
+  private var persisted : Set[Int] = _
   setup {
     httpClient = new HttpClient()
     httpClient.setConnectTimeout(1000)
     httpClient.setMaxRedirects(1)
     httpClient.start()
+    persisted = Set()
   }
   shutdown{
     if (httpClient.isStarted)
       httpClient.stop()
     httpClient = null
+    persisted = null
   }
   override def typedExecute(t: (GenericNodeConf, Date, SigarMeteredData), st : Tuple): Unit = {
     try{
       val sampleData = GenericNodeSample(t._1.url, t._3)
-      val resourceData = GenericNodeResource(t._1.url, t._3)
       val sampleModel = sampleData.toRdf
-      val resourceModel = resourceData.toRdf
-      writeToRDFStore(GraphNamer.resourcesGraphName, resourceModel)
       writeToRDFStore(GraphNamer.graphName(t._2), sampleModel)
+      if (!(persisted contains t._1.url.toString.hashCode)) {
+        val resourceData = GenericNodeResource(t._1.url, t._3)
+        val resourceModel = resourceData.toRdf
+        writeToRDFStore(GraphNamer.resourcesGraphName, resourceModel)
+        persisted += t._1.url.toString.hashCode
+      }
       st.ack
     }
     catch{

@@ -20,15 +20,25 @@ class GenericNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
   extends TypedBolt[(GenericNodeConf, Date, SigarMeteredData), Nothing]
   with Logging
 {
+  private var persisted : Set[Int] = _
+  setup{
+    persisted = Set()
+  }
+  shutdown{
+    persisted = null
+  }
   override def typedExecute(t: (GenericNodeConf, Date, SigarMeteredData), st : Tuple): Unit = {
     try{
       val graphName = GraphNamer.graphName(t._2)
       val sampleData = GenericNodeSample(t._1.url, t._3)
-      val resourceData = GenericNodeResource(t._1.url, t._3)
       val sampleModel = sampleData.toRdf
-      val resourceModel = resourceData.toRdf
-      writeToRDFStore(GraphNamer.resourcesGraphName, resourceModel)
       writeToRDFStore(graphName, sampleModel)
+      if (!(persisted contains t._1.url.toString.hashCode)) {
+        val resourceData = GenericNodeResource(t._1.url, t._3)
+        val resourceModel = resourceData.toRdf
+        writeToRDFStore(GraphNamer.resourcesGraphName, resourceModel)
+        persisted += t._1.url.toString.hashCode
+      }
       st.ack
     }
     catch{

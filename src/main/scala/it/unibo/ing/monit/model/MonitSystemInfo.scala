@@ -30,6 +30,7 @@ case class MonitSystemInfo(name : String,
     "swap usage -> " + swap_usage + "\n"+
     "data collected -> " + data_collected + "\n"
   }
+  def resId = name.hashCode
 }
 object MonitSystemInfo {
   def applyOpt(name: Option[String],

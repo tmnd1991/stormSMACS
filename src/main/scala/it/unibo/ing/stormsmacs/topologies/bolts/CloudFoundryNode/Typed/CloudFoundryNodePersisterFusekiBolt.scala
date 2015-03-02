@@ -23,27 +23,32 @@ import storm.scala.dsl.{Logging, TypedBolt}
 class CloudFoundryNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   extends TypedBolt[(CloudFoundryNodeConf, Date, MonitInfo), Nothing]
   with Logging{
-
+  private var persisted : Set[Int] = _
   private var httpClient: HttpClient = _
   setup {
     httpClient = new HttpClient()
     httpClient.setConnectTimeout(1000)
     httpClient.setMaxRedirects(1)
     httpClient.start()
+    persisted = Set()
   }
   shutdown{
     if (httpClient.isStarted)
       httpClient.stop()
     httpClient = null
+    persisted = null
   }
 
   override def typedExecute(t: (CloudFoundryNodeConf, Date, MonitInfo), st : Tuple): Unit = {
     try{
       val graphName = GraphNamer.graphName(t._2)
       val sampleData = CFNodeSample(t._1.url, t._3)
-      val resourceData = CFNodeResource(t._1.url, t._3)
       writeToRDFStore(graphName, sampleData.toRdf)
-      writeToRDFStore(GraphNamer.resourcesGraphName, resourceData.toRdf)
+      if (!(persisted contains t._3.resId)){
+        val resourceData = CFNodeResource(t._1.url, t._3)
+        writeToRDFStore(GraphNamer.resourcesGraphName, resourceData.toRdf)
+        persisted += t._3.resId
+      }
       st.ack
     }
     catch{

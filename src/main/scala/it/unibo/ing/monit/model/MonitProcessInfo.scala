@@ -50,6 +50,7 @@ case class MonitProcessInfo(name              : String,
       else ""
     }
   }
+  def resId = pid
 }
 object MonitProcessInfo{
   def applyOpt(name              : Option[String],

@@ -20,13 +20,23 @@ import it.unibo.ing.rdf._
 class CloudFoundryNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
   extends TypedBolt[(CloudFoundryNodeConf, Date, MonitInfo), Nothing]
   with Logging{
+  private var persisted : Set[Int] = _
+  setup{
+    persisted = Set()
+  }
+  shutdown{
+    persisted = null
+  }
   override def typedExecute(t: (CloudFoundryNodeConf, Date, MonitInfo), st : Tuple): Unit = {
     try{
       val graphName = GraphNamer.graphName(t._2)
       val sampleData = CFNodeSample(t._1.url, t._3)
-      val resourceData = CFNodeResource(t._1.url, t._3)
       writeToRDFStore(graphName, sampleData.toRdf)
-      writeToRDFStore(GraphNamer.resourcesGraphName, resourceData.toRdf)
+      if (!(persisted contains t._3.resId)){
+        val resourceData = CFNodeResource(t._1.url, t._3)
+        writeToRDFStore(GraphNamer.resourcesGraphName, resourceData.toRdf)
+        persisted += t._3.resId
+      }
       st.ack
     }
     catch{

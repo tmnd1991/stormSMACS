@@ -19,7 +19,8 @@ case class SigarMeteredData(cpuPercent : Double,
                             uptime : Double,
                             numberOfCores : Int,
                             osName : String,
-                            cpuName : String)
+                            cpuName : String){
+}
 
 object SigarMeteredDataFormat extends DefaultJsonProtocol{
   implicit val SigarMeteredDataJsonFormat = jsonFormat13(SigarMeteredData)
