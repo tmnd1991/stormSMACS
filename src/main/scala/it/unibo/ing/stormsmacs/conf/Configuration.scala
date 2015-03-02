@@ -30,7 +30,7 @@ abstract class Configuration{
   val openstackNodes    : Option[Seq[OpenStackNodeConf]]
   val cloudfoundryNodes : Option[Seq[CloudFoundryNodeConf]]
   val genericNodes      : Option[Seq[GenericNodeConf]]
-  val fusekiNode        : FusekiNodeConf
+  val persisterNode     : PersisterNodeConf
   val remote            : Boolean
   val debug             : Boolean
   val pollTime          : Long
@@ -41,7 +41,7 @@ abstract class Configuration{
   override def toString = "openstackNodes =" + openstackNodeList.mkString("{\n",",\n\t","}\n") +
                           "cloudfoundryNodes =" + cloudfoundryNodeList.mkString("{\n",",\n\t","}\n") +
                           "genericNodes =" + genericNodeList.mkString("{\n",",\n\t","}\n") +
-                          "fusekiNode = " + fusekiNode + "\n" +
+                          "persisterNode = " + persisterNode + "\n" +
                           "debug = " + debug + "\n" +
                           "pollTime = " + pollTime
 }

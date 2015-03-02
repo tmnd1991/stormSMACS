@@ -35,7 +35,7 @@ object DebugTopology {
                                   Some(30000), Some(30000)))),
       Some(List(CloudFoundryNodeConf("cd", new URL("http://localhost:9876"),Some(10000), Some(10000)))),
       Some(List(GenericNodeConf("gn", new URL("http://localhost:9875"), Some(10000), Some(10000)))),
-      FusekiNodeConf("virtuoso","jdbc:virtuoso://localhost:1111","dba","dba"),
+      VirtuosoNodeConf("virtuoso","jdbc:virtuoso://localhost:1111","dba","dba"),
       false,
       false,
       60000
@@ -52,13 +52,13 @@ object DebugTopology {
     builder.setSpout[Tuple1[Date]](timerSpoutName, timerSpout)
     logger.info("spout set")
 
-    configureOpenstackNodes(builder, conf.fusekiNode, conf.openstackNodeList, timerSpout, timerSpoutName)
+    configureOpenstackNodes(builder, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName)
     logger.info("configured openstack")
 
-    configureGenericNodes(builder, conf.fusekiNode, conf.genericNodeList, timerSpout, timerSpoutName)
+    configureGenericNodes(builder, conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName)
     logger.info("configured generics")
 
-    configureCloudFoundryNodes(builder, conf.fusekiNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName)
+    configureCloudFoundryNodes(builder, conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName)
     logger.info("configured cfs")
 
     logger.info("configured topology")
@@ -73,7 +73,7 @@ object DebugTopology {
   }
 
   private def configureOpenstackNodes( builder : TypedTopologyBuilder,
-                                       fusekiNode : FusekiNodeConf,
+                                       persisterNode : PersisterNodeConf,
                                        list: Seq[OpenStackNodeConf],
                                        timerSpout : TimerSpout,
                                        timerSpoutName : String) : Unit = {
@@ -81,12 +81,12 @@ object DebugTopology {
       val boltClientName = "openstackClientBolt"
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
-      val persisterBolt = new OpenStackNodePersisterFusekiBolt(FusekiNodeConf.apply("fuseki","http://localhost:3030/ds","",""))
+      val persisterBolt = new OpenStackNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds"))
       val sampleClient = new OpenStackNodeClientBolt(list.head)
       for(osn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltClientName, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
-      val meterBolt = new OpenStackNodeMeterBolt(fusekiNode, 60000)
+      val meterBolt = new OpenStackNodeMeterBolt(60000)
       builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
         boltMeterName, meterBolt,3).shuffleGrouping(boltClientName)
       builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
@@ -96,7 +96,7 @@ object DebugTopology {
   }
 
   private def configureGenericNodes(builder : TypedTopologyBuilder,
-                                    fusekiNode : FusekiNodeConf,
+                                    persisterNode : PersisterNodeConf,
                                     list: Seq[GenericNodeConf],
                                     timerSpout : TimerSpout,
                                     timerSpoutName : String) : Unit = {
@@ -107,7 +107,7 @@ object DebugTopology {
       for(gn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltReaderName, new GenericNodeClientBolt(gn),3).allGrouping(timerSpoutName)
-      val persisterBolt = new GenericNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds","",""))
+      val persisterBolt = new GenericNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds"))
       builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
         boltPersisterName,persisterBolt).
         shuffleGrouping(boltReaderName)
@@ -115,7 +115,7 @@ object DebugTopology {
   }
 
   private def configureCloudFoundryNodes(builder : TypedTopologyBuilder,
-                                         fusekiNode : FusekiNodeConf,
+                                         persisterNode : PersisterNodeConf,
                                          list: Seq[CloudFoundryNodeConf],
                                          timerSpout : TimerSpout,
                                          timerSpoutName : String) : Unit = {
@@ -123,7 +123,7 @@ object DebugTopology {
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
       val sampleClient = new CloudFoundryNodeClientBolt(list.head)
-      val persisterBolt = new CloudFoundryNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds","",""))
+      val persisterBolt = new CloudFoundryNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds"))
       for(cfn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltReaderName, new CloudFoundryNodeClientBolt(cfn),3).allGrouping(timerSpoutName)

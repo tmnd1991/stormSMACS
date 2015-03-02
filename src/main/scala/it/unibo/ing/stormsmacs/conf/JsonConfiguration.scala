@@ -11,7 +11,7 @@ package it.unibo.ing.stormsmacs.conf
  * @param openstackNodes     Optional non-empty list of OpenStackNode monitored through the ceilometer endpoint
  * @param cloudfoundryNodes  Optional non-empty list of CloudFoundryNode monitored through the restful endpoint written on top of monit daemon
  * @param genericNodes       Optional non-empty list of GenericNode monitored through the restful endpoint written on top of java cigar API
- * @param fusekiNode         fuseki endpoint used as TDB
+ * @param persisterNode      persister endpoint used as TDB
  * @param debug              storm debug mode
  * @param pollTime           poll time of monitoring
  */
@@ -19,14 +19,14 @@ case class JsonConfiguration(name              : String,
                              openstackNodes    : Option[Seq[OpenStackNodeConf]],
                              cloudfoundryNodes : Option[Seq[CloudFoundryNodeConf]],
                              genericNodes      : Option[Seq[GenericNodeConf]],
-                             fusekiNode        : FusekiNodeConf,
+                             persisterNode     : PersisterNodeConf,
                              debug             : Boolean,
                              remote            : Boolean,
                              pollTime          : Long) extends Configuration{
   require(openstackNodes == None || openstackNodes.get.nonEmpty)
   require(cloudfoundryNodes == None || cloudfoundryNodes.get.nonEmpty)
   require(genericNodes == None || genericNodes.get.nonEmpty)
-  require(fusekiNode != null)
+  require(persisterNode != null)
   require(pollTime > 0)
 }
 object JsonConfiguration{
@@ -48,7 +48,7 @@ object JsonConfigurationProtocol extends spray.json.DefaultJsonProtocol{
   import OpenStackNodeProtocol._
   import CloudFoundryNodeProtocol._
   import GenericNodeProtocol._
-  import FusekiNodeProtocol._
+  import PeristerNodeProtocol._
   implicit val jsonConfigurationFormat : JsonFormat[JsonConfiguration] = jsonFormat8(JsonConfiguration.apply)
   implicit object urlFormat extends JsonFormat[URL]{
     override def read(json: JsValue) = json match{

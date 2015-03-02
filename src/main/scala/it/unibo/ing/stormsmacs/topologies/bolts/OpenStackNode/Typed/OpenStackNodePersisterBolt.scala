@@ -5,7 +5,7 @@ import java.util.Date
 import backtype.storm.tuple.Tuple
 import com.hp.hpl.jena.rdf.model.Model
 import it.unibo.ing.stormsmacs.GraphNamer
-import it.unibo.ing.stormsmacs.conf.{OpenStackNodeConf, FusekiNodeConf}
+import it.unibo.ing.stormsmacs.conf.{PersisterNodeConf, OpenStackNodeConf, FusekiNodeConf}
 import it.unibo.ing.stormsmacs.rdfBindings.{OpenStackResourceData, OpenStackSampleData}
 
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
@@ -19,7 +19,7 @@ import it.unibo.ing.stormsmacs.rdfBindings.OpenStackRdfFormats._
 /**
  * Created by Antonio on 02/03/2015.
  */
-abstract class OpenStackNodePersisterBolt(fusekiEndpoint: FusekiNodeConf)
+abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
   extends TypedBolt[(OpenStackNodeConf, Date, Resource, Sample), Nothing]
   with Logging{
     private var _persisted : Set[Int] = _

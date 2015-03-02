@@ -9,7 +9,7 @@ import it.unibo.ing.rdf._
 import it.unibo.ing.utils._
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.GraphNamer
-import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, GenericNodeConf}
+import it.unibo.ing.stormsmacs.conf.{PersisterNodeConf, FusekiNodeConf, GenericNodeConf}
 import it.unibo.ing.stormsmacs.rdfBindings.{GenericNodeResource, GenericNodeSample}
 import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeDataRdfFormat._
 import org.eclipse.jetty.client.{ContentExchange, HttpClient}
@@ -19,7 +19,7 @@ import storm.scala.dsl.{Logging, TypedBolt}
 /**
  * Created by tmnd91 on 24/12/14.
  */
-abstract class GenericNodePersisterBolt(fusekiEndpoint : FusekiNodeConf)
+abstract class GenericNodePersisterBolt(persisterNode : PersisterNodeConf)
   extends TypedBolt[(GenericNodeConf, Date, SigarMeteredData), Nothing]
   with Logging
 {

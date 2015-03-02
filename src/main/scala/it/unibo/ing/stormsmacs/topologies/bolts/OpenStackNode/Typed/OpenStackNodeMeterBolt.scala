@@ -20,7 +20,7 @@ import it.unibo.ing.stormsmacs.GraphNamer
  * @author Antonio Murgia
  * @version 22/12/14
  */
-class OpenStackNodeMeterBolt(fusekiEndpoint : FusekiNodeConf, pollTime: Long)
+class OpenStackNodeMeterBolt(pollTime: Long)
   extends TypedBolt[(OpenStackNodeConf, Date, Resource),(OpenStackNodeConf, Date, Resource, Sample)](
     "NodeName", "GraphName", "Resource", "Sample")
   with Logging{

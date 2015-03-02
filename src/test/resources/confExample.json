@@ -46,11 +46,9 @@
                                 "connect_timeout" : 10000,
                                 "read_timeout" : 10000
                             }],
-      "fusekiNode"        : {
+      "persisterNode"     : {
                                 "id"  : "fuseki",
-                                "url" : "http://10.0.10.13:3030/ds/update",
-                                "username": "",
-                                "password": ""
+                                "url" : "http://10.0.10.13:3030/ds/update"
                             },
       "remote"            : true,
       "debug"             : false,
