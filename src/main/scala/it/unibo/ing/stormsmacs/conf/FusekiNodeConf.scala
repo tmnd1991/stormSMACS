@@ -1,6 +1,9 @@
 package it.unibo.ing.stormsmacs.conf
 
 import java.net.URL
+
+import it.unibo.ing.stormsmacs.conf.PersisterNodeType.FusekiNodeType
+
 /**
  * @author Antonio Murgia
  * @constructor Representation of a FusekiNode the TDB endpoint
@@ -9,8 +12,8 @@ import java.net.URL
  */
 
 case class FusekiNodeConf (id : String,
-                           `type` : PersisterNodeType,
-                           url : String) extends PersisterNodeConf(PersisterNodeType.FusekiNodeType){
+                           url : String,
+                           `type` : PersisterNodeType = FusekiNodeType) extends PersisterNodeConf(FusekiNodeType){
   override def toString = "FusekiNode[ " + id + " @ " + url.toString + " ]"
 }
 object FusekiNodeProtocol extends spray.json.DefaultJsonProtocol{
