@@ -48,7 +48,7 @@ object JsonConfigurationProtocol extends spray.json.DefaultJsonProtocol{
   import OpenStackNodeProtocol._
   import CloudFoundryNodeProtocol._
   import GenericNodeProtocol._
-  import PeristerNodeProtocol._
+  import PersisterNodeProtocol._
   implicit val jsonConfigurationFormat : JsonFormat[JsonConfiguration] = jsonFormat8(JsonConfiguration.apply)
   implicit object urlFormat extends JsonFormat[URL]{
     override def read(json: JsValue) = json match{

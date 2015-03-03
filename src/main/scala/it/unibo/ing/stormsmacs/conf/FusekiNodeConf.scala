@@ -9,12 +9,13 @@ import java.net.URL
  */
 
 case class FusekiNodeConf (id : String,
-                           url : String) extends PersisterNodeConf{
+                           `type` : PersisterNodeType,
+                           url : String) extends PersisterNodeConf(id, url, `type`){
   override def toString = "FusekiNode[ " + id + " @ " + url.toString + " ]"
 }
-
 object FusekiNodeProtocol extends spray.json.DefaultJsonProtocol{
   import spray.json._
-  import it.unibo.ing.stormsmacs.conf.JsonConfigurationProtocol._
-  implicit val fusekiNodeFormat = jsonFormat2(FusekiNodeConf)
+  import it.unibo.ing.stormsmacs.conf.PersisterNodeProtocol._
+
+  implicit val fusekiNodeFormat = jsonFormat3(FusekiNodeConf.apply)
 }

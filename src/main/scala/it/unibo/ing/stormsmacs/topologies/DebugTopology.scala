@@ -35,7 +35,7 @@ object DebugTopology {
                                   Some(30000), Some(30000)))),
       Some(List(CloudFoundryNodeConf("cd", new URL("http://localhost:9876"),Some(10000), Some(10000)))),
       Some(List(GenericNodeConf("gn", new URL("http://localhost:9875"), Some(10000), Some(10000)))),
-      VirtuosoNodeConf("virtuoso","jdbc:virtuoso://localhost:1111","dba","dba"),
+      VirtuosoNodeConf("virtuoso", PersisterNodeType.VirtuosoNodeType, "jdbc:virtuoso://localhost:1111", "dba", "dba"),
       false,
       false,
       60000
@@ -81,7 +81,7 @@ object DebugTopology {
       val boltClientName = "openstackClientBolt"
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
-      val persisterBolt = new OpenStackNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds"))
+      val persisterBolt = new OpenStackNodePersisterFusekiBolt(FusekiNodeConf("fuseki", PersisterNodeType.FusekiNodeType, "http://localhost:3030/ds"))
       val sampleClient = new OpenStackNodeClientBolt(list.head)
       for(osn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
@@ -107,7 +107,7 @@ object DebugTopology {
       for(gn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltReaderName, new GenericNodeClientBolt(gn),3).allGrouping(timerSpoutName)
-      val persisterBolt = new GenericNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds"))
+      val persisterBolt = new GenericNodePersisterFusekiBolt(FusekiNodeConf("fuseki", PersisterNodeType.FusekiNodeType, "http://localhost:3030/ds"))
       builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
         boltPersisterName,persisterBolt).
         shuffleGrouping(boltReaderName)
@@ -123,7 +123,7 @@ object DebugTopology {
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
       val sampleClient = new CloudFoundryNodeClientBolt(list.head)
-      val persisterBolt = new CloudFoundryNodePersisterFusekiBolt(FusekiNodeConf("fuseki","http://localhost:3030/ds"))
+      val persisterBolt = new CloudFoundryNodePersisterFusekiBolt(FusekiNodeConf("fuseki", PersisterNodeType.FusekiNodeType, "http://localhost:3030/ds"))
       for(cfn <- list)
         builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
           boltReaderName, new CloudFoundryNodeClientBolt(cfn),3).allGrouping(timerSpoutName)

@@ -13,6 +13,7 @@ class ConfTest extends FlatSpec with Matchers{
   "json conf file " should " be valid " in{
     val jsonText = Source.fromURL(getClass.getResource("/confExample.json")).mkString
     val conf = JsonConfiguration.tryReadJsonConf(jsonText)
+    JsonConfiguration.readJsonConf(jsonText)
     conf should not be (None)
   }
 
