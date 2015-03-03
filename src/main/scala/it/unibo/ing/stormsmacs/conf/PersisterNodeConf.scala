@@ -7,7 +7,7 @@ import org.openstack.api.restful.MalformedJsonException
  */
 abstract class PersisterNodeConf(id : String,
                                  url : String,
-                                 `type` : PersisterNodeType) {
+                                 `type` : PersisterNodeType) extends Serializable{
 
 }
 
