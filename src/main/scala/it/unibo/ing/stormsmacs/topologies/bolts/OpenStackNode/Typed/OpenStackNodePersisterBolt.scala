@@ -23,6 +23,12 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
   extends TypedBolt[(OpenStackNodeConf, Date, Resource, Sample), Nothing]
   with Logging{
     private var _persisted : Set[Int] = _
+    setup{
+      _persisted = Set()
+    }
+    shutdown{
+      _persisted = null
+    }
 
     protected def writeToRDF(graphName : String, model : Model)
 
