@@ -13,7 +13,7 @@ import it.unibo.ing.stormsmacs.conf.PersisterNodeType.FusekiNodeType
 
 case class FusekiNodeConf (id : String,
                            url : String,
-                           `type` : PersisterNodeType = FusekiNodeType) extends PersisterNodeConf(FusekiNodeType){
+                           `type` : PersisterNodeType = FusekiNodeType) extends PersisterNodeConf{
   override def toString = "FusekiNode[ " + id + " @ " + url.toString + " ]"
 }
 object FusekiNodeProtocol extends spray.json.DefaultJsonProtocol{

@@ -11,7 +11,7 @@ case class VirtuosoNodeConf( id : String,
                              url : String,
                              username : String,
                              password : String,
-                             `type` : PersisterNodeType = VirtuosoNodeType) extends PersisterNodeConf(VirtuosoNodeType){
+                             `type` : PersisterNodeType = VirtuosoNodeType) extends PersisterNodeConf{
 }
 
 object VirtuosoNodeProtocol extends spray.json.DefaultJsonProtocol{

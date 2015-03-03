@@ -11,7 +11,6 @@ import scala.concurrent.duration.Duration
  * @author Antonio Murgia
  * @version 28/12/14.
  */
-
 class MonitProcessInfoSerializer extends Serializer[MonitProcessInfo]{
   override def write(kryo: Kryo, output: Output, t: MonitProcessInfo): Unit = {
     output.writeFloat(t.cpu_percent, 1000, true)

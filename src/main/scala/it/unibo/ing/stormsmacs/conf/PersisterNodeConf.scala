@@ -5,8 +5,8 @@ import org.openstack.api.restful.MalformedJsonException
 /**
  * Created by Antonio on 02/03/2015.
  */
-abstract class PersisterNodeConf(`type` : PersisterNodeType){
-
+abstract class PersisterNodeConf{
+  val `type`: PersisterNodeType
 }
 
 object PersisterNodeProtocol extends spray.json.DefaultJsonProtocol{

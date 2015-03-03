@@ -218,6 +218,10 @@ object Topology {
     conf.registerSerialization(classOf[OpenStackNodeConf], classOf[OpenStackNodeConfSerializer])
     conf.registerSerialization(classOf[SigarMeteredData], classOf[SigarMeteredDataSerializer])
     conf.registerSerialization(classOf[Statistics], classOf[StatisticsSerializer])
+    conf.registerSerialization(classOf[PersisterNodeConf], classOf[PersisterNodeConfSerializer])
+    conf.registerSerialization(classOf[FusekiNodeConf], classOf[FusekiNodeConfSerializer])
+    conf.registerSerialization(classOf[VirtuosoNodeConf], classOf[VirtuosoNodeConfSerializer])
+
   }
   private def calctasks(nodes : Int, arity : Int): Int = (math ceil (nodes.toFloat / arity)) toInt
 }
