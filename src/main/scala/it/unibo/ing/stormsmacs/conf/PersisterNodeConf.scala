@@ -5,9 +5,7 @@ import org.openstack.api.restful.MalformedJsonException
 /**
  * Created by Antonio on 02/03/2015.
  */
-abstract class PersisterNodeConf(id : String,
-                                 url : String,
-                                 `type` : PersisterNodeType){
+abstract class PersisterNodeConf(`type` : PersisterNodeType){
 
 }
 

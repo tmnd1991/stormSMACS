@@ -10,7 +10,7 @@ import java.net.URL
 
 case class FusekiNodeConf (id : String,
                            `type` : PersisterNodeType,
-                           url : String) extends PersisterNodeConf(id, url, `type`){
+                           url : String) extends PersisterNodeConf(PersisterNodeType.FusekiNodeType){
   override def toString = "FusekiNode[ " + id + " @ " + url.toString + " ]"
 }
 object FusekiNodeProtocol extends spray.json.DefaultJsonProtocol{
