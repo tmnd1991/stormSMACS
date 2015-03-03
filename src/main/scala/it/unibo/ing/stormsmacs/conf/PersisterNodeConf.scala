@@ -7,7 +7,7 @@ import org.openstack.api.restful.MalformedJsonException
  */
 abstract class PersisterNodeConf(id : String,
                                  url : String,
-                                 `type` : PersisterNodeType) extends Serializable{
+                                 `type` : PersisterNodeType){
 
 }
 
@@ -48,7 +48,7 @@ object PersisterNodeProtocol extends spray.json.DefaultJsonProtocol{
     override def write(obj: PersisterNodeType): JsValue = JsString(obj.value)
   }
 }
-abstract class PersisterNodeType(val value : String)
+abstract class PersisterNodeType(val value : String) extends Serializable
 object PersisterNodeType{
   val values = Map(FusekiNodeType.value   -> FusekiNodeType,
                    VirtuosoNodeType.value -> VirtuosoNodeType)
