@@ -20,3 +20,6 @@ build
 target/
 .idea
 testdata/debugger
+cf.txt
+gen.txt
+os.txt
