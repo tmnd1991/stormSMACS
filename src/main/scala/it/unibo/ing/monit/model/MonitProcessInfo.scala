@@ -3,6 +3,7 @@ package it.unibo.ing.monit.model
 /**
  * @author Antonio Murgia
  * @version 03/11/14
+ * Class that represents a process information
  */
 
 import com.hp.hpl.jena.rdf.model.{ModelFactory, Model}
@@ -53,7 +54,7 @@ case class MonitProcessInfo(name              : String,
   def resId = pid
 }
 object MonitProcessInfo{
-  def applyOpt(name              : Option[String],
+  def applyOpt(name           : Option[String],
             status            : Option[MonitStatus],
             monitoring_status : Option[MonitMonitoringStatus],
             pid               : Option[Int],

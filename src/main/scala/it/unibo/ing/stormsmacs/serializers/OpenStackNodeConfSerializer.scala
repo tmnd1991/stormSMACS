@@ -7,6 +7,7 @@ import java.net.URL
 /**
  * @author Antonio Murgia
  * @version 28/12/14.
+ * Kryo serializer for OpenstackNodeConf to speed up communication in storm topologies.
  */
 class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
   override def write(kryo: Kryo, output: Output, t: OpenStackNodeConf): Unit = {

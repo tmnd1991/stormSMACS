@@ -7,6 +7,7 @@ import java.net.URL
  * @param id    id of the node (arbitrary, just an internal rappresentantion, should be unique)
  * @param connect_timeout connect timeout in ms default is 2000ms
  * @param read_timeout  read timeout in ms default is 1000ms
+ * Representation of a Generic Node
  */
 
 case class GenericNodeConf (id : String,

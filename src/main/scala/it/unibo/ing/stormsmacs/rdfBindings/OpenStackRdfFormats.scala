@@ -12,6 +12,7 @@ import org.openstack.api.restful.ceilometer.v2.elements.{Meter, Resource, Sample
 /**
  * @author Antonio Murgia
  * @version 26/12/14
+ * Converters from Openstack data to Rdf
  */
 case class OpenStackSampleData(url : URL, resourceId : String, info : Sample)
 case class OpenStackResourceData(url : URL, resource : Resource, meterId : String, unit : String, `type` : String)

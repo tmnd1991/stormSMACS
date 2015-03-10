@@ -12,6 +12,7 @@ import java.util.Date
 /**
  * @author Antonio Murgia
  * @version 24/12/14
+ * Storm Bolt that gets Sample Data from given Cloudfoundry node
  */
 class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf)
   extends HttpRequesterBolt[Tuple1[Date],(CloudFoundryNodeConf, Date, MonitInfo)](node.connectTimeout, node.readTimeout, false,"Node","GraphName","MonitData")

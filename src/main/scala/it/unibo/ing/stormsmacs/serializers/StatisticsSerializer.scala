@@ -8,6 +8,7 @@ import java.util.Date
 /**
  * @author Antonio Murgia
  * @version 27/12/2014
+ * Kryo serializer for Statistics to speed up communication in storm topologies.
  */
 
 class StatisticsSerializer extends Serializer[Statistics]{

@@ -5,7 +5,9 @@ import java.net.URL
 import it.unibo.ing.stormsmacs.conf.PersisterNodeType.VirtuosoNodeType
 
 /**
- * Created by Antonio on 02/03/2015.
+ * @author Antonio Murgia
+ * @version 02/03/2015
+ * Representation of a Virtuoso persister Node
  */
 case class VirtuosoNodeConf( id : String,
                              url : String,

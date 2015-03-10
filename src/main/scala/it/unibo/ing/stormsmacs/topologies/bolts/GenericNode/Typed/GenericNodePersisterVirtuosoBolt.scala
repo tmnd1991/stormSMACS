@@ -5,7 +5,9 @@ import it.unibo.ing.stormsmacs.conf.{VirtuosoNodeConf, FusekiNodeConf}
 import it.unibo.ing.stormsmacs.topologies.bolts.VirtuosoPersister
 
 /**
- * Created by tmnd91 on 24/12/14.
+ * @author Antonio Murgia
+ * @version 24/12/14.
+ * Storm Bolt that persists the monitored values to given Virtuoso endpoint
  */
 class GenericNodePersisterVirtuosoBolt(virtuosoEndpoint : VirtuosoNodeConf)
   extends GenericNodePersisterBolt(virtuosoEndpoint)

@@ -7,7 +7,9 @@ import it.unibo.ing.stormsmacs.conf.{PersisterNodeType, VirtuosoNodeConf, Fuseki
 import it.unibo.ing.stormsmacs.conf.PersisterNodeType.FusekiNodeType
 
 /**
- * Created by Andrea on 03/03/15.
+ * @author Antonio Murgia
+ * @version 03/03/15
+ * Kryo serializer for PersisterNodeConf (Fuseki and Virtuoso) to speed up communication in storm topologies.
  */
 
 class PersisterNodeConfSerializer extends Serializer[PersisterNodeConf] {

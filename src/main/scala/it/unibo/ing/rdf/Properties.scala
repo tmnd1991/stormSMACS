@@ -5,6 +5,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory
 /**
  * @author Antonio Murgia
  * @version 24/12/14
+ * Jena custom vocabulary
  */
 object Properties {
   private val m = ModelFactory.createDefaultModel()

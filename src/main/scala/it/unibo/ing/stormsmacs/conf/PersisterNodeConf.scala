@@ -3,7 +3,9 @@ package it.unibo.ing.stormsmacs.conf
 import org.openstack.api.restful.MalformedJsonException
 
 /**
- * Created by Antonio on 02/03/2015.
+ * @author Antonio Murgia
+ * @version 02/03/2015
+ * Representation of a generic Perister Node
  */
 abstract class PersisterNodeConf{
   val `type`: PersisterNodeType

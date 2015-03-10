@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Input
 /**
  * @author Antonio Murgia
  * @version 28/12/14.
+ * Some implicit additions to Kryo class
  */
 package object serializers {
   implicit class RichKryo(kryo: Kryo){

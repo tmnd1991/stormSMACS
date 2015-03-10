@@ -3,6 +3,7 @@ package it.unibo.ing.monit.model
 /**
  * @author Antonio Murgia
  * @version 03/11/14
+ * Enum monitoring status
  */
 
 class MonitStatus(val value : String){

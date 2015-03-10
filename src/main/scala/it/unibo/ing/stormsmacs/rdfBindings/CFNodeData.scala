@@ -3,6 +3,7 @@ package it.unibo.ing.stormsmacs.rdfBindings
 /**
  * @author Murgia Antonio
  * @version 15/12/14
+ * Converters from Cloudfoundry data to Rdf
  */
 import scala.language.postfixOps
 import java.net.{URI, URL}

@@ -15,7 +15,9 @@ import it.unibo.ing.stormsmacs.rdfBindings.CFNodeDataRdfFormat._
 import it.unibo.ing.rdf._
 
 /**
- * Created by tmnd91 on 24/12/14.
+ * @author Antonio Murgia
+ * @version 24/12/14
+ * Abstract Storm Bolt that persists the monitored values
  */
 abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeConf)
   extends TypedBolt[(CloudFoundryNodeConf, Date, MonitInfo), Nothing]

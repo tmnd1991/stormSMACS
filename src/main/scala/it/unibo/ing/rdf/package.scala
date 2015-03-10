@@ -8,7 +8,9 @@ import com.hp.hpl.jena.rdf.model.Model
 import scala.language.implicitConversions
 
 /**
- * Created by tmnd on 15/12/14.
+ * @author Antonio Murgia
+ * @version 15/12/14
+ * These implicits add conversions from any object to rdf (if the right conversion method is imported
  */
 
 package object rdf {

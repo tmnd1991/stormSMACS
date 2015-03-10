@@ -13,6 +13,7 @@ import java.net.URL
  * @param password password to log into keystone and get a valid token
  * @param connect_timeout connect timeout in ms default is 2000ms
  * @param read_timeout  read timeout in ms default is 1000ms
+ * Representation of an Openstack Node
  */
 case class OpenStackNodeConf(id : String,
                         tenantName: String,

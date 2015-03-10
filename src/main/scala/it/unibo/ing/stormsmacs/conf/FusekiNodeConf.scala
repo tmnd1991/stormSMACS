@@ -9,6 +9,7 @@ import it.unibo.ing.stormsmacs.conf.PersisterNodeType.FusekiNodeType
  * @constructor Representation of a FusekiNode the TDB endpoint
  * @param id    id of the node (arbitrary, just an internal representation, should be unique)
  * @param url   fuseki endpoint
+ * Representation of a Fuseki Node
  */
 
 case class FusekiNodeConf (id : String,

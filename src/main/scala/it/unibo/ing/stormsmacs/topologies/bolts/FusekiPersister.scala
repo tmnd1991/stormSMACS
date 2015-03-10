@@ -9,7 +9,9 @@ import org.eclipse.jetty.io.ByteArrayBuffer
 import it.unibo.ing.rdf._
 import it.unibo.ing.utils._
 /**
- * Created by Antonio on 02/03/2015.
+ * @author Antonio Murgia
+ * @version 02/03/2015
+ * Trait that adds the functionality to write to a Fuseki endpoint
  */
 trait FusekiPersister {
   protected def writeToRDFStore(fusekiEndpoint : FusekiNodeConf, httpClient : HttpClient,

@@ -3,6 +3,7 @@ package it.unibo.ing.monit.model
 /**
  * @author Antonio Murgia
  * @version 03/11/14
+ * Enum to represent the type of the Monitoring status
  */
 class MonitMonitoringStatus(val value : String){
   override val toString = value

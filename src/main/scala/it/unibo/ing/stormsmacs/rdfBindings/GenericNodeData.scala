@@ -6,7 +6,8 @@ import it.unibo.ing.utils._
 
 /**
  * @author Antonio Murgia
- * @version 26/12/14.
+ * @version 26/12/14
+ * Converters from Generic node data to Rdf
  */
 case class GenericNodeSample(url : URL, info : SigarMeteredData)
 case class GenericNodeResource(url : URL, info : SigarMeteredData)

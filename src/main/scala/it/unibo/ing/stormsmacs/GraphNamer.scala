@@ -5,7 +5,9 @@ import java.util.Date
 import it.unibo.ing.utils._
 
 /**
- * Created by tmnd91 on 09/01/15.
+ * @author Antonio Murgia
+ * @version 09/01/15
+ * Object to centralize the assignment of graph names
  */
 object GraphNamer {
   def graphName(d : Date)(implicit base : URI = new URI("http://stormsmacs/tests/")) = {

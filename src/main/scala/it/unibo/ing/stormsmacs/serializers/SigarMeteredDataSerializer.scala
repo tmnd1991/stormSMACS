@@ -6,7 +6,8 @@ import it.unibo.ing.sigar.restful.model.SigarMeteredData
 
 /**
  * @author Antonio Murgia
- * @version 28/12/14.
+ * @version 28/12/14
+ * Kryo serializer for SigarMeteredData to speed up communication in storm topologies.
  */
 class SigarMeteredDataSerializer extends Serializer[SigarMeteredData]{
   override def write(kryo: Kryo, output: Output, t: SigarMeteredData): Unit = {

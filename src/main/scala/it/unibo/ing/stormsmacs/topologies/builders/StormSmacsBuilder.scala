@@ -4,7 +4,9 @@ import backtype.storm.topology.TopologyBuilder
 import storm.scala.dsl.TypedTopologyBuilder
 
 /**
- * Created by tmnd91 on 08/03/15.
+ * @author Antonio Murgia
+ * @version 08/03/15
+ * Abstract builder
  */
 abstract class StormSmacsBuilder {
   def build(builder : TypedTopologyBuilder) : TypedTopologyBuilder

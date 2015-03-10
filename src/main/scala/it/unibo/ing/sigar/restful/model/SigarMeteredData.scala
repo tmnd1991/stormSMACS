@@ -5,7 +5,8 @@ import spray.json.DefaultJsonProtocol
 
 /**
  * @author Antonio Murgia
- * @version 28/10/14.
+ * @version 28/10/14
+ * Representation of Sigar Metered Data
  */
 case class SigarMeteredData(cpuPercent : Double,
                             freeMemPercent : Double,

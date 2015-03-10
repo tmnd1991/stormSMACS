@@ -6,10 +6,13 @@ import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf.{VirtuosoNodeConf, FusekiNodeConf, GenericNodeConf, PersisterNodeConf}
 import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterFusekiBolt, GenericNodePersisterVirtuosoBolt, GenericNodeClientBolt}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
+import scala.language.postfixOps
 import storm.scala.dsl.TypedTopologyBuilder
 
 /**
- * Created by tmnd91 on 08/03/15.
+ * @author Antonio Murgia
+ * @version 08/03/15
+ * Adds to the current topology all the spouts and bolts needed to monitor the list of generic node passed
  */
 class GenericBuilder(persisterNode : PersisterNodeConf,
                      list: Seq[GenericNodeConf],

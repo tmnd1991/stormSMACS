@@ -7,8 +7,11 @@ import it.unibo.ing.stormsmacs.topologies.bolts.VirtuosoPersister
 import storm.scala.dsl.Logging
 import virtuoso.jena.driver.{VirtGraph, VirtuosoUpdateFactory}
 
+
 /**
- * Created by tmnd91 on 22/12/14.
+ * @author Antonio Murgia
+ * @version 10/01/2015
+ * Storm Bolt that persists the monitored values to a Virtuoso endpoint
  */
 class OpenStackNodePersisterVirtuosoBolt(virtuosoEndpoint: VirtuosoNodeConf) extends OpenStackNodePersisterBolt(virtuosoEndpoint) with VirtuosoPersister
   with Logging{

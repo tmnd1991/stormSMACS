@@ -1,29 +1,10 @@
 package it.unibo.ing.stormsmacs.conf
 
 /**
- * Example of JSON configuration file
- * {
- *     "name"              : "test",
- *     "cloudfoundryNodes" : [{
- *                               "id" : "cf_cf",
- *                               "url" : "http://10.0.10.11:9876",
- *                               "connect-timeout" : 10000,
- *                               "read-timeout" : 10000
- *                          }],
- *     "genericNodes"      : [{
- *                               "id" : "cf_generic",
- *                               "url" : "http://10.0.10.11:9875",
- *                               "connect-timeout" : 10000,
- *                               "read-timeout" : 10000
- *                           }],
- *     "fusekiNode"        : {
- *                                   "id"  : "papap",
- *                                   "url" : "http://localhost:3030"
- *                           },
- *     "remote"            : false,
- *     "debug"             : false,
- *     "pollTime"          : 4000
- * }
+ * @author Antonio Murgia
+ * @version 10/03/2015
+ * Abstract representation of stormsmacs configuration
+ *
  */
 abstract class Configuration{
   val name              : String

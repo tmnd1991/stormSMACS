@@ -6,7 +6,9 @@ import it.unibo.ing.stormsmacs.topologies.bolts.FusekiPersister
 import org.eclipse.jetty.client.HttpClient
 
 /**
- * Created by tmnd91 on 24/12/14.
+ * @author Antonio Murgia
+ * @version 24/12/14.
+ * Storm Bolt that persists the monitored values to given Fuseki endpoint
  */
 class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
   extends GenericNodePersisterBolt(fusekiEndpoint) with FusekiPersister

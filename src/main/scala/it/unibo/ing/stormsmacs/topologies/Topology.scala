@@ -1,21 +1,18 @@
 package it.unibo.ing.stormsmacs.topologies
 
 import java.io.{File, FileNotFoundException}
-import java.util.Date
+
+import backtype.storm.{Config, LocalCluster, StormSubmitter}
+import it.unibo.ing.monit.model.{MonitProcessInfo, MonitSystemInfo}
+import it.unibo.ing.sigar.restful.model.SigarMeteredData
+import it.unibo.ing.stormsmacs.conf._
 import it.unibo.ing.stormsmacs.serializers._
 import it.unibo.ing.stormsmacs.topologies.builders.{CloudFoundryBuilder, GenericBuilder, OpenstackBuilder}
-import org.slf4j.LoggerFactory
-import backtype.storm.tuple.Fields
-import backtype.storm.{Config, StormSubmitter, LocalCluster}
-import storm.scala.dsl.{TypedTopologyBuilder, StormConfig}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
-import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodePersisterVirtuosoBolt, CloudFoundryNodePersisterFusekiBolt, CloudFoundryNodeClientBolt, CloudFoundryNodePersisterBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterFusekiBolt, GenericNodePersisterVirtuosoBolt, GenericNodeClientBolt}
-import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterFusekiBolt, OpenStackNodePersisterVirtuosoBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
-import it.unibo.ing.stormsmacs.conf._
-import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Statistics, Meter}
-import it.unibo.ing.sigar.restful.model.SigarMeteredData
-import it.unibo.ing.monit.model.{MonitSystemInfo, MonitProcessInfo, MonitInfo}
+import org.openstack.api.restful.ceilometer.v2.elements.{Meter, Statistics}
+import org.slf4j.LoggerFactory
+import storm.scala.dsl.{StormConfig, TypedTopologyBuilder}
+
 import scala.language.postfixOps
 
 
@@ -26,8 +23,8 @@ import scala.language.postfixOps
  */
 object Topology {
   val logger = LoggerFactory.getLogger(this.getClass)
-  val arityOfPersister = 3
   def main(args: Array[String]) = {
+    val maxNodesPerTask = 3
     require(args.length == 1)
     val jsonConfFile = args(0)
     try{
@@ -39,9 +36,10 @@ object Topology {
       val timerSpoutName = "timer"
       val timerSpout = new TimerSpout(conf.pollTime)
       builder.setSpout(timerSpoutName, timerSpout)
-      (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName)).build(builder)
-      (new GenericBuilder(conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName)).build(builder)
-      (new CloudFoundryBuilder(conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName)).build(builder)
+
+      (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+      (new GenericBuilder(conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+      (new CloudFoundryBuilder(conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
 
       val sConf = new StormConfig(debug = conf.debug)
       registerSerializers(sConf)
@@ -57,8 +55,6 @@ object Topology {
       case t : Throwable => logger.error(t.getMessage)
     }
   }
-
-
 
   def readConfFromJsonFile(filename : String) = {
     val jsonText = io.Source.fromFile(new File(filename)).mkString

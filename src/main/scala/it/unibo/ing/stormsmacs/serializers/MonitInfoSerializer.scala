@@ -10,6 +10,7 @@ import scala.concurrent.duration.Duration
 /**
  * @author Antonio Murgia
  * @version 28/12/14.
+ * Kryo serializer for MonitInfos to speed up communication in storm topologies.
  */
 class MonitProcessInfoSerializer extends Serializer[MonitProcessInfo]{
   override def write(kryo: Kryo, output: Output, t: MonitProcessInfo): Unit = {

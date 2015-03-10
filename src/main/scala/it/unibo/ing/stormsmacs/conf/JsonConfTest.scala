@@ -3,7 +3,9 @@ package it.unibo.ing.stormsmacs.conf
 import java.io.File
 
 /**
- * Created by tmnd91 on 18/01/15.
+ * @author Antonio Murgia
+ * @version 18/01/15
+ * Little utility to test integrity json conf files
  */
 object JsonConfTest extends App{
   if (args.length < 1)

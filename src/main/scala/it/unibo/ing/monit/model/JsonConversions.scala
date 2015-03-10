@@ -12,6 +12,7 @@ import it.unibo.ing.utils.DateUtils
 /**
  * @author Antonio Murgia
  * @version 03/11/14
+ * Conversion formats for Monit classes
  */
 object JsonConversions extends DefaultJsonProtocol {
   implicit object durationJsonFormat extends JsonFormat[Duration]{

@@ -17,7 +17,9 @@ import org.eclipse.jetty.io.ByteArrayBuffer
 import storm.scala.dsl.{Logging, TypedBolt}
 
 /**
- * Created by tmnd91 on 24/12/14.
+ * @author Antonio Murgia
+ * @version 24/12/14.
+ * Abstract Storm Bolt that persists the monitored values
  */
 abstract class GenericNodePersisterBolt(persisterNode : PersisterNodeConf)
   extends TypedBolt[(GenericNodeConf, Date, SigarMeteredData), Nothing]

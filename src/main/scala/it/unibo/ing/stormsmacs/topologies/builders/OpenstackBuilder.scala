@@ -4,13 +4,16 @@ import java.util.Date
 
 import backtype.storm.topology.TopologyBuilder
 import it.unibo.ing.stormsmacs.conf.{VirtuosoNodeConf, PersisterNodeConf, OpenStackNodeConf, FusekiNodeConf}
-import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterVirtuosoBolt, OpenStackNodePersisterFusekiBolt, OpenStackNodeMeterBolt, OpenStackNodeClientBolt}
+import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNodePersisterVirtuosoBolt, OpenStackNodePersisterFusekiBolt, OpenStackNodeSampleBolt, OpenStackNodeClientBolt}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
+import scala.language.postfixOps
 import storm.scala.dsl.TypedTopologyBuilder
 
 /**
- * Created by tmnd91 on 08/03/15.
+ * @author Antonio Murgia
+ * @version 08/03/15
+ * Adds to the current topology all the spouts and bolts needed to monitor the list of Openstack node passed
  */
 class OpenstackBuilder(pollTime : Long,
                        persisterNode : PersisterNodeConf,
@@ -25,7 +28,7 @@ class OpenstackBuilder(pollTime : Long,
       val boltMeterName = "openstackMeterBolt"
       val boltPersisterName = "openstackPersister"
       val sampleClient = new OpenStackNodeClientBolt(list.head)
-      val meterBolt = new OpenStackNodeMeterBolt(pollTime)
+      val meterBolt = new OpenStackNodeSampleBolt(pollTime)
       val meterBoltDeclarer = builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
         boltMeterName, meterBolt)
       for(osn <- list){

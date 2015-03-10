@@ -9,6 +9,7 @@ import it.unibo.ing.stormsmacs.conf.GenericNodeConf
 /**
  * @author Antonio Murgia
  * @version 28/12/14.
+ * Kryo serializer for GenericNodeConf to speed up communication in storm topologies.
  */
 class GenericNodeConfSerializer extends Serializer[GenericNodeConf]{
 

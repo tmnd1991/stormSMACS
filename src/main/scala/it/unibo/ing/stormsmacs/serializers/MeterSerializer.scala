@@ -7,6 +7,7 @@ import org.openstack.api.restful.ceilometer.v2.elements.{MeterType, Meter}
 /**
  * @author Antonio Murgia
  * @version 28/12/14.
+ * Kryo serializer for Meter to speed up communication in storm topologies.
  */
 class MeterSerializer extends Serializer[Meter]{
 

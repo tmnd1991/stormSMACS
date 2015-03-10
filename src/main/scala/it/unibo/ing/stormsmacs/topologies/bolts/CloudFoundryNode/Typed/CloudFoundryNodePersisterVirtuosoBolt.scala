@@ -5,7 +5,9 @@ import it.unibo.ing.stormsmacs.conf.{VirtuosoNodeConf}
 import it.unibo.ing.stormsmacs.topologies.bolts.VirtuosoPersister
 
 /**
- * Created by Antonio on 02/03/2015.
+ * @author Antonio Murgia
+ * @version 24/12/14
+ * Storm Bolt that persists the monitored values to a Virtuoso endpoint
  */
 class CloudFoundryNodePersisterVirtuosoBolt(virtuosoEndpoint : VirtuosoNodeConf)
   extends CloudFoundryNodePersisterBolt(virtuosoEndpoint)

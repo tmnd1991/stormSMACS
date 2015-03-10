@@ -17,7 +17,9 @@ import it.unibo.ing.stormsmacs.rdfBindings.OpenStackRdfFormats._
 
 
 /**
- * Created by Antonio on 02/03/2015.
+ * @author Antonio Murgia
+ * @version 22/12/2014
+ * Abstract Storm Bolt that persists the monitored values
  */
 abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
   extends TypedBolt[(OpenStackNodeConf, Date, Resource, Sample), Nothing]

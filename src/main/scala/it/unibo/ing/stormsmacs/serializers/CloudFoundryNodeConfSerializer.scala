@@ -9,6 +9,7 @@ import it.unibo.ing.stormsmacs.conf.CloudFoundryNodeConf
 /**
  * @author Antonio Murgia
  * @version 28/12/14.
+ * Kryo serializer for CloudFoundryNodeConf to speed up communication in storm topologies.
  */
 class CloudFoundryNodeConfSerializer extends Serializer[CloudFoundryNodeConf]{
   override def write(kryo: Kryo, output: Output, t: CloudFoundryNodeConf): Unit ={

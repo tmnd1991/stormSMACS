@@ -1,7 +1,9 @@
 package it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed
 
 /**
- * Created by tmnd91 on 22/12/14.
+ * @author Antonio Murgia
+ * @version 22/12/2014
+ * Storm Bolt that lists all the resources that will be monitored
  */
 
 import java.util.Date

@@ -4,9 +4,10 @@ import java.net.URL
 /**
  * @author Antonio Murgia
  * @constructor Representation of a CloudFoundryNode
- * @param id    id of the node (arbitrary, just an internal rappresentantion, should be unique)
+ * @param id    id of the node (arbitrary, just an internal representantion, should be unique)
  * @param connect_timeout connect timeout in ms default is 2000ms
  * @param read_timeout  read timeout in ms default is 1000ms
+ * Representation of a Cloudfoundry Node
  */
 
 case class CloudFoundryNodeConf (id : String,

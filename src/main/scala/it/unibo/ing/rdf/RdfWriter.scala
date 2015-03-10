@@ -9,6 +9,7 @@ import scala.annotation.implicitNotFound
 /**
  * @author Antonio Murgia
  * @version 15/12/14
+ * These implicits add conversions from any object to rdf (if the right conversion method is imported
  */
 @implicitNotFound(msg = "Cannot find RdfWriter type class for ${T}")
 trait RdfWriter[T] {

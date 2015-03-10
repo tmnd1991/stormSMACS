@@ -7,7 +7,9 @@ import it.unibo.ing.utils._
 import virtuoso.jena.driver.{VirtuosoUpdateFactory, VirtGraph}
 
 /**
- * Created by Antonio on 02/03/2015.
+ * @author Antonio Murgia
+ * @version 02/03/2015
+ * Trait that adds the functionality to write to a Fuseki endpoint
  */
 trait VirtuosoPersister {
   protected def writeToRDFStore(virtuosoEndPoint : VirtuosoNodeConf, graphName: String, data : Model) : Unit = {

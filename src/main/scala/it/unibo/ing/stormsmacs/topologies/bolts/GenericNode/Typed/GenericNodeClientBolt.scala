@@ -12,7 +12,8 @@ import spray.json._
 import it.unibo.ing.sigar.restful.model.SigarMeteredDataFormat._
 /**
  * @author Antonio Murgia
- * @version 18/11/14
+ * @version 18/11/2014
+ * Storm Bolt that gets Sample Data from given node
  */
 class GenericNodeClientBolt(val node : GenericNodeConf)
   extends HttpRequesterBolt[Tuple1[Date], (GenericNodeConf, Date, SigarMeteredData)](node.connectTimeout, node.readTimeout, false, "Node","GraphName","MonitData")
@@ -31,7 +32,7 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
     catch{
       case e : Throwable => {
         logger.error(e.getStackTrace.mkString("\n"))
-        st.fail
+        st.ack //the replay of this is fruitless, because the value will be reread in the future and wouldn't correspond to the original one
       }
     }
   }

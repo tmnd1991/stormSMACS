@@ -6,10 +6,13 @@ import it.unibo.ing.monit.model.MonitInfo
 import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, PersisterNodeConf, VirtuosoNodeConf, CloudFoundryNodeConf}
 import it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed.{CloudFoundryNodePersisterVirtuosoBolt, CloudFoundryNodePersisterFusekiBolt, CloudFoundryNodeClientBolt}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
+import scala.language.postfixOps
 import storm.scala.dsl.TypedTopologyBuilder
 
 /**
- * Created by tmnd91 on 08/03/15.
+ * @author Antonio Murgia
+ * @version 08/03/15
+ * Adds to the current topology all the spouts and bolts needed to monitor the list of cloudfoundry node passed
  */
 class CloudFoundryBuilder(persister: PersisterNodeConf,
                           list: Seq[CloudFoundryNodeConf],

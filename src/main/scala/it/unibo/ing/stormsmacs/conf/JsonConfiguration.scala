@@ -14,6 +14,7 @@ package it.unibo.ing.stormsmacs.conf
  * @param persisterNode      persister endpoint used as TDB
  * @param debug              storm debug mode
  * @param pollTime           poll time of monitoring
+ * Implementation of Configuration, as a json file
  */
 case class JsonConfiguration(name              : String,
                              openstackNodes    : Option[Seq[OpenStackNodeConf]],
