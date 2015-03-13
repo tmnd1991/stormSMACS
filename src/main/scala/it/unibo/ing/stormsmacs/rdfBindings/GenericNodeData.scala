@@ -21,20 +21,20 @@ object GenericNodeDataRdfFormat{
     override def write(obj: GenericNodeSample): Model = {
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
-
-      val cpuURL = (obj.url / "cpu").toString
-      val coreNumberURL = (obj.url / "cpu" / "coreNumbers").toString
-      val cpuPercentUsage = (obj.url /  "cpu"  / "percentUsage").toString
-      val diskByteReads = (obj.url / "disk" / "bytesRead").toString
-      val diskReads = (obj.url / "disk" / "reads").toString
-      val diskByteWrites = (obj.url / "disk" / "bytesWrite").toString
-      val diskWrites = (obj.url / "disk" / "writes").toString
-      val memoryFreePercentage = (obj.url / "memory" / "freePercentage").toString
-      val netBytesRead = (obj.url / "net" / "bytesRead").toString
-      val netBytesWrite = (obj.url / "net" / "bytesWrite").toString
-      val os = (obj.url / "os").toString
-      val numberOfProcesses = (obj.url / "numberOfProcesses").toString
-      val uptime = (obj.url / "upTime").toString
+      val url = URLUtils.removePort(obj.url)
+      val cpuURL = (url / "cpu").toString
+      val coreNumberURL = (url / "cpu" / "coreNumbers").toString
+      val cpuPercentUsage = (url /  "cpu"  / "percentUsage").toString
+      val diskByteReads = (url / "disk" / "bytesRead").toString
+      val diskReads = (url / "disk" / "reads").toString
+      val diskByteWrites = (url / "disk" / "bytesWrite").toString
+      val diskWrites = (url / "disk" / "writes").toString
+      val memoryFreePercentage = (url / "memory" / "freePercentage").toString
+      val netBytesRead = (url / "net" / "bytesRead").toString
+      val netBytesWrite = (url / "net" / "bytesWrite").toString
+      val os = (url / "os").toString
+      val numberOfProcesses = (url / "numberOfProcesses").toString
+      val uptime = (url / "upTime").toString
 
       m.createResource(cpuURL).addProperty(Properties.name, obj.info.cpuName)
 
@@ -93,19 +93,20 @@ object GenericNodeDataRdfFormat{
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
 
-      val cpuURL = (obj.url / "cpu").toString
-      val coreNumberURL = (obj.url / "cpu" / "coreNumbers").toString
-      val cpuPercentUsage = (obj.url /  "cpu"  / "percentUsage").toString
-      val diskByteReads = (obj.url / "disk" / "bytesRead").toString
-      val diskReads = (obj.url / "disk" / "reads").toString
-      val diskByteWrites = (obj.url / "disk" / "bytesWrite").toString
-      val diskWrites = (obj.url / "disk" / "writes").toString
-      val memoryFreePercentage = (obj.url / "memory" / "freePercentage").toString
-      val netBytesRead = (obj.url / "net" / "bytesRead").toString
-      val netBytesWrite = (obj.url / "net" / "bytesWrite").toString
-      val os = (obj.url / "os").toString
-      val numberOfProcesses = (obj.url / "numberOfProcesses").toString
-      val uptime = (obj.url / "upTime").toString
+      val url = URLUtils.removePort(obj.url)
+      val cpuURL = (url / "cpu").toString
+      val coreNumberURL = (url / "cpu" / "coreNumbers").toString
+      val cpuPercentUsage = (url /  "cpu"  / "percentUsage").toString
+      val diskByteReads = (url / "disk" / "bytesRead").toString
+      val diskReads = (url / "disk" / "reads").toString
+      val diskByteWrites = (url / "disk" / "bytesWrite").toString
+      val diskWrites = (url / "disk" / "writes").toString
+      val memoryFreePercentage = (url / "memory" / "freePercentage").toString
+      val netBytesRead = (url / "net" / "bytesRead").toString
+      val netBytesWrite = (url / "net" / "bytesWrite").toString
+      val os = (url / "os").toString
+      val numberOfProcesses = (url / "numberOfProcesses").toString
+      val uptime = (url / "upTime").toString
 
 
       m.createResource(coreNumberURL).
@@ -154,8 +155,7 @@ object GenericNodeDataRdfFormat{
 
       m.createResource(os).
         addProperty(RDF.`type`, "Resource").
-        addProperty(Properties.sampleType, "gauge").
-        addProperty(Properties.unit, "B")
+        addProperty(Properties.sampleType, "gauge")
 
       m.createResource(numberOfProcesses).
         addProperty(RDF.`type`, "Resource").
