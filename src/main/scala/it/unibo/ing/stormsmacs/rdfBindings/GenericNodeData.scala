@@ -21,51 +21,68 @@ object GenericNodeDataRdfFormat{
     override def write(obj: GenericNodeSample): Model = {
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
-      val cpuName = m.createResource((obj.url / "cpu").toString).addProperty(Properties.name, obj.info.cpuName)
-      val cpuCores = m.createResource((obj.url / "cpu" / "coreNumbers").toString).
+
+      val cpuURL = (obj.url / "cpu").toString
+      val coreNumberURL = (obj.url / "cpu" / "coreNumbers").toString
+      val cpuPercentUsage = (obj.url /  "cpu"  / "percentUsage").toString
+      val diskByteReads = (obj.url / "disk" / "bytesRead").toString
+      val diskReads = (obj.url / "disk" / "reads").toString
+      val diskByteWrites = (obj.url / "disk" / "bytesWrite").toString
+      val diskWrites = (obj.url / "disk" / "writes").toString
+      val memoryFreePercentage = (obj.url / "memory" / "freePercentage").toString
+      val netBytesRead = (obj.url / "net" / "bytesRead").toString
+      val netBytesWrite = (obj.url / "net" / "bytesWrite").toString
+      val os = (obj.url / "os").toString
+      val numberOfProcesses = (obj.url / "numberOfProcesses").toString
+      val uptime = (obj.url / "upTime").toString
+
+      m.createResource(cpuURL).addProperty(Properties.name, obj.info.cpuName)
+
+      m.createResource(coreNumberURL).
         addProperty(RDF.value, "" + obj.info.numberOfCores).
         addProperty(RDF.`type`, "Sample")
-      val cpuUsage = m.createResource((obj.url /  "cpu"  / "percentUsage").toString).
+
+      m.createResource(cpuPercentUsage).
         addProperty(RDF.value, "" + obj.info.cpuPercent.toInt).
         addProperty(RDF.`type`, "Sample")
 
-      val diskByteRead = m.createResource((obj.url / "disk" / "bytesRead").toString).
+      m.createResource(diskByteReads).
         addProperty(RDF.value, "" + obj.info.diskReadBytes).
         addProperty(RDF.`type`, "Sample")
 
-      val diskReads = m.createResource((obj.url / "disk" / "reads").toString).
+      m.createResource(diskReads).
         addProperty(RDF.value, "" + obj.info.diskReads).
         addProperty(RDF.`type`, "Sample")
 
-      val diskByteWrite =  m.createResource((obj.url / "disk" / "bytesWrite").toString).
+      m.createResource(diskByteWrites).
         addProperty(RDF.value, "" + obj.info.diskWriteBytes).
         addProperty(RDF.`type`, "Sample")
 
-      val diskWrites =  m.createResource((obj.url / "disk" / "writes").toString).
+      m.createResource(diskWrites).
         addProperty(RDF.value, "" + obj.info.diskWrites).
         addProperty(RDF.`type`, "Sample")
 
-      val memory = m.createResource((obj.url / "memory" / "freePercentage").toString).
+      m.createResource(memoryFreePercentage).
         addProperty(RDF.value, "" + obj.info.freeMemPercent).
         addProperty(RDF.`type`, "Sample")
 
-      val netByteRead = m.createResource((obj.url / "net" / "bytesRead").toString).
+      m.createResource(netBytesRead).
         addProperty(RDF.value, "" + obj.info.netInBytes).
         addProperty(RDF.`type`, "Sample")
 
-      val netByteWrite = m.createResource((obj.url / "net" / "bytesWrite").toString).
+      m.createResource(netBytesWrite).
         addProperty(RDF.value, "" + obj.info.netOutBytes).
         addProperty(RDF.`type`, "Sample")
 
-      val os = m.createResource((obj.url / "os").toString).
+      m.createResource(os).
         addProperty(RDF.value, "" + obj.info.osName).
         addProperty(RDF.`type`, "Sample")
 
-      val processes = m.createResource((obj.url / "numberOfProcesses").toString).
+      m.createResource(numberOfProcesses).
         addProperty(RDF.value, "" + obj.info.processes).
         addProperty(RDF.`type`, "Sample")
 
-      val uptime = m.createResource((obj.url / "upTime").toString).
+      m.createResource(uptime).
         addProperty(RDF.value, "" + obj.info.uptime).
         addProperty(RDF.`type`, "Sample")
       m
@@ -76,58 +93,76 @@ object GenericNodeDataRdfFormat{
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
 
-      val cpuCores = m.createResource((obj.url / "cpu" / "coreNumbers").toString).
+      val cpuURL = (obj.url / "cpu").toString
+      val coreNumberURL = (obj.url / "cpu" / "coreNumbers").toString
+      val cpuPercentUsage = (obj.url /  "cpu"  / "percentUsage").toString
+      val diskByteReads = (obj.url / "disk" / "bytesRead").toString
+      val diskReads = (obj.url / "disk" / "reads").toString
+      val diskByteWrites = (obj.url / "disk" / "bytesWrite").toString
+      val diskWrites = (obj.url / "disk" / "writes").toString
+      val memoryFreePercentage = (obj.url / "memory" / "freePercentage").toString
+      val netBytesRead = (obj.url / "net" / "bytesRead").toString
+      val netBytesWrite = (obj.url / "net" / "bytesWrite").toString
+      val os = (obj.url / "os").toString
+      val numberOfProcesses = (obj.url / "numberOfProcesses").toString
+      val uptime = (obj.url / "upTime").toString
+
+
+      m.createResource(coreNumberURL).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge")
 
-      val cpuUsage = m.createResource((obj.url / "cpu" / "percentUsage").toString).
+      m.createResource(cpuPercentUsage).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "%")
 
-      val diskByteRead = m.createResource((obj.url / "disk" / "bytesRead").toString).
+      m.createResource(diskByteReads).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "B")
 
-      val diskReads = m.createResource((obj.url / "disk" / "reads").toString).
+      m.createResource(diskReads).
         addProperty(RDF.`type`, "Resource").
-        addProperty(Properties.sampleType, "gauge")
+        addProperty(Properties.sampleType, "gauge").
+        addProperty(Properties.unit, "units")
 
-      val diskByteWrite =  m.createResource((obj.url / "disk" / "bytesWrite").toString).
+      m.createResource(diskByteWrites).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "B")
 
-      val diskWrites =  m.createResource((obj.url / "disk" / "writes").toString).
+      m.createResource(diskWrites).
         addProperty(RDF.`type`, "Resource").
-        addProperty(Properties.sampleType, "gauge")
+        addProperty(Properties.sampleType, "gauge").
+        addProperty(Properties.unit, "units")
 
-      val memory = m.createResource((obj.url / "memory" / "freePercentage").toString).
+      m.createResource(memoryFreePercentage).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "%")
 
-      val netByteRead = m.createResource((obj.url / "net" / "bytesRead").toString).
+      m.createResource(netBytesRead).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "B")
 
-      val netByteWrite = m.createResource((obj.url / "net" / "bytesWrite").toString).
+      m.createResource(netBytesWrite).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "B")
 
-      val os = m.createResource((obj.url / "os").toString).
+      m.createResource(os).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "B")
 
-      val processes = m.createResource((obj.url / "numberOfProcesses").toString).
+      m.createResource(numberOfProcesses).
         addProperty(RDF.`type`, "Resource").
-        addProperty(Properties.sampleType, "gauge")
+        addProperty(Properties.sampleType, "gauge").
+        addProperty(Properties.unit, "units")
 
-      val uptime = m.createResource((obj.url / "upTime").toString).
+      m.createResource(uptime).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "cumulative").
         addProperty(Properties.unit, "ms")
