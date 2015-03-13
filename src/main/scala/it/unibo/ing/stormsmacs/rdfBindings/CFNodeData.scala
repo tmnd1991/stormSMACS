@@ -14,22 +14,25 @@ import it.unibo.ing.monit.model.{MonitSystemInfo, MonitProcessInfo, MonitInfo}
 import it.unibo.ing.rdf._
 import it.unibo.ing.rdf.RdfWriter
 import it.unibo.ing.utils._
+import it.unibo.ing.utils.URLUtils._
 
 case class CFNodeSample(url : URL, info : MonitInfo)
 case class CFNodeResource(url : URL, info : MonitInfo)
 object CFNodeDataRdfFormat{
+  def nodeUrl(obj : CFNodeResource) : URL = URLUtils.removePort(obj.url) / obj.info.name
+  def nodeUrl(obj : CFNodeSample) : URL = URLUtils.removePort(obj.url) / obj.info.name
+
   implicit object CFNodeResourceRDFWriter extends RdfWriter[CFNodeResource]{
     override def write(obj: CFNodeResource): Model = {
       val model = ModelFactory.createDefaultModel()
       model.setNsPrefixes(Properties.prefixes)
-      val nodeUrl = (obj.url / "CF").toString
       obj info match {
-        case m : MonitProcessInfo => write(model, nodeUrl, m)
-        case m : MonitSystemInfo  => write(model, nodeUrl, m)
+        case m : MonitProcessInfo => write(model, nodeUrl(obj), m)
+        case m : MonitSystemInfo  => write(model, nodeUrl(obj), m)
         case _ => model
       }
     }
-    private def write(model : Model, url : String, obj: MonitProcessInfo) : Model = {
+    private def write(model : Model, url : URL, obj: MonitProcessInfo) : Model = {
       model.createResource(url / "status").
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge")
@@ -101,7 +104,7 @@ object CFNodeDataRdfFormat{
       }
       return model
     }
-    private def write(model : Model, url : String, obj: MonitSystemInfo) : Model = {
+    private def write(model : Model, url : URL, obj: MonitSystemInfo) : Model = {
       model.createResource(url / "dataCollected").
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge")
@@ -172,10 +175,9 @@ object CFNodeDataRdfFormat{
     override def write(obj: CFNodeSample): Model = {
       val model = ModelFactory.createDefaultModel()
       model.setNsPrefixes(Properties.prefixes)
-      val nodeUrl = (obj.url / "CF").toString
       obj info match {
-        case m : MonitProcessInfo => write(model, nodeUrl, m)
-        case m : MonitSystemInfo  => write(model, nodeUrl, m)
+        case m : MonitProcessInfo => write(model, nodeUrl(obj), m)
+        case m : MonitSystemInfo  => write(model, nodeUrl(obj), m)
         case _ => model
       }
     }

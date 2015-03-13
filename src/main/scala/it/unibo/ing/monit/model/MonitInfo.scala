@@ -7,5 +7,6 @@ package it.unibo.ing.monit.model
  * abstract class to be inherited by MonitProcessInfo and MonitSystemInfo
  */
 abstract class MonitInfo{
+  val name : String
   def resId : Int
 }
