@@ -49,7 +49,7 @@ object GenericNodeDataRdfFormat{
         addProperty(RDF.value, "" + obj.info.freeMemPercent).
         addProperty(RDF.`type`, "Sample")
 
-      val netByteRead = m.createResource((obj.url / "net" / "byteRead").toString).
+      val netByteRead = m.createResource((obj.url / "net" / "bytesRead").toString).
         addProperty(RDF.value, "" + obj.info.netInBytes).
         addProperty(RDF.`type`, "Sample")
 
@@ -108,12 +108,12 @@ object GenericNodeDataRdfFormat{
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "%")
 
-      val netByteRead = m.createResource((obj.url / "net" / "byteRead").toString).
+      val netByteRead = m.createResource((obj.url / "net" / "bytesRead").toString).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "B")
 
-      val netByteWrite = m.createResource((obj.url / "net" / "byteWrite").toString).
+      val netByteWrite = m.createResource((obj.url / "net" / "bytesWrite").toString).
         addProperty(RDF.`type`, "Resource").
         addProperty(Properties.sampleType, "gauge").
         addProperty(Properties.unit, "B")

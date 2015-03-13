@@ -18,7 +18,6 @@ import it.unibo.ing.utils._
 case class CFNodeSample(url : URL, info : MonitInfo)
 case class CFNodeResource(url : URL, info : MonitInfo)
 object CFNodeDataRdfFormat{
-  import scala.collection.JavaConversions._
   implicit object CFNodeResourceRDFWriter extends RdfWriter[CFNodeResource]{
     override def write(obj: CFNodeResource): Model = {
       val model = ModelFactory.createDefaultModel()

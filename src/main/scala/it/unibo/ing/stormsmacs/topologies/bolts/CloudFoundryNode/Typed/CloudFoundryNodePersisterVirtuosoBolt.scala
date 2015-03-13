@@ -12,7 +12,6 @@ import it.unibo.ing.stormsmacs.topologies.bolts.VirtuosoPersister
 class CloudFoundryNodePersisterVirtuosoBolt(virtuosoEndpoint : VirtuosoNodeConf)
   extends CloudFoundryNodePersisterBolt(virtuosoEndpoint)
   with VirtuosoPersister {
-
   override protected def writeToRDF(graphName: String, data: Model): Unit = writeToRDFStore(virtuosoEndpoint, graphName, data)
 }
 
