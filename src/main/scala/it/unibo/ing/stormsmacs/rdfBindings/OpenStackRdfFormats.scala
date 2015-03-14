@@ -14,7 +14,7 @@ import org.openstack.api.restful.ceilometer.v2.elements.{Meter, Resource, Sample
  * @version 26/12/14
  * Converters from Openstack data to Rdf
  */
-case class OpenStackSampleData(url : URL, resourceId : String, info : Sample)
+case class OpenStackSampleData(url : URL, info : Sample)
 case class OpenStackResourceData(url : URL, resource : Resource, meterId : String, unit : String, `type` : String)
 object OpenStackRdfFormats{
 
@@ -23,13 +23,13 @@ object OpenStackRdfFormats{
       val m = ModelFactory.createDefaultModel()
       m.setNsPrefixes(Properties.prefixes)
       //the sample
-      val sample = m.createResource((obj.url / obj.info.id).toString).
+      val sample = m.createResource((obj.url / obj.info.resource_id / obj.info.meter).toString).
         addProperty(RDF.`type`, "Sample").
         addProperty(Properties.sampleType, "" + obj.info.`type`). //we can skip this
         addProperty(Properties.sampleId, "" + obj.info.id).       //this too
         addProperty(Properties.projectId, obj.info.project_id).
         addProperty(Properties.recordedAt, TimestampUtils.format(obj.info.recorded_at)).
-        addProperty(Properties.resourceId, obj.resourceId).
+        addProperty(Properties.resourceId, obj.info.resource_id).
         addProperty(Properties.source, obj.info.source).
         addProperty(Properties.timestamp, TimestampUtils.format(obj.info.timestamp)).
         addProperty(Properties.unit, obj.info.unit).

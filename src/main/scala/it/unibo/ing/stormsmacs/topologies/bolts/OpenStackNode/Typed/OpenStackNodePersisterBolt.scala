@@ -38,7 +38,7 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
       try {
         val graphName = GraphNamer.graphName(t._2)
         val url = GraphNamer.cleanURL(t._1.ceilometerUrl)
-        val data = OpenStackSampleData(url, t._3.resource_id, t._4)
+        val data = OpenStackSampleData(url, t._4)
         val model = data.toRdf
         writeToRDF(graphName, model)
         val res = OpenStackResourceData(GraphNamer.cleanURL(t._1.ceilometerUrl), t._3, t._4.meter, t._4.unit, t._4.`type`.toString)
