@@ -31,7 +31,7 @@ class osWriteToFileBolt(file: String)
     try{
       val graphName = GraphNamer.graphName(t._2)
       val url = new URL(t._1.ceilometerUrl.getProtocol + "://" +t._1.ceilometerUrl.getHost)
-      val data = OpenStackSampleData(url, t._3.resource_id, t._4)
+      val data = OpenStackSampleData(url, t._4)
       val model = data.toRdf
       writeToRDFStore(graphName, model)
       st.ack
