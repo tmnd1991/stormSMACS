@@ -31,7 +31,10 @@ class OpenStackNodeSampleBolt(pollTime: Long)
     val start = new Date(t._2.getTime - pollTime)
     cclient.tryGetSamplesOfResource(t._3.resource_id, start, t._2) match{
       case Some(Nil) => st.ack        //no samples for this resource, we just ack the tuple
-      case Some(samples : Seq[Sample]) => for (s <- samples) using anchor st emit(t._1, t._2, t._3, s)
+      case Some(samples : Seq[Sample]) => {
+        for (s <- samples) using anchor st emit(t._1, t._2, t._3, s)
+        st.ack
+      }
       case None => st.fail            //if we get None as a result, something bad happened, we need to replay the tuple
     }
   }

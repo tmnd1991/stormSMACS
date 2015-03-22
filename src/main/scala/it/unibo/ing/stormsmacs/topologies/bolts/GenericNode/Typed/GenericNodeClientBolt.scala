@@ -28,6 +28,7 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
       val state = exchange.waitForDone()
       val body = exchange.getResponseContent
       using anchor st emit (node, t._1, body.parseJson.convertTo[SigarMeteredData])
+      st.ack
     }
     catch{
       case e : Throwable => {

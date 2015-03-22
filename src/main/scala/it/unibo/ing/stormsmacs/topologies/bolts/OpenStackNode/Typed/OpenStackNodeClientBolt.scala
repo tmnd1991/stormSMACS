@@ -25,7 +25,10 @@ class OpenStackNodeClientBolt(node : OpenStackNodeConf)
   override def typedExecute(t: Tuple1[Date], st : Tuple) = {
     cclient.tryListAllResources match{
       case Some(Nil) => st.ack
-      case Some(res : Seq[Resource]) => for (r <- res) using anchor st emit(node, t._1, r)
+      case Some(res : Seq[Resource]) => {
+        for (r <- res) using anchor st emit(node, t._1, r)
+        st.ack
+      }
       case None => st.fail
     }
     //this method looks so cute!
