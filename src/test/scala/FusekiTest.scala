@@ -19,7 +19,7 @@ import scala.concurrent.duration.Duration
  * Created by tmnd91 on 03/01/15.
  */
 class FusekiTest extends FlatSpec with Matchers{
-
+/*
   "we " should " be able to insert" in{
     val httpClient = new HttpClient()
     httpClient.setConnectTimeout(1000)
@@ -38,7 +38,7 @@ class FusekiTest extends FlatSpec with Matchers{
     val state = exchange.waitForDone()
     (exchange.getResponseStatus / 100) should be (2)
   }
-/*
+
   "virtuoso " should " work " in{
     val graphName = "<http://stormsmacs/sample/" + DateUtils.format(new Date(),"yyyy-MM-dd_HH:mm:ss>")
     val node = CFNodeData(new URL("http://192.168.1.10"),
