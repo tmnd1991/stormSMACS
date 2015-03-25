@@ -37,6 +37,7 @@ object Topology {
       val timerSpout = new TimerSpout(conf.pollTime)
       builder.setSpout(timerSpoutName, timerSpout)
 
+
       (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
       (new GenericBuilder(conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
       (new CloudFoundryBuilder(conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
@@ -44,6 +45,7 @@ object Topology {
       val sConf = new StormConfig(debug = conf.debug)
       registerSerializers(sConf)
       if (conf.remote){
+        sConf.setNumWorkers((math ceil (conf.nodesNumber.toFloat / 20)) toInt)
         StormSubmitter.submitTopology(conf.name, sConf, builder.createTopology())
       }
       else{

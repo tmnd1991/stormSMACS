@@ -25,4 +25,7 @@ abstract class Configuration{
                           "persisterNode = " + persisterNode + "\n" +
                           "debug = " + debug + "\n" +
                           "pollTime = " + pollTime
+
+  def nodesNumber = openstackNodeList.length + cloudfoundryNodeList.length + genericNodeList.length
+
 }
