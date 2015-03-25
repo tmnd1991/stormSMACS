@@ -46,7 +46,7 @@ object Topology {
       val sConf = new StormConfig(debug = conf.debug)
       registerSerializers(sConf)
       if (conf.remote){
-        sConf.setNumWorkers((math ceil (conf.nodesNumber.toFloat / 20)) toInt)
+        sConf.setNumWorkers((math ceil (conf.nodesNumber.toFloat / 50)) toInt)
         StormSubmitter.submitTopology(conf.name, sConf, builder.createTopology())
       }
       else{
