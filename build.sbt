@@ -38,3 +38,7 @@ libraryDependencies += "org.apache.jena" % "jena-core" % "2.11.2" exclude("org.s
 
 //sparql queryengine
 libraryDependencies += "org.apache.jena" % "jena-arq" % "2.11.2" exclude("org.slf4j","jcl-over-slf4j") exclude("org.apache.commons", "commons-csv")
+
+//serializer for scala classes
+libraryDependencies += "com.twitter" % "chill-storm" % "0.5.2"
+

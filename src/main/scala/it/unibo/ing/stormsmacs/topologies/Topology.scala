@@ -10,7 +10,7 @@ import it.unibo.ing.stormsmacs.conf._
 import it.unibo.ing.stormsmacs.serializers._
 import it.unibo.ing.stormsmacs.topologies.builders.{CloudFoundryBuilder, GenericBuilder, OpenstackBuilder}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
-import org.openstack.api.restful.ceilometer.v2.elements.{Meter, Statistics}
+import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Meter, Statistics}
 import org.slf4j.LoggerFactory
 import storm.scala.dsl.{StormConfig, TypedTopologyBuilder}
 
@@ -65,6 +65,7 @@ object Topology {
   }
 
   private def registerSerializers(conf : Config) : Unit = {
+
     conf.setFallBackOnJavaSerialization(false)
     conf.registerSerialization(classOf[CloudFoundryNodeConf], classOf[CloudFoundryNodeConfSerializer])
     conf.registerSerialization(classOf[GenericNodeConf], classOf[GenericNodeConfSerializer])
@@ -78,5 +79,7 @@ object Topology {
     conf.registerSerialization(classOf[FusekiNodeConf], classOf[FusekiNodeConfSerializer])
     conf.registerSerialization(classOf[VirtuosoNodeConf], classOf[VirtuosoNodeConfSerializer])
     conf.registerSerialization(classOf[java.util.Date], classOf[DateSerializer])
+    conf.registerSerialization(classOf[Resource], classOf[ResourceSerializer])
+    conf.registerSerialization(classOf[Sample], classOf[SampleSerializer])
   }
 }
