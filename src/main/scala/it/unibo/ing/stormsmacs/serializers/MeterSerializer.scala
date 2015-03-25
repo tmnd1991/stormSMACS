@@ -2,6 +2,7 @@ package it.unibo.ing.stormsmacs.serializers
 
 import com.esotericsoftware.kryo.io.{Output, Input}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
+import com.twitter.chill.ScalaKryoInstantiator
 import org.openstack.api.restful.ceilometer.v2.elements.{MeterType, Meter}
 
 /**
@@ -10,8 +11,10 @@ import org.openstack.api.restful.ceilometer.v2.elements.{MeterType, Meter}
  * Kryo serializer for Meter to speed up communication in storm topologies.
  */
 class MeterSerializer extends Serializer[Meter]{
-
+  val instantiator = new ScalaKryoInstantiator()
   override def write(kryo: Kryo, output: Output, t: Meter): Unit = {
+    instantiator.newKryo().writeObject(output,t)
+    /*
     output.writeString(t.meter_id)
     output.writeString(t.name)
     output.writeString(t.project_id)
@@ -20,8 +23,11 @@ class MeterSerializer extends Serializer[Meter]{
     output.writeString(t.`type`.toString())
     output.writeString(t.unit)
     output.writeString(t.user_id)
+    */
   }
   override def read(kryo: Kryo, input: Input, aClass: Class[Meter]): Meter = {
+    instantiator.newKryo().readObject(input,aClass)
+    /*
     Meter(
       meter_id = input.readString(),
       name = input.readString(),
@@ -32,5 +38,6 @@ class MeterSerializer extends Serializer[Meter]{
       unit = input.readString(),
       user_id = input.readString()
     )
+    */
   }
 }

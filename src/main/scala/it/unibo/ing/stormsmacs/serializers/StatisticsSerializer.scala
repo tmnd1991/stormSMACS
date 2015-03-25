@@ -2,6 +2,7 @@ package it.unibo.ing.stormsmacs.serializers
 
 import com.esotericsoftware.kryo.io.{Output, Input}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
+import com.twitter.chill.ScalaKryoInstantiator
 import org.openstack.api.restful.ceilometer.v2.elements.Statistics
 import java.util.Date
 
@@ -12,7 +13,9 @@ import java.util.Date
  */
 
 class StatisticsSerializer extends Serializer[Statistics]{
+  val instantiator = new ScalaKryoInstantiator()
   override def write(kryo: Kryo, output: Output, t: Statistics): Unit ={
+    /*
     kryo.writeObjectOrNull(output, t.aggregate.orNull, classOf[Map[String,Float]])
     output.writeFloat(t.avg)
     output.writeInt(t.count,true)
@@ -27,9 +30,12 @@ class StatisticsSerializer extends Serializer[Statistics]{
     kryo.writeObject(output, t.period_start)
     output.writeFloat(t.sum)
     output.writeString(t.unit)
+    */
+    instantiator.newKryo().writeObject(output,t)
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[Statistics]): Statistics ={
+    /*
     Statistics(
       aggregate = kryo.readSomeObjectOrNone[Map[String,Float]](input, classOf[Map[String,Float]]),
       avg = input.readFloat(),
@@ -46,5 +52,7 @@ class StatisticsSerializer extends Serializer[Statistics]{
       sum = input.readFloat(),
       unit = input.readString()
     )
+    */
+    instantiator.newKryo().readObject(input,aClass)
   }
 }

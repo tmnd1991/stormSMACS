@@ -65,7 +65,6 @@ object Topology {
   }
 
   private def registerSerializers(conf : Config) : Unit = {
-
     conf.setFallBackOnJavaSerialization(false)
     conf.registerSerialization(classOf[CloudFoundryNodeConf], classOf[CloudFoundryNodeConfSerializer])
     conf.registerSerialization(classOf[GenericNodeConf], classOf[GenericNodeConfSerializer])

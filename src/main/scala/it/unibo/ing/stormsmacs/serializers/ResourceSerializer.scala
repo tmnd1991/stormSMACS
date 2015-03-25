@@ -4,6 +4,7 @@ import java.sql.Timestamp
 
 import com.esotericsoftware.kryo.io.{Output, Input}
 import com.esotericsoftware.kryo.{Kryo, Serializer}
+import com.twitter.chill.ScalaKryoInstantiator
 import org.openstack.api.restful.ceilometer.v2.elements.Resource
 
 /**
@@ -13,12 +14,14 @@ import org.openstack.api.restful.ceilometer.v2.elements.Resource
 class ResourceSerializer extends Serializer[Resource]{
   import spray.json._
   import org.openstack.api.restful.ceilometer.v2.elements.JsonConversions._
-
+  val instantiator = new ScalaKryoInstantiator()
   override def write(kryo: Kryo, output: Output, t: Resource): Unit = {
-    output.writeString(t.toJson.compactPrint)
+    instantiator.newKryo().writeObject(output,t)
+    //output.writeString(t.toJson.compactPrint)
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[Resource]): Resource = {
-    input.readString().parseJson.convertTo[Resource]
+    instantiator.newKryo().readObject(input,aClass)
+    //input.readString().parseJson.convertTo[Resource]
   }
 }
