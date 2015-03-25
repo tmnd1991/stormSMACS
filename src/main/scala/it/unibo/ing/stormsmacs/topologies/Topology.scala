@@ -3,6 +3,7 @@ package it.unibo.ing.stormsmacs.topologies
 import java.io.{File, FileNotFoundException}
 
 import backtype.storm.{Config, LocalCluster, StormSubmitter}
+import com.esotericsoftware.kryo.serializers.DefaultSerializers.DateSerializer
 import it.unibo.ing.monit.model.{MonitProcessInfo, MonitSystemInfo}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf._
@@ -76,5 +77,6 @@ object Topology {
     conf.registerSerialization(classOf[PersisterNodeConf], classOf[PersisterNodeConfSerializer])
     conf.registerSerialization(classOf[FusekiNodeConf], classOf[FusekiNodeConfSerializer])
     conf.registerSerialization(classOf[VirtuosoNodeConf], classOf[VirtuosoNodeConfSerializer])
+    conf.registerSerialization(classOf[java.util.Date], classOf[DateSerializer])
   }
 }
