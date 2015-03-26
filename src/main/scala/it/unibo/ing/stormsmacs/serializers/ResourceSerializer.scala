@@ -1,5 +1,6 @@
 package it.unibo.ing.stormsmacs.serializers
 
+import java.net.URL
 import java.sql.Timestamp
 
 import com.esotericsoftware.kryo.io.{Output, Input}
@@ -40,5 +41,21 @@ class ResourceSerializer extends Serializer[Resource]{
               source = myKryo.readObject(input, classOf[String]),
               user_id = myKryo.readObject(input, classOf[Some[String]])
     )
+  }
+}
+class LinkSerializer extends Serializer[Link]{
+  override def write(kryo: Kryo, output: Output, t: Link): Unit = {
+    output.writeString(t.href.toString)
+    output.writeString(t.rel)
+    output.writeString(t.contentType.getOrElse("_"))
+  }
+
+  override def read(kryo: Kryo, input: Input, aClass: Class[Link]): Link = {
+    val url = new URL(input.readString())
+    val rel = input.readString()
+    val ctype = input.readString()
+    Link(href = url,
+        contentType = if (ctype == "_") None else Some(ctype),
+        rel = rel)
   }
 }
