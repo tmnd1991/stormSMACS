@@ -12,7 +12,17 @@ import scala.concurrent.duration.Duration
  * @version 28/12/14.
  * Kryo serializer for MonitInfos to speed up communication in storm topologies.
  */
+class MonitInfoSerializer extends Serializer[MonitInfo]{
+  import spray.json._
+  import it.unibo.ing.monit.model.JsonConversions._
+
+  override def write(kryo: Kryo, output: Output, t: MonitInfo): Unit = output.writeString(t.toJson.compactPrint)
+
+  override def read(kryo: Kryo, input: Input, aClass: Class[MonitInfo]): MonitInfo = input.readString().parseJson.convertTo[MonitInfo]
+}
+/*
 class MonitProcessInfoSerializer extends Serializer[MonitProcessInfo]{
+
   override def write(kryo: Kryo, output: Output, t: MonitProcessInfo): Unit = {
     output.writeFloat(t.cpu_percent, 1000, true)
     output.writeInt(t.children, true)
@@ -105,3 +115,4 @@ class MonitSystemInfoSerializer extends Serializer[MonitSystemInfo]{
     )
   }
 }
+*/

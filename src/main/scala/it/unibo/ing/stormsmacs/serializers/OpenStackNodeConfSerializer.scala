@@ -11,10 +11,13 @@ import java.net.URL
  * Kryo serializer for OpenstackNodeConf to speed up communication in storm topologies.
  */
 class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
-  val instantiator = new ScalaKryoInstantiator()
+  import spray.json._
+  import it.unibo.ing.stormsmacs.conf.OpenStackNodeProtocol._
+  //val instantiator = new ScalaKryoInstantiator()
   override def write(kryo: Kryo, output: Output, t: OpenStackNodeConf): Unit = {
-    instantiator.newKryo().writeObject(output,t)
+    output.writeString(t.toJson.compactPrint)
     /*
+    instantiator.newKryo().writeObject(output,t)
     output.writeInt(t.connectTimeout, true)
     output.writeInt(t.readTimeout, true)
     output.writeString(t.ceilometerUrl.toString)
@@ -27,8 +30,9 @@ class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[OpenStackNodeConf]): OpenStackNodeConf = {
-    instantiator.newKryo().readObject(input,aClass)
+    input.readString().parseJson.convertTo[OpenStackNodeConf]
     /*
+    instantiator.newKryo().readObject(input,aClass)
     OpenStackNodeConf.apply(
       connect_timeout = Some(input.readInt(true)),
       read_timeout = Some(input.readInt(true)),

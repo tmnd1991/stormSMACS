@@ -11,7 +11,14 @@ import it.unibo.ing.stormsmacs.conf.PersisterNodeType.FusekiNodeType
  * @version 03/03/15
  * Kryo serializer for PersisterNodeConf (Fuseki and Virtuoso) to speed up communication in storm topologies.
  */
+class PersisterNodeConfSerializer extends Serializer[PersisterNodeConf]{
+  import spray.json._
+  import it.unibo.ing.stormsmacs.conf.PersisterNodeProtocol._
+  override def write(kryo: Kryo, output: Output, t: PersisterNodeConf): Unit = output.writeString(t.toJson.compactPrint)
 
+  override def read(kryo: Kryo, input: Input, aClass: Class[PersisterNodeConf]): PersisterNodeConf = input.readString().parseJson.convertTo[PersisterNodeConf]
+}
+/*
 class PersisterNodeConfSerializer extends Serializer[PersisterNodeConf] {
   override def write(kryo: Kryo, output: Output, obj: PersisterNodeConf): Unit = {
     output.writeString(obj.`type`.value)
@@ -59,3 +66,4 @@ class VirtuosoNodeConfSerializer extends Serializer[VirtuosoNodeConf]{
 
   override def read(kryo: Kryo, input: Input, `type`: Class[VirtuosoNodeConf]): VirtuosoNodeConf = kryo.readObject(input,classOf[PersisterNodeConf]).asInstanceOf[VirtuosoNodeConf]
 }
+*/

@@ -11,8 +11,11 @@ import it.unibo.ing.sigar.restful.model.SigarMeteredData
  * Kryo serializer for SigarMeteredData to speed up communication in storm topologies.
  */
 class SigarMeteredDataSerializer extends Serializer[SigarMeteredData]{
-  val instantiator = new ScalaKryoInstantiator()
+  //val instantiator = new ScalaKryoInstantiator()
+  import spray.json._
+  import it.unibo.ing.sigar.restful.model.SigarMeteredDataFormat._
   override def write(kryo: Kryo, output: Output, t: SigarMeteredData): Unit = {
+    output.writeString(t.toJson.compactPrint)
     /*
     output.writeDouble(t.cpuPercent, 1000, true)
     output.writeDouble(t.freeMemPercent, 1000, true)
@@ -27,11 +30,12 @@ class SigarMeteredDataSerializer extends Serializer[SigarMeteredData]{
     output.writeInt(t.numberOfCores, true)
     output.writeString(t.osName)
     output.writeString(t.cpuName)
-    */
     instantiator.newKryo().writeObject(output, t)
+    */
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[SigarMeteredData]): SigarMeteredData = {
+    input.readString().parseJson.convertTo[SigarMeteredData]
     /*
     SigarMeteredData(
       cpuPercent = input.readDouble(1000, true),
@@ -48,7 +52,7 @@ class SigarMeteredDataSerializer extends Serializer[SigarMeteredData]{
       osName = input.readString(),
       cpuName = input.readString()
     )
-    */
     instantiator.newKryo().readObject(input,aClass)
+    */
   }
 }

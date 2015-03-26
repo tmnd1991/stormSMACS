@@ -16,12 +16,12 @@ class ResourceSerializer extends Serializer[Resource]{
   import org.openstack.api.restful.ceilometer.v2.elements.JsonConversions._
   val instantiator = new ScalaKryoInstantiator()
   override def write(kryo: Kryo, output: Output, t: Resource): Unit = {
-    instantiator.newKryo().writeObject(output,t)
-    //output.writeString(t.toJson.compactPrint)
+    //instantiator.newKryo().writeObject(output,t)
+    output.writeString(t.toJson.compactPrint)
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[Resource]): Resource = {
-    instantiator.newKryo().readObject(input,aClass)
-    //input.readString().parseJson.convertTo[Resource]
+    //instantiator.newKryo().readObject(input,aClass)
+    input.readString().parseJson.convertTo[Resource]
   }
 }

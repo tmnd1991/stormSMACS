@@ -4,7 +4,7 @@ import java.io.{File, FileNotFoundException}
 
 import backtype.storm.{Config, LocalCluster, StormSubmitter}
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.DateSerializer
-import it.unibo.ing.monit.model.{MonitProcessInfo, MonitSystemInfo}
+import it.unibo.ing.monit.model.{MonitInfo, MonitProcessInfo, MonitSystemInfo}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf._
 import it.unibo.ing.stormsmacs.serializers._
@@ -68,15 +68,14 @@ object Topology {
     conf.setFallBackOnJavaSerialization(false)
     conf.registerSerialization(classOf[CloudFoundryNodeConf], classOf[CloudFoundryNodeConfSerializer])
     conf.registerSerialization(classOf[GenericNodeConf], classOf[GenericNodeConfSerializer])
-    conf.registerSerialization(classOf[Meter], classOf[MeterSerializer])
-    conf.registerSerialization(classOf[MonitProcessInfo], classOf[MonitProcessInfoSerializer])
-    conf.registerSerialization(classOf[MonitSystemInfo], classOf[MonitSystemInfoSerializer])
+    conf.registerSerialization(classOf[MonitInfo], classOf[MonitInfoSerializer])
+    conf.registerSerialization(classOf[MonitProcessInfo], classOf[MonitInfoSerializer])
+    conf.registerSerialization(classOf[MonitSystemInfo], classOf[MonitInfoSerializer])
     conf.registerSerialization(classOf[OpenStackNodeConf], classOf[OpenStackNodeConfSerializer])
     conf.registerSerialization(classOf[SigarMeteredData], classOf[SigarMeteredDataSerializer])
-    conf.registerSerialization(classOf[Statistics], classOf[StatisticsSerializer])
     conf.registerSerialization(classOf[PersisterNodeConf], classOf[PersisterNodeConfSerializer])
-    conf.registerSerialization(classOf[FusekiNodeConf], classOf[FusekiNodeConfSerializer])
-    conf.registerSerialization(classOf[VirtuosoNodeConf], classOf[VirtuosoNodeConfSerializer])
+    conf.registerSerialization(classOf[FusekiNodeConf], classOf[PersisterNodeConfSerializer])
+    conf.registerSerialization(classOf[VirtuosoNodeConf], classOf[PersisterNodeConfSerializer])
     conf.registerSerialization(classOf[java.util.Date], classOf[DateSerializer])
     conf.registerSerialization(classOf[Resource], classOf[ResourceSerializer])
     conf.registerSerialization(classOf[Sample], classOf[SampleSerializer])

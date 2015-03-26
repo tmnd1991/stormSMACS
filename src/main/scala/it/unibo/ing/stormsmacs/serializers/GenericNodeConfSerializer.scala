@@ -13,10 +13,13 @@ import it.unibo.ing.stormsmacs.conf.GenericNodeConf
  * Kryo serializer for GenericNodeConf to speed up communication in storm topologies.
  */
 class GenericNodeConfSerializer extends Serializer[GenericNodeConf]{
-  val instantiator = new ScalaKryoInstantiator()
+  import spray.json._
+  import it.unibo.ing.stormsmacs.conf.GenericNodeProtocol._
+  //val instantiator = new ScalaKryoInstantiator()
   override def write(kryo: Kryo, output: Output, t: GenericNodeConf): Unit = {
-    instantiator.newKryo().writeObject(output,t)
+    output.writeString(t.toJson.compactPrint)
     /*
+    instantiator.newKryo().writeObject(output,t)
     output.writeInt(t.connectTimeout, true)
     output.writeInt(t.readTimeout,true)
     output.writeString(t.id)
@@ -25,8 +28,9 @@ class GenericNodeConfSerializer extends Serializer[GenericNodeConf]{
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[GenericNodeConf]): GenericNodeConf = {
-    instantiator.newKryo().readObject(input,aClass)
+    input.readString().toJson.convertTo[GenericNodeConf]
     /*
+    instantiator.newKryo().readObject(input,aClass)
     GenericNodeConf(
       connect_timeout = Some(input.readInt(true)),
       read_timeout = Some(input.readInt(true)),

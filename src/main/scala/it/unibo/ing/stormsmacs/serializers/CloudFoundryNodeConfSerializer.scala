@@ -13,11 +13,13 @@ import it.unibo.ing.stormsmacs.conf.CloudFoundryNodeConf
  * Kryo serializer for CloudFoundryNodeConf to speed up communication in storm topologies.
  */
 class CloudFoundryNodeConfSerializer extends Serializer[CloudFoundryNodeConf]{
-  val instantiator = new ScalaKryoInstantiator()
-
+  //val instantiator = new ScalaKryoInstantiator()
+  import spray.json._
+  import it.unibo.ing.stormsmacs.conf.CloudFoundryNodeProtocol._
   override def write(kryo: Kryo, output: Output, t: CloudFoundryNodeConf): Unit ={
-    instantiator.newKryo().writeObject(output,t)
+    output.writeString(t.toJson.compactPrint)
     /*
+    instantiator.newKryo().writeObject(output,t)
     output.writeInt(t.readTimeout,true)
     output.writeString(t.id)
     output.writeString(t.url.toString)
@@ -25,8 +27,9 @@ class CloudFoundryNodeConfSerializer extends Serializer[CloudFoundryNodeConf]{
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[CloudFoundryNodeConf]): CloudFoundryNodeConf = {
-    instantiator.newKryo().readObject(input,aClass)
+    input.readString().parseJson.convertTo[CloudFoundryNodeConf]
     /*
+    instantiator.newKryo().readObject(input,aClass)
     CloudFoundryNodeConf(
       connect_timeout = Some(input.readInt(true)),
       read_timeout = Some(input.readInt(true)),
