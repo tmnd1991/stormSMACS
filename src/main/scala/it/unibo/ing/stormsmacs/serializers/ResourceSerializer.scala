@@ -35,7 +35,7 @@ class ResourceSerializer extends Serializer[Resource]{
               last_sample_timestamp  = (if (firstSample != None) Some(new Timestamp(lastSample.get)) else None),
               links = myKryo.readObject(input,classOf[Seq[Link]]),
               metadata = myKryo.readObject(input, classOf[Map[String,String]]),
-              project_id = myKryo.readObject(input, classOf[Option[String]]),
+              project_id = myKryo.readObject(input, classOf[Some[String]]),
               resource_id = myKryo.readObject(input, classOf[String]),
               source = myKryo.readObject(input, classOf[String]),
               user_id = myKryo.readObject(input, classOf[Option[String]])
