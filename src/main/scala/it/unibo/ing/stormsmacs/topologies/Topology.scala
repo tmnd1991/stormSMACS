@@ -66,11 +66,11 @@ object Topology {
 
   private def registerSerializers(conf : Config) : Unit = {
     conf.setFallBackOnJavaSerialization(false)
+    conf.registerSerialization(classOf[java.sql.Timestamp], classOf[com.twitter.chill.java.TimestampSerializer])
     conf.registerSerialization(classOf[CloudFoundryNodeConf], classOf[CloudFoundryNodeConfSerializer])
     conf.registerSerialization(classOf[GenericNodeConf], classOf[GenericNodeConfSerializer])
-    conf.registerSerialization(classOf[MonitInfo], classOf[MonitInfoSerializer])
-    conf.registerSerialization(classOf[MonitProcessInfo], classOf[MonitInfoSerializer])
-    conf.registerSerialization(classOf[MonitSystemInfo], classOf[MonitInfoSerializer])
+    conf.registerSerialization(classOf[MonitProcessInfo], classOf[MonitProcessInfoSerializer])
+    conf.registerSerialization(classOf[MonitSystemInfo], classOf[MonitSystemInfoSerializer])
     conf.registerSerialization(classOf[OpenStackNodeConf], classOf[OpenStackNodeConfSerializer])
     conf.registerSerialization(classOf[SigarMeteredData], classOf[SigarMeteredDataSerializer])
     conf.registerSerialization(classOf[PersisterNodeConf], classOf[PersisterNodeConfSerializer])

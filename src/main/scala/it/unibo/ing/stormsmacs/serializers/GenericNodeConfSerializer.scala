@@ -17,26 +17,18 @@ class GenericNodeConfSerializer extends Serializer[GenericNodeConf]{
   import it.unibo.ing.stormsmacs.conf.GenericNodeProtocol._
   //val instantiator = new ScalaKryoInstantiator()
   override def write(kryo: Kryo, output: Output, t: GenericNodeConf): Unit = {
-    output.writeString(t.toJson.compactPrint)
-    /*
-    instantiator.newKryo().writeObject(output,t)
     output.writeInt(t.connectTimeout, true)
     output.writeInt(t.readTimeout,true)
     output.writeString(t.id)
     output.writeString(t.url.toString)
-    */
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[GenericNodeConf]): GenericNodeConf = {
-    input.readString().toJson.convertTo[GenericNodeConf]
-    /*
-    instantiator.newKryo().readObject(input,aClass)
     GenericNodeConf(
       connect_timeout = Some(input.readInt(true)),
       read_timeout = Some(input.readInt(true)),
       id = input.readString(),
       url = new URL(input.readString())
     )
-    */
   }
 }

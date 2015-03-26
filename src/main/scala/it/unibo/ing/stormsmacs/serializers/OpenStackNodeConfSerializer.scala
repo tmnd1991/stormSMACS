@@ -15,9 +15,6 @@ class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
   import it.unibo.ing.stormsmacs.conf.OpenStackNodeProtocol._
   //val instantiator = new ScalaKryoInstantiator()
   override def write(kryo: Kryo, output: Output, t: OpenStackNodeConf): Unit = {
-    output.writeString(t.toJson.compactPrint)
-    /*
-    instantiator.newKryo().writeObject(output,t)
     output.writeInt(t.connectTimeout, true)
     output.writeInt(t.readTimeout, true)
     output.writeString(t.ceilometerUrl.toString)
@@ -26,13 +23,12 @@ class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
     output.writeString(t.password)
     output.writeString(t.tenantName)
     output.writeString(t.username)
-    */
+
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[OpenStackNodeConf]): OpenStackNodeConf = {
     input.readString().parseJson.convertTo[OpenStackNodeConf]
-    /*
-    instantiator.newKryo().readObject(input,aClass)
+
     OpenStackNodeConf.apply(
       connect_timeout = Some(input.readInt(true)),
       read_timeout = Some(input.readInt(true)),
@@ -43,6 +39,6 @@ class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
       tenantName = input.readString(),
       username = input.readString()
     )
-    */
+
   }
 }
