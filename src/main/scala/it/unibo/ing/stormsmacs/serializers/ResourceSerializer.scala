@@ -29,8 +29,8 @@ class ResourceSerializer extends Serializer[Resource]{
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[Resource]): Resource = {
-    val firstSample = myKryo.readObject(input,classOf[Option[Long]])
-    val lastSample = myKryo.readObject(input,classOf[Option[Long]])
+    val firstSample = myKryo.readObject(input,classOf[Some[Long]])
+    val lastSample = myKryo.readObject(input,classOf[Some[Long]])
     Resource( first_sample_timestamp = (if (firstSample != None) Some(new Timestamp(firstSample.get)) else None),
               last_sample_timestamp  = (if (firstSample != None) Some(new Timestamp(lastSample.get)) else None),
               links = myKryo.readObject(input,classOf[Seq[Link]]),
