@@ -21,8 +21,8 @@ class ResourceSerializer extends Serializer[Resource]{
   val myKryo = instantiator.newKryo()
 
   override def write(kryo: Kryo, output: Output, t: Resource): Unit = {
-    myKryo.writeObject(output,if (t.first_sample_timestamp.isDefined) Some(t.first_sample_timestamp.get.getTime) else None)
-    myKryo.writeObject(output,if (t.last_sample_timestamp.isDefined) Some(t.last_sample_timestamp.get.getTime) else None)
+    output.writeLong(t.first_sample_timestamp.getOrElse(new Timestamp((0))).getTime)
+    output.writeLong(t.last_sample_timestamp.getOrElse(new Timestamp((0))).getTime)
     kryo.writeObject(output,t.links.toArray)
     myKryo.writeObject(output,t.metadata)
     output.writeString(t.project_id.getOrElse("_"))
@@ -32,10 +32,10 @@ class ResourceSerializer extends Serializer[Resource]{
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[Resource]): Resource = {
-    val firstSample = myKryo.readObject(input,classOf[Some[Long]])
-    val lastSample = myKryo.readObject(input,classOf[Some[Long]])
-    Resource( first_sample_timestamp = (if (firstSample.isEmpty) Some(new Timestamp(firstSample.get)) else None),
-              last_sample_timestamp  = (if (firstSample.isEmpty) Some(new Timestamp(lastSample.get)) else None),
+    val firstSample = input.readLong()
+    val lastSample = input.readLong()
+    Resource( first_sample_timestamp = (if (firstSample != 0) Some(new Timestamp(firstSample)) else None),
+              last_sample_timestamp  = (if (lastSample != 0) Some(new Timestamp(lastSample)) else None),
               links = kryo.readObject(input,classOf[Array[Link]]),
               metadata = myKryo.readObject(input, classOf[Map[String,String]]),
               project_id = Some(input.readString()),
