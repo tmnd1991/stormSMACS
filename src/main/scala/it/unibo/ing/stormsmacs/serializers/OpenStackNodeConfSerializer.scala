@@ -26,7 +26,7 @@ class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
 
   }
 
-  override def read(kryo: Kryo, input: Input, aClass: Class[OpenStackNodeConf]): OpenStackNodeConf =
+  override def read(kryo: Kryo, input: Input, aClass: Class[OpenStackNodeConf]): OpenStackNodeConf = {
     OpenStackNodeConf.apply(
       connect_timeout = Some(input.readInt(true)),
       read_timeout = Some(input.readInt(true)),
