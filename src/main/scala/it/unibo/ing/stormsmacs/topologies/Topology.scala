@@ -66,7 +66,7 @@ object Topology {
   }
 
   private def registerSerializers(conf : Config) : Unit = {
-    conf.setFallBackOnJavaSerialization(false)
+    conf.setFallBackOnJavaSerialization(true)
     conf.registerSerialization(classOf[Link], classOf[LinkSerializer])
     conf.registerSerialization(classOf[java.sql.Timestamp], classOf[com.twitter.chill.java.TimestampSerializer])
     conf.registerSerialization(classOf[CloudFoundryNodeConf], classOf[CloudFoundryNodeConfSerializer])
