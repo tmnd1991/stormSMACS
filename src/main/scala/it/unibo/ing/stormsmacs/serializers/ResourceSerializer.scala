@@ -26,7 +26,7 @@ class ResourceSerializer extends Serializer[Resource]{
     myKryo.writeObject(output,t.project_id)
     myKryo.writeObject(output,t.resource_id)
     myKryo.writeObject(output,t.source)
-    myKryo.writeObject(output,t.user_id)
+    output.writeString(t.user_id.getOrElse("_"))
   }
 
   override def read(kryo: Kryo, input: Input, aClass: Class[Resource]): Resource = {
@@ -39,7 +39,7 @@ class ResourceSerializer extends Serializer[Resource]{
               project_id = myKryo.readObject(input, classOf[Some[String]]),
               resource_id = myKryo.readObject(input, classOf[String]),
               source = myKryo.readObject(input, classOf[String]),
-              user_id = myKryo.readObject(input, classOf[Some[String]])
+              user_id = Some(input.readString())
     )
   }
 }
