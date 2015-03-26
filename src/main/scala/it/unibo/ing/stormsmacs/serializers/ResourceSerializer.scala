@@ -25,7 +25,7 @@ class ResourceSerializer extends Serializer[Resource]{
     myKryo.writeObject(output,if (t.last_sample_timestamp.isDefined) Some(t.last_sample_timestamp.get.getTime) else None)
     kryo.writeObject(output,t.links.toArray)
     myKryo.writeObject(output,t.metadata)
-    myKryo.writeObject(output,t.project_id)
+    output.writeString(t.project_id.getOrElse("_"))
     myKryo.writeObject(output,t.resource_id)
     myKryo.writeObject(output,t.source)
     output.writeString(t.user_id.getOrElse("_"))
@@ -38,7 +38,7 @@ class ResourceSerializer extends Serializer[Resource]{
               last_sample_timestamp  = (if (firstSample.isEmpty) Some(new Timestamp(lastSample.get)) else None),
               links = kryo.readObject(input,classOf[Array[Link]]),
               metadata = myKryo.readObject(input, classOf[Map[String,String]]),
-              project_id = myKryo.readObject(input, classOf[Some[String]]),
+              project_id = Some(input.readString()),
               resource_id = myKryo.readObject(input, classOf[String]),
               source = myKryo.readObject(input, classOf[String]),
               user_id = Some(input.readString())
