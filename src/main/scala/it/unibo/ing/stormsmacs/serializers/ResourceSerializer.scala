@@ -38,7 +38,7 @@ class ResourceSerializer extends Serializer[Resource]{
               project_id = myKryo.readObject(input, classOf[Some[String]]),
               resource_id = myKryo.readObject(input, classOf[String]),
               source = myKryo.readObject(input, classOf[String]),
-              user_id = myKryo.readObject(input, classOf[Option[String]])
+              user_id = myKryo.readObject(input, classOf[Some[String]])
     )
   }
 }
