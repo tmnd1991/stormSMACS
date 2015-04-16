@@ -28,13 +28,16 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
       val state = exchange.waitForDone()
       val body = exchange.getResponseContent
       using anchor st emit (node, t._1, body.parseJson.convertTo[SigarMeteredData])
-      st.ack
+      //st.ack
     }
     catch{
       case e : Throwable => {
         logger.error(e.getStackTrace.mkString("\n"))
-        st.ack //the replay of this is fruitless, because the value will be reread in the future and wouldn't correspond to the original one
+        //st.ack //the replay of this is fruitless, because the value will be reread in the future and wouldn't correspond to the original one
       }
+    }
+    finally {
+      st.ack
     }
   }
 }

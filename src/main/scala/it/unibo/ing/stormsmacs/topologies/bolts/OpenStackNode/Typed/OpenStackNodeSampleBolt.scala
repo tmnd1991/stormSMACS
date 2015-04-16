@@ -35,7 +35,7 @@ class OpenStackNodeSampleBolt(pollTime: Long)
         for (s <- samples) using anchor st emit(t._1, t._2, t._3, s)
         st.ack
       }
-      case None => st.fail            //if we get None as a result, something bad happened, we need to replay the tuple
+      case _ => st.fail            //if we get None as a result, something bad happened, we need to replay the tuple
     }
   }
 }
