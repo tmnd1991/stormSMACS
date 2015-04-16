@@ -1,7 +1,6 @@
 package it.unibo.ing.stormsmacs.topologies.builders
 
 import backtype.storm.topology.TopologyBuilder
-import storm.scala.dsl.TypedTopologyBuilder
 
 /**
  * @author Antonio Murgia
@@ -9,5 +8,5 @@ import storm.scala.dsl.TypedTopologyBuilder
  * Abstract builder
  */
 abstract class StormSmacsBuilder {
-  def build(builder : TypedTopologyBuilder) : TypedTopologyBuilder
+  def build(builder : TopologyBuilder) : TopologyBuilder
 }

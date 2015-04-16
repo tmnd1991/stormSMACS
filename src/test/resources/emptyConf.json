@@ -1,0 +1,11 @@
+{
+  "name"              : "test",
+  "persisterNode"     : {
+    "id"  : "fuseki",
+    "type": "FUSEKI",
+    "url" : "http://10.0.10.13:3030/ds/update"
+  },
+  "remote"            : false,
+  "debug"             : true,
+  "pollTime"          : 60000
+}

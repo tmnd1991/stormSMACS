@@ -14,7 +14,8 @@ import it.unibo.ing.stormsmacs.rdfBindings.{GenericNodeResource, GenericNodeSamp
 import it.unibo.ing.stormsmacs.rdfBindings.GenericNodeDataRdfFormat._
 import org.eclipse.jetty.client.{ContentExchange, HttpClient}
 import org.eclipse.jetty.io.ByteArrayBuffer
-import storm.scala.dsl.{Logging, TypedBolt}
+import storm.scala.dsl.additions.Logging
+import storm.scala.dsl.StormBolt
 
 /**
  * @author Antonio Murgia
@@ -22,7 +23,8 @@ import storm.scala.dsl.{Logging, TypedBolt}
  * Abstract Storm Bolt that persists the monitored values
  */
 abstract class GenericNodePersisterBolt(persisterNode : PersisterNodeConf)
-  extends TypedBolt[(GenericNodeConf, Date, SigarMeteredData), Nothing]
+  extends StormBolt(List())
+  //extends TypedBolt[(GenericNodeConf, Date, SigarMeteredData), Nothing]
   with Logging
 {
   private var persisted : Set[Int] = _
@@ -32,6 +34,31 @@ abstract class GenericNodePersisterBolt(persisterNode : PersisterNodeConf)
   shutdown{
     persisted = null
   }
+  override def execute(t : Tuple) : Unit = {
+    try{
+      t matchSeq{
+        case Seq(node: GenericNodeConf, date: Date, data: SigarMeteredData) =>{
+          val sampleData = GenericNodeSample(node.url, data)
+          val sampleModel = sampleData.toRdf
+          writeToRDF(GraphNamer.graphName(date), sampleModel)
+          if (!(persisted contains node.url.toString.hashCode)) {
+            val resourceData = GenericNodeResource(node.url, data)
+            val resourceModel = resourceData.toRdf
+            writeToRDF(GraphNamer.resourcesGraphName, resourceModel)
+            persisted += node.url.toString.hashCode
+          }
+          t ack
+        }
+      }
+    }
+    catch{
+      case e: Throwable => {
+        logger.trace(e.getMessage, e)
+        t fail
+      }
+    }
+  }
+  /*
   override def typedExecute(t: (GenericNodeConf, Date, SigarMeteredData), st : Tuple): Unit = {
     try{
       val sampleData = GenericNodeSample(t._1.url, t._3)
@@ -52,6 +79,7 @@ abstract class GenericNodePersisterBolt(persisterNode : PersisterNodeConf)
       }
     }
   }
+  */
 
   protected def writeToRDF(graphName : String, data : Model) : Unit
 }

@@ -6,7 +6,7 @@ organization := "it.unibo.ing"
 
 scalaVersion := "2.11.4"
 
-scalacOptions := Seq("-feature", "-deprecation")
+scalacOptions := Seq("-feature", "-deprecation", "-language:postfixOps")
 
 resolvers ++= Seq("clojars" at "http://clojars.org/repo/",
                   "clojure-releases" at "http://build.clojure.org/releases")
@@ -18,7 +18,8 @@ libraryDependencies += "org.apache.storm" % "storm-core" % "0.9.3" % "provided" 
 libraryDependencies += "io.spray" %%  "spray-json" % "1.3.1"
 
 //SCALASTORM DSL
-libraryDependencies += "com.github.velvia" %% "scala-storm" % "2.0" withSources() intransitive()
+//libraryDependencies += "com.github.velvia" %% "scala-storm" % "2.0" withSources() intransitive()
+libraryDependencies += "com.github.velvia" %% "scala-storm" % "1.0" withSources()
 
 //SOME UTILS
 libraryDependencies += "it.unibo.ing" %% "utils" % "1.0" withSources() intransitive()

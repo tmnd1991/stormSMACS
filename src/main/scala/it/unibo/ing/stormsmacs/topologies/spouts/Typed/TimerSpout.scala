@@ -1,6 +1,6 @@
 package it.unibo.ing.stormsmacs.topologies.spouts.Typed
 
-import storm.scala.dsl.TypedSpout
+import storm.scala.dsl.{StormSpout}
 
 import backtype.storm.utils.Utils
 import java.util.Date
@@ -11,10 +11,10 @@ import java.util.Date
  * Spout that gives the clock to the entire stormsmacs topology
  */
 
-class TimerSpout(pollTime : Long) extends TypedSpout[Tuple1[Date]](false,"GraphName"){
+class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")){
   override def nextTuple = {
-    val now = new Date()
-    emit(now.getTime, now)
     Utils.sleep(pollTime)
+    val now = new Date()
+    using msgId(now.getTime) emit (now)
   }
 }

@@ -8,7 +8,6 @@ import it.unibo.ing.stormsmacs.topologies.bolts.OpenStackNode.Typed.{OpenStackNo
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
 import scala.language.postfixOps
-import storm.scala.dsl.TypedTopologyBuilder
 
 /**
  * @author Antonio Murgia
@@ -21,7 +20,7 @@ class OpenstackBuilder(pollTime : Long,
                        timerSpout : TimerSpout,
                        timerSpoutName : String,
                        maxNodesPerTask : Int = 3) extends StormSmacsBuilder{
-  override def build(builder: TypedTopologyBuilder): TypedTopologyBuilder = {
+  override def build(builder: TopologyBuilder): TopologyBuilder = {
     if (list.nonEmpty){
       val persisterTasks = calctasks(list.size, maxNodesPerTask)
       val boltClientName = "openstackClientBolt"
@@ -29,20 +28,16 @@ class OpenstackBuilder(pollTime : Long,
       val boltPersisterName = "openstackPersister"
       val sampleClient = new OpenStackNodeClientBolt(list.head)
       val meterBolt = new OpenStackNodeSampleBolt(pollTime)
-      val meterBoltDeclarer = builder.setBolt[(OpenStackNodeConf, Date, Resource)](boltClientName, sampleClient,
-        boltMeterName, meterBolt)
+      val meterBoltDeclarer = builder.setBolt(boltMeterName, meterBolt)
       for(osn <- list){
         val name = boltClientName + "_" + osn.id
-        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
-          name, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
+        builder.setBolt(name, new OpenStackNodeClientBolt(osn)).allGrouping(timerSpoutName)
         meterBoltDeclarer.shuffleGrouping(name)
       }
       persisterNode match{
-        case x : FusekiNodeConf => builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
-          boltPersisterName, new OpenStackNodePersisterFusekiBolt(x),persisterTasks).
+        case x : FusekiNodeConf => builder.setBolt(boltPersisterName, new OpenStackNodePersisterFusekiBolt(x),persisterTasks).
           shuffleGrouping(boltMeterName)
-        case x : VirtuosoNodeConf => builder.setBolt[(OpenStackNodeConf, Date, Resource, Sample)](boltMeterName, meterBolt,
-          boltPersisterName, new OpenStackNodePersisterVirtuosoBolt(x),persisterTasks).
+        case x : VirtuosoNodeConf => builder.setBolt(boltPersisterName, new OpenStackNodePersisterVirtuosoBolt(x),persisterTasks).
           shuffleGrouping(boltMeterName)
       }
     }

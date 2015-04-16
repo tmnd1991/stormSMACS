@@ -12,26 +12,37 @@ import backtype.storm.tuple.Tuple
 import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
 import org.openstack.api.restful.ceilometer.v2.elements.Resource
 import org.openstack.clients.ceilometer.v2.CeilometerClient
-import storm.scala.dsl.{Logging, TypedBolt}
+import storm.scala.dsl.additions.Logging
+import storm.scala.dsl.StormBolt
 import it.unibo.ing.utils._
 
 class OpenStackNodeClientBolt(node : OpenStackNodeConf)
-  extends TypedBolt[Tuple1[Date],(OpenStackNodeConf, Date, Resource)]("NodeName","GraphName","Resource")
+  extends StormBolt(List("NodeName","GraphName","Resource"))
   with Logging{
   private var cclient : CeilometerClient = _
   setup{
     cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
   }
-  override def typedExecute(t: Tuple1[Date], st : Tuple) = {
-    cclient.tryListAllResources match{
-      case Some(Nil) => st.ack
-      case Some(res : Seq[Resource]) => {
-        for (r <- res) using anchor st emit(node, t._1, r)
-        st.ack
+  shutdown{
+    cclient = null
+  }
+  override def execute(t : Tuple) : Unit = {
+    t matchSeq{
+      case Seq(date: Date)=>{
+        cclient.tryListAllResources match{
+          case Some(Nil) => t ack
+          case Some(res : Seq[Resource]) => {
+            for (r <- res) using anchor t emit(node, date, r)
+            t ack
+          }
+          case _ => t fail
+        }
       }
-      case _ => st.fail
+      case x => {
+        logger.error("invalid input tuple: expected Date and " + x + "found")
+        t fail
+      }
     }
-    //this method looks so cute!
   }
 }
 

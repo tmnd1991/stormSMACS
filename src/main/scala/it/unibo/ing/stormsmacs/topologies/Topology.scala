@@ -2,6 +2,7 @@ package it.unibo.ing.stormsmacs.topologies
 
 import java.io.{File, FileNotFoundException}
 
+import backtype.storm.topology.TopologyBuilder
 import backtype.storm.{Config, LocalCluster, StormSubmitter}
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.DateSerializer
 import it.unibo.ing.monit.model.{MonitInfo, MonitProcessInfo, MonitSystemInfo}
@@ -13,7 +14,6 @@ import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Meter, Statistics}
 import org.openstack.api.restful.elements.Link
 import org.slf4j.LoggerFactory
-import storm.scala.dsl.{StormConfig, TypedTopologyBuilder}
 
 import scala.language.postfixOps
 
@@ -31,7 +31,7 @@ object Topology {
     val jsonConfFile = args(0)
     try{
       val conf = readConfFromJsonFile(jsonConfFile)
-      val builder = new TypedTopologyBuilder()
+      val builder = new TopologyBuilder()
 
       logger.info("starting stormsmacs with conf : \n" + conf)
 
@@ -44,14 +44,15 @@ object Topology {
       (new GenericBuilder(conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
       (new CloudFoundryBuilder(conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
 
-      val sConf = new StormConfig(debug = conf.debug)
-      registerSerializers(sConf)
+      val config = new Config()
+      config.setDebug(conf.debug)
+      registerSerializers(config)
       if (conf.remote){
-        sConf.setNumWorkers((math ceil (conf.nodesNumber.toFloat / 50)) toInt)
-        StormSubmitter.submitTopology(conf.name, sConf, builder.createTopology())
+        config.setNumWorkers((math ceil (conf.nodesNumber.toFloat / 50)) toInt)
+        StormSubmitter.submitTopology(conf.name, config, builder.createTopology())
       }
       else{
-        new LocalCluster().submitTopology(conf.name, sConf, builder.createTopology())
+        new LocalCluster().submitTopology(conf.name, config, builder.createTopology())
       }
     }
     catch{

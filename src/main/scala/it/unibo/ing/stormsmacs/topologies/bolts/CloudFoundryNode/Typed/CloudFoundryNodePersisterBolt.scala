@@ -5,8 +5,9 @@ import java.util.Date
 
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.stormsmacs.GraphNamer
+import storm.scala.dsl.additions.Logging
 import virtuoso.jena.driver._
-import storm.scala.dsl.{StormTuple, Logging, TypedBolt}
+import storm.scala.dsl.StormBolt
 import com.hp.hpl.jena.rdf.model.Model
 import it.unibo.ing.monit.model.MonitInfo
 import it.unibo.ing.stormsmacs.conf.{PersisterNodeConf, FusekiNodeConf, CloudFoundryNodeConf}
@@ -20,8 +21,7 @@ import it.unibo.ing.rdf._
  * Abstract Storm Bolt that persists the monitored values
  */
 abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeConf)
-  extends TypedBolt[(CloudFoundryNodeConf, Date, MonitInfo), Nothing]
-  with Logging{
+  extends StormBolt(List()) with Logging{
   private var persisted : Set[Int] = _
   setup{
     persisted = Set()
@@ -29,6 +29,38 @@ abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeCo
   shutdown{
     persisted = null
   }
+
+
+  override def execute(t : Tuple) = {
+    try{
+      t matchSeq{
+        case Seq(node : CloudFoundryNodeConf, date : Date, info : MonitInfo) =>{
+          val graphName = GraphNamer.graphName(date)
+          val sampleData = CFNodeSample(node.url, info)
+          writeToRDF(graphName, sampleData.toRdf)
+          if (!(persisted contains info.resId)){
+            val resourceData = CFNodeResource(node.url, info)
+            writeToRDF(GraphNamer.resourcesGraphName, resourceData.toRdf)
+            persisted += info.resId
+          }
+          t ack
+        }
+        case x => {
+          logger.error("invalid input tuple: expected CloudFoundryNodeConf, Date, MonitInfo and " + x + "found")
+          t fail
+        }
+      }
+    }
+    catch{
+      case e : Throwable => {
+        logger.error(e.toString)
+        t fail
+      }
+    }
+  }
+
+
+  /*
   override def typedExecute(t: (CloudFoundryNodeConf, Date, MonitInfo), st : Tuple): Unit = {
     try{
       val graphName = GraphNamer.graphName(t._2)
@@ -48,6 +80,7 @@ abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeCo
       }
     }
   }
+  */
 
   protected def writeToRDF(graphName : String, data : Model) : Unit
 }

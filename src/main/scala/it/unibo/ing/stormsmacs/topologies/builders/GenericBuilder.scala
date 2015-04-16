@@ -2,12 +2,12 @@ package it.unibo.ing.stormsmacs.topologies.builders
 
 import java.util.Date
 
+import backtype.storm.topology.TopologyBuilder
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf.{VirtuosoNodeConf, FusekiNodeConf, GenericNodeConf, PersisterNodeConf}
 import it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed.{GenericNodePersisterFusekiBolt, GenericNodePersisterVirtuosoBolt, GenericNodeClientBolt}
 import it.unibo.ing.stormsmacs.topologies.spouts.Typed.TimerSpout
 import scala.language.postfixOps
-import storm.scala.dsl.TypedTopologyBuilder
 
 /**
  * @author Antonio Murgia
@@ -19,7 +19,7 @@ class GenericBuilder(persisterNode : PersisterNodeConf,
                      timerSpout : TimerSpout,
                      timerSpoutName : String,
                      maxNodesPerTask : Int = 3) extends StormSmacsBuilder{
-  override def build(builder: TypedTopologyBuilder): TypedTopologyBuilder = {
+  override def build(builder: TopologyBuilder): TopologyBuilder = {
     if (list.nonEmpty){
       val persisterTasks =  calctasks(list.size, maxNodesPerTask)
       val boltReaderName = "genericReaderBolt"
@@ -29,12 +29,10 @@ class GenericBuilder(persisterNode : PersisterNodeConf,
         case x : FusekiNodeConf => new GenericNodePersisterFusekiBolt(x)
         case x : VirtuosoNodeConf => new GenericNodePersisterVirtuosoBolt(x)
       }
-      val persisterDeclarer = builder.setBolt[(GenericNodeConf, Date, SigarMeteredData)](boltReaderName, sampleClient,
-        boltPersisterName,persisterBolt,persisterTasks)
+      val persisterDeclarer = builder.setBolt(boltPersisterName,persisterBolt,persisterTasks)
       for(gn <- list){
         val name = boltReaderName + "_" + gn.id
-        builder.setBolt[Tuple1[Date]](timerSpoutName, timerSpout,
-          name, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
+        builder.setBolt(name, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
         persisterDeclarer.shuffleGrouping(name)
       }
     }
