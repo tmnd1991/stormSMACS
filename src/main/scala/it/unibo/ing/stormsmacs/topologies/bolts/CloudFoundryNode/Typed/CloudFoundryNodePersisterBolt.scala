@@ -22,12 +22,15 @@ import it.unibo.ing.rdf._
  */
 abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeConf)
   extends StormBolt(List()) with Logging{
-  private var persisted : Set[Int] = _
+  private var _persistedResources : Set[Int] = _
+  private var _persistedSample : Set[Long] = _
   setup{
-    persisted = Set()
+    _persistedResources = Set()
+    _persistedSample = Set()
   }
   shutdown{
-    persisted = null
+    _persistedResources = null
+    _persistedSample = null
   }
 
 
@@ -35,13 +38,16 @@ abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeCo
     try{
       t matchSeq{
         case Seq(node : CloudFoundryNodeConf, date : Date, info : MonitInfo) =>{
-          val graphName = GraphNamer.graphName(date)
-          val sampleData = CFNodeSample(node.url, info)
-          writeToRDF(graphName, sampleData.toRdf)
-          if (!(persisted contains info.resId)){
-            val resourceData = CFNodeResource(node.url, info)
-            writeToRDF(GraphNamer.resourcesGraphName, resourceData.toRdf)
-            persisted += info.resId
+          if (!(_persistedSample contains date.getTime)){
+            val graphName = GraphNamer.graphName(date)
+            val sampleData = CFNodeSample(node.url, info)
+            writeToRDF(graphName, sampleData.toRdf)
+            if (!(_persistedResources contains info.resId)){
+              val resourceData = CFNodeResource(node.url, info)
+              writeToRDF(GraphNamer.resourcesGraphName, resourceData.toRdf)
+              _persistedResources += info.resId
+            }
+            _persistedSample += date.getTime
           }
           t ack
         }

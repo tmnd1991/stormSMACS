@@ -24,14 +24,16 @@ import it.unibo.ing.stormsmacs.rdfBindings.OpenStackRdfFormats._
  */
 abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
   extends StormBolt(List())
-  //extends TypedBolt[(OpenStackNodeConf, Date, Resource, Sample), Nothing]
   with Logging{
-    private var _persisted : Set[Int] = _
+    private var _persistedResources : Set[Int] = _
+    private var _persistedSample : Set[Long] = _
     setup{
-      _persisted = Set()
+      _persistedResources = Set()
+      _persistedSample = Set()
     }
     shutdown{
-      _persisted = null
+      _persistedResources = null
+      _persistedSample = null
     }
 
     protected def writeToRDF(graphName : String, model : Model)
@@ -40,16 +42,19 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
       try{
         t match{
           case Seq(node: OpenStackNodeConf, date: Date, resource: Resource, sample: Sample) => {
-            val graphName = GraphNamer.graphName(date)
-            val url = GraphNamer.cleanURL(node.ceilometerUrl)
-            val data = OpenStackSampleData(url, sample)
-            val model = data.toRdf
-            writeToRDF(graphName, model)
-            val res = OpenStackResourceData(GraphNamer.cleanURL(node.ceilometerUrl), resource, sample.meter, sample.unit, sample.`type`.toString)
-            if (!(_persisted contains res.hashCode)){
-              val resModel = res.toRdf
-              writeToRDF(GraphNamer.resourcesGraphName, resModel)
-              _persisted += res.hashCode
+            if (!(_persistedSample contains date.getTime)){
+              val graphName = GraphNamer.graphName(date)
+              val url = GraphNamer.cleanURL(node.ceilometerUrl)
+              val data = OpenStackSampleData(url, sample)
+              val model = data.toRdf
+              writeToRDF(graphName, model)
+              val res = OpenStackResourceData(GraphNamer.cleanURL(node.ceilometerUrl), resource, sample.meter, sample.unit, sample.`type`.toString)
+              if (!(_persistedResources contains res.hashCode)){
+                val resModel = res.toRdf
+                writeToRDF(GraphNamer.resourcesGraphName, resModel)
+                _persistedResources += res.hashCode
+              }
+              _persistedSample += date.getTime
             }
             t ack
           }
