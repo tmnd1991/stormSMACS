@@ -19,7 +19,6 @@ class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")){
     using msgId(now.getTime) emit (now)
   }
   override def fail(messageId: Any) : Unit = {
-    super.fail(messageId)
     val dateToBeReplayed = new Date(messageId.asInstanceOf[Long])
     using msgId(dateToBeReplayed.getTime) emit (dateToBeReplayed)
   }
