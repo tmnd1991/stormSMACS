@@ -38,7 +38,7 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
 
     protected def writeToRDF(graphName : String, model : Model)
 
-    override def execute(t : Tuple) : Unit = t match{
+    override def execute(t : Tuple) : Unit = t matchSeq{
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource, sample: Sample) => {
         try {
           val sId = sample.id + resource.resource_id

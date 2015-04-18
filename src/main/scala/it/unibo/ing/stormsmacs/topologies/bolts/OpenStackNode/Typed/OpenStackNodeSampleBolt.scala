@@ -30,6 +30,5 @@ class OpenStackNodeSampleBolt(pollTime: Long)
         case _ => input fail            //if we get None as a result, something bad happened, we need to replay the tuple
       }
     }
-    case x => logger.error(x.toString())
   }
 }
