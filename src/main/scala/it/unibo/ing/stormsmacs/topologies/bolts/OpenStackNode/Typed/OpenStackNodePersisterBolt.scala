@@ -26,45 +26,46 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
   extends StormBolt(List())
   with Logging{
     private var _persistedResources : Set[Int] = _
-    private var _persistedSample : Set[Long] = _
+    private var _persistedSamples : MostRecentKvalues[List[String]] = _
     setup{
       _persistedResources = Set()
-      _persistedSample = Set()
+      _persistedSamples = new MostRecentKvalues[List[String]](30)
     }
     shutdown{
       _persistedResources = null
-      _persistedSample = null
+      _persistedSamples = null
     }
 
     protected def writeToRDF(graphName : String, model : Model)
 
-    override def execute(t : Tuple) : Unit = {
-      try{
-        t match{
-          case Seq(node: OpenStackNodeConf, date: Date, resource: Resource, sample: Sample) => {
-            if (!(_persistedSample contains date.getTime)){
-              val graphName = GraphNamer.graphName(date)
-              val url = GraphNamer.cleanURL(node.ceilometerUrl)
-              val data = OpenStackSampleData(url, sample)
-              val model = data.toRdf
-              writeToRDF(graphName, model)
-              val res = OpenStackResourceData(GraphNamer.cleanURL(node.ceilometerUrl), resource, sample.meter, sample.unit, sample.`type`.toString)
-              if (!(_persistedResources contains res.hashCode)){
-                val resModel = res.toRdf
-                writeToRDF(GraphNamer.resourcesGraphName, resModel)
-                _persistedResources += res.hashCode
-              }
-              _persistedSample += date.getTime
+    override def execute(t : Tuple) : Unit = t match{
+      case Seq(node: OpenStackNodeConf, date: Date, resource: Resource, sample: Sample) => {
+        try {
+          val sId = sample.id + resource.resource_id
+          if (!((_persistedSamples contains date) && (_persistedSamples(date) contains sId))) {
+            val graphName = GraphNamer.graphName(date)
+            val url = GraphNamer.cleanURL(node.ceilometerUrl)
+            val data = OpenStackSampleData(url, sample)
+            val model = data.toRdf
+            writeToRDF(graphName, model)
+            val res = OpenStackResourceData(GraphNamer.cleanURL(node.ceilometerUrl), resource, sample.meter, sample.unit, sample.`type`.toString)
+            if (!(_persistedResources contains res.hashCode)) {
+              val resModel = res.toRdf
+              writeToRDF(GraphNamer.resourcesGraphName, resModel)
+              _persistedResources += res.hashCode
             }
-            t ack
+            if (!(_persistedSamples contains date))
+              _persistedSamples(date) = List(sId)
+            else
+              _persistedSamples(date) :+= sId
           }
+          t ack
         }
-
-      }
-      catch {
-        case e: Throwable => {
-          logger.trace(e.getMessage, e)
-          t fail
+        catch {
+          case e: Throwable => {
+            logger.trace(e.getMessage, e)
+            t fail
+          }
         }
       }
     }

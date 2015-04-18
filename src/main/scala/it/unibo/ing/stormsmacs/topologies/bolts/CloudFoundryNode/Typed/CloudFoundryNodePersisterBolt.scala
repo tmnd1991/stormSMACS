@@ -5,6 +5,7 @@ import java.util.Date
 
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.stormsmacs.GraphNamer
+import it.unibo.ing.utils.MostRecentKvalues
 import storm.scala.dsl.additions.Logging
 import virtuoso.jena.driver._
 import storm.scala.dsl.StormBolt
@@ -23,70 +24,44 @@ import it.unibo.ing.rdf._
 abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeConf)
   extends StormBolt(List()) with Logging{
   private var _persistedResources : Set[Int] = _
-  private var _persistedSample : Set[Long] = _
+  private var _persistedSamples : MostRecentKvalues[List[String]] = _
   setup{
     _persistedResources = Set()
-    _persistedSample = Set()
+    _persistedSamples = new MostRecentKvalues[List[String]](30)
   }
   shutdown{
     _persistedResources = null
-    _persistedSample = null
+    _persistedSamples = null
   }
 
 
-  override def execute(t : Tuple) = {
-    try{
-      t matchSeq{
-        case Seq(node : CloudFoundryNodeConf, date : Date, info : MonitInfo) =>{
-          if (!(_persistedSample contains date.getTime)){
-            val graphName = GraphNamer.graphName(date)
-            val sampleData = CFNodeSample(node.url, info)
-            writeToRDF(graphName, sampleData.toRdf)
-            if (!(_persistedResources contains info.resId)){
-              val resourceData = CFNodeResource(node.url, info)
-              writeToRDF(GraphNamer.resourcesGraphName, resourceData.toRdf)
-              _persistedResources += info.resId
-            }
-            _persistedSample += date.getTime
+  override def execute(t : Tuple) = t matchSeq {
+    case Seq(node: CloudFoundryNodeConf, date: Date, info: MonitInfo) => {
+      try {
+        val sId = node.id + info.name
+        if (!((_persistedSamples contains date) && (_persistedSamples(date) contains sId))){
+          val graphName = GraphNamer.graphName(date)
+          val sampleData = CFNodeSample(node.url, info)
+          writeToRDF(graphName, sampleData.toRdf)
+          if (!(_persistedResources contains info.resId)) {
+            val resourceData = CFNodeResource(node.url, info)
+            writeToRDF(GraphNamer.resourcesGraphName, resourceData.toRdf)
+            _persistedResources += info.resId
           }
-          t ack
+          if (!(_persistedSamples contains date))
+            _persistedSamples(date) = List(sId)
+          else
+            _persistedSamples(date) :+= sId
         }
-        case x => {
-          logger.error("invalid input tuple: expected CloudFoundryNodeConf, Date, MonitInfo and " + x + "found")
+        t ack
+      }
+      catch {
+        case e: Throwable => {
+          logger.trace(e.getMessage,e)
           t fail
         }
       }
     }
-    catch{
-      case e : Throwable => {
-        logger.error(e.toString)
-        t fail
-      }
-    }
   }
-
-
-  /*
-  override def typedExecute(t: (CloudFoundryNodeConf, Date, MonitInfo), st : Tuple): Unit = {
-    try{
-      val graphName = GraphNamer.graphName(t._2)
-      val sampleData = CFNodeSample(t._1.url, t._3)
-      writeToRDF(graphName, sampleData.toRdf)
-      if (!(persisted contains t._3.resId)){
-        val resourceData = CFNodeResource(t._1.url, t._3)
-        writeToRDF(GraphNamer.resourcesGraphName, resourceData.toRdf)
-        persisted += t._3.resId
-      }
-      st.ack
-    }
-    catch{
-      case e : Throwable => {
-        logger.error(e.getStackTrace.mkString("\n"))
-        st.fail
-      }
-    }
-  }
-  */
-
   protected def writeToRDF(graphName : String, data : Model) : Unit
 }
