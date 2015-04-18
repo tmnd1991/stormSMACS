@@ -22,12 +22,13 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
 {
   override def execute(t: Tuple) : Unit = t matchSeq {
     case Seq(date: Date) =>{
+      val url = node.url.toURI / date.getTime.toString
       try{
-        val data = httpClient.doGET(node.url.toURI / date.getTime.toString, node.readTimeout)
+        val data = httpClient.doGET(url , node.readTimeout)
         if (data.isSuccess)
           using anchor t emit (node, date, data.content.parseJson.convertTo[SigarMeteredData])
         else
-          logger error (node.url + "response code not successful")
+          logger error (url + ": response code not successful")
       }
       catch{
         case e : Throwable => logger.trace(e.getMessage,e)
