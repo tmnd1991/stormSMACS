@@ -56,10 +56,9 @@ abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeCo
         t ack
       }
       catch {
-        case e: Throwable => {
-          logger.trace(e.getMessage,e)
+        case e: Throwable =>
+          logger.error(e.getMessage, e)
           t fail
-        }
       }
     }
   }

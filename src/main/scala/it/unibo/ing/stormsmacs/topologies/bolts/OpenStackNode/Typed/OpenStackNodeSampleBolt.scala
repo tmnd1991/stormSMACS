@@ -35,8 +35,7 @@ class OpenStackNodeSampleBolt(pollTime: Long)
   }
   catch{
       case e : Throwable =>
-        logger.trace(e.getMessage,e)
-        logger.error("Thrown " + e.getClass.toString)
+        logger.error(e.getMessage,e)
         input fail
   }
 }

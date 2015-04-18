@@ -30,7 +30,7 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf)
         }
       }
       catch{
-        case e : Throwable => logger.trace("", e)
+        case e : Throwable => logger.error(e.getMessage, e)
       }
       finally{
         t ack
