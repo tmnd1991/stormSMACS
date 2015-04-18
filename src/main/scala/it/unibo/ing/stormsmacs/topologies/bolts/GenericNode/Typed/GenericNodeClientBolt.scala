@@ -34,6 +34,7 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
         case e : Throwable => logger.trace(e.getMessage,e)
       }
       finally {
+        logger.info("acking")
         t ack
       }
     }
