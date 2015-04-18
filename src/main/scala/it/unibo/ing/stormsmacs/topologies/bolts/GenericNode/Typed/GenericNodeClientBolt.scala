@@ -27,7 +27,7 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
         if (data.isSuccess)
           using anchor t emit (node, date, data.content.parseJson.convertTo[SigarMeteredData])
         else
-          logger error "response code not successful"
+          logger error (node.url + "response code not successful")
       }
       catch{
         case e : Throwable => logger.trace(e.getMessage,e)
