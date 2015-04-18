@@ -32,7 +32,6 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
       }
       catch{
         case e : Throwable => logger.trace(e.getMessage,e)
-
       }
       finally {
         t ack

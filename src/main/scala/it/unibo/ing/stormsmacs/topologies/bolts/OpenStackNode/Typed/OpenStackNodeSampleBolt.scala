@@ -19,7 +19,7 @@ class OpenStackNodeSampleBolt(pollTime: Long)
   with Logging{
   override def execute(input: Tuple) = try {
     input matchSeq {
-      case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) => {
+      case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
         val cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
         val start = new Date(date.getTime - pollTime)
         cclient.tryGetSamplesOfResource(resource.resource_id, start, date) match {
@@ -31,10 +31,11 @@ class OpenStackNodeSampleBolt(pollTime: Long)
           }
           case _ => input fail //if we get None as a result, something bad happened, we need to replay the tuple
         }
-      }
     }
-  }catch
-    {
-      case e : Throwable => logger.trace(e.getMessage,e)
-    }
+  }
+  catch{
+      case e : Throwable =>
+        logger.trace(e.getMessage,e)
+        logger.error("Thrown " + e.getClass.toString)
+  }
 }

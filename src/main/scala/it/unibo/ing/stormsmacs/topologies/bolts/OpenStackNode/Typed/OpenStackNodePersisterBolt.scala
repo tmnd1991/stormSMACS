@@ -40,7 +40,6 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
 
     override def execute(t : Tuple) : Unit = try {
       t matchSeq {
-
         case Seq(node: OpenStackNodeConf, date: Date, resource: Resource, sample: Sample) => {
           val sId = sample.id + resource.resource_id
           if (!((_persistedSamples contains date) && (_persistedSamples(date) contains sId))) {
@@ -64,10 +63,10 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
         }
       }
     }
-        catch {
-          case e: Throwable => {
-            logger.trace(e.getMessage, e)
-            t fail
-          }
-        }
+    catch {
+      case e: Throwable => {
+        logger.trace(e.getMessage, e)
+        t fail
+      }
+    }
 }
