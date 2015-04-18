@@ -39,10 +39,6 @@ class OpenStackNodeClientBolt(node : OpenStackNodeConf)
           case _ => t fail
         }
       }
-      case x => {
-        logger.error("invalid input tuple: expected Date and " + x + "found")
-        t fail
-      }
     }
   }
 }

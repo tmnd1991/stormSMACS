@@ -31,10 +31,10 @@ class GenericNodeClientBolt(val node : GenericNodeConf)
           logger error (url + ": response code not successful")
       }
       catch{
+        case r : RuntimeException => logger.error(r.getMessage,r)
         case e : Throwable => logger.error(e.getMessage,e)
       }
       finally {
-        logger.info("acking")
         t ack
       }
     }

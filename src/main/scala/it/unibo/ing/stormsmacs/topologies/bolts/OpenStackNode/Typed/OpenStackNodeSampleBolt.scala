@@ -34,8 +34,13 @@ class OpenStackNodeSampleBolt(pollTime: Long)
     }
   }
   catch{
+      case re : RuntimeException =>
+        logger.error(re.getMessage, re)
+        logger.error("fail")
+        input.fail
       case e : Throwable =>
         logger.error(e.getMessage,e)
+        logger.error("fail")
         input fail
   }
 }

@@ -30,6 +30,7 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf)
         }
       }
       catch{
+        case r : RuntimeException => logger.error(r.getMessage, r)
         case e : Throwable => logger.error(e.getMessage, e)
       }
       finally{

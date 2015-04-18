@@ -64,9 +64,14 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
       }
     }
     catch {
-      case e: Throwable => {
-        logger.error(e.getMessage,e)
+      case r: RuntimeException =>
+        logger.error(r.getMessage,r)
+        logger.error("fail")
         t fail
-      }
+      case e: Throwable =>
+        logger.error(e.getMessage,e)
+        logger.error("fail")
+        t fail
+
     }
 }
