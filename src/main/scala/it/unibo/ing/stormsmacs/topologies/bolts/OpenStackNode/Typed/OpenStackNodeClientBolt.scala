@@ -32,7 +32,8 @@ class OpenStackNodeClientBolt(node : OpenStackNodeConf)
         cclient.tryListAllResources match{
           case Some(Nil) => t ack
           case Some(res : Seq[Resource]) => {
-            for (r <- res) using anchor t emit(node, date, r)
+            for (r <- res)
+              using anchor t emit(node, date, r)
             t ack
           }
           case _ => t fail
