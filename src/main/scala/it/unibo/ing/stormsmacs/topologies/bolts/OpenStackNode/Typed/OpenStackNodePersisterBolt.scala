@@ -65,7 +65,8 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
     }
     catch {
       case e: Throwable => {
-        logger.trace(e.getMessage, e)
+        logger.trace(e.getMessage,e)
+        logger.error("Thrown " + e.getClass.toString)
         t fail
       }
     }
