@@ -37,7 +37,7 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
           t ack
         }
         else{
-          logger.info("fail - not successfully http " + date)
+          logger.info("fail - not successfully http " + date.getTime)
           t fail
         }
 
@@ -45,7 +45,7 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
       catch{
         case e : Throwable =>
           logger.error(e.getMessage, e)
-          logger.info("fail - no samples " + date)
+          logger.info("fail - http error " + date)
           t fail
       }
 
