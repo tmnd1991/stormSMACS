@@ -26,14 +26,14 @@ class CloudFoundryBuilder(pollTime : Long,
       val persisterBolt = persister match{
         case x : FusekiNodeConf => new CloudFoundryNodePersisterFusekiBolt(x)
         case x : VirtuosoNodeConf => new CloudFoundryNodePersisterVirtuosoBolt(x)
+        case _ => throw new IllegalArgumentException("what's that?")
       }
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
       val persisterDeclarer = builder.setBolt(boltPersisterName, persisterBolt, persisterTasks)
       for(cfn <- list){
         val name = boltReaderName + "_" + cfn.id
-        builder.setBolt(name, new CloudFoundryNodeClientBolt(cfn, pollTime)).
-          allGrouping(timerSpoutName)
+        builder.setBolt(name, new CloudFoundryNodeClientBolt(cfn, pollTime)).allGrouping(timerSpoutName)
         persisterDeclarer.shuffleGrouping(name)
       }
     }

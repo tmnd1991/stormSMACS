@@ -28,11 +28,19 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
         if (response isSuccess) {
           import spray.json.DefaultJsonProtocol._
           val data = response.content.parseJson.convertTo[Seq[MonitInfo]]
-          for (d <- data)
+          var i = 0
+          for (d <- data){
+            logger.info(s"emitting $i of ${data.size} of: $date")
             using anchor t emit(node, date, d)
+          }
+          logger.info("ack - got samples " + date)
+          t ack
         }
-        logger.info("ack - got samples " + date)
-        t ack
+        else{
+          logger.info("fail - not successfully http " + date)
+          t fail
+        }
+
       }
       catch{
         case e : Throwable =>
