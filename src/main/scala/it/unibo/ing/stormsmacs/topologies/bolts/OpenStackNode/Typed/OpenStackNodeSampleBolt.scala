@@ -17,7 +17,7 @@ import storm.scala.dsl.StormBolt
 class OpenStackNodeSampleBolt(pollTime: Long)
   extends StormBolt(List("NodeName", "GraphName", "Resource", "Sample"))
   with Logging{
-  override def execute(input: Tuple) = try {
+  override def execute(input: Tuple) = {//try {
     input matchSeq {
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
         val cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
@@ -33,14 +33,14 @@ class OpenStackNodeSampleBolt(pollTime: Long)
         }
     }
   }
-  catch{
-      case re : RuntimeException =>
-        logger.error(re.getMessage, re)
-        logger.error("fail")
-        input.fail
-      case e : Throwable =>
-        logger.error(e.getMessage,e)
-        logger.error("fail")
-        input fail
-  }
+//  catch{
+//    case re : RuntimeException =>
+//      logger.error(re.getMessage, re)
+//      logger.error("fail")
+//      input.fail
+//    case e : Throwable =>
+//      logger.error(e.getMessage,e)
+//      logger.error("fail")
+//      input fail
+//  }
 }

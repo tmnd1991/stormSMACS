@@ -36,9 +36,7 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
         case r : RuntimeException => logger.error(r.getMessage, r)
         case e : Throwable => logger.error(e.getMessage, e)
       }
-      finally{
-        t ack
-      }
+      t ack
     }
   }
 }
