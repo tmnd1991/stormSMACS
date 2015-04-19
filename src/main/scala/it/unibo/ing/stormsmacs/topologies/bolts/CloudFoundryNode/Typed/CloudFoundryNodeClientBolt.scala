@@ -1,5 +1,7 @@
 package it.unibo.ing.stormsmacs.topologies.bolts.CloudFoundryNode.Typed
 
+import java.net.URI
+
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.monit.model.MonitInfo
 import it.unibo.ing.monit.model.JsonConversions._
@@ -14,14 +16,15 @@ import it.unibo.ing.utils._
  * @version 24/12/14
  * Storm Bolt that gets Sample Data from given Cloudfoundry node
  */
-class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf)
+class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
   extends HttpRequesterBolt(node.connectTimeout, node.readTimeout, false,"Node","GraphName","MonitData")
   with Logging
 {
   override def execute(t: Tuple) = t matchSeq{
     case Seq(date : Date) =>{
       try {
-        val response = httpClient.doGET(uri = node.url.toURI / date.getTime.toString, timeout = node.readTimeout)
+        val url: URI = node.url.toURI / (date.getTime - pollTime).toString / date.getTime.toString
+        val response = httpClient.doGET(uri = url, timeout = node.readTimeout)
         if (response isSuccess) {
           import spray.json.DefaultJsonProtocol._
           val data = response.content.parseJson.convertTo[Seq[MonitInfo]]

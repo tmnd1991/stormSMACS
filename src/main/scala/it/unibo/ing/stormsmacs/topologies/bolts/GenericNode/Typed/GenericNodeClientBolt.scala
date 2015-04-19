@@ -1,5 +1,6 @@
 package it.unibo.ing.stormsmacs.topologies.bolts.GenericNode.Typed
 
+import java.net.URI
 import java.util.Date
 
 import backtype.storm.tuple.Tuple
@@ -16,17 +17,22 @@ import storm.scala.dsl.additions.Logging
  * @version 18/11/2014
  * Storm Bolt that gets Sample Data from given node
  */
-class GenericNodeClientBolt(val node : GenericNodeConf)
+class GenericNodeClientBolt(val node : GenericNodeConf, val pollTime: Long)
   extends HttpRequesterBolt(node.connectTimeout, node.readTimeout, false, "Node","GraphName","MonitData")
   with Logging
 {
+  require (pollTime > 0)
   override def execute(t: Tuple) : Unit = t matchSeq {
     case Seq(date: Date) =>{
-      val url = node.url.toURI / date.getTime.toString
+      val url: URI = node.url.toURI / (date.getTime - pollTime).toString / date.getTime.toString
       try{
         val data = httpClient.doGET(url , node.readTimeout)
-        if (data.isSuccess)
-          using anchor t emit (node, date, data.content.parseJson.convertTo[SigarMeteredData])
+        if (data.isSuccess){
+          import spray.json.DefaultJsonProtocol._
+          val convertedData = data.content.parseJson.convertTo[Seq[SigarMeteredData]]
+          for (d <- convertedData)
+            using anchor t emit (node, date, d)
+        }
         else
           logger error (url + ": response code not successful")
       }

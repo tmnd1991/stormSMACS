@@ -26,23 +26,6 @@ class GenericNodePersisterFusekiBolt(fusekiEndpoint : FusekiNodeConf)
       httpClient.stop()
     httpClient = null
   }
-  /*
-  private def writeToRDFStore(graphName : String, data : Model) : Unit = {
-    val dataAsString = data.rdfSerialization("N-TRIPLE")
-    val str = s"INSERT DATA { GRAPH $graphName { $dataAsString } }"
 
-    val exchange = new ContentExchange()
-    exchange.setURI(new URI(fusekiEndpoint.url / "update"))
-    exchange.setMethod("POST")
-    exchange.setRequestContentType("application/sparql-update")
-    exchange.setRequestContent(new ByteArrayBuffer(str))
-    httpClient.send(exchange)
-    val state = exchange.waitForDone()
-    if ((exchange.getResponseStatus/100) != 2){
-      logger.info(str)
-      throw new Exception(s"Cannot sparql update: ${exchange.getResponseStatus} -> ${exchange.getResponseContent}")
-    }
-  }
-  */
   override protected def writeToRDF(graphName: String, data: Model) : Unit = writeToRDFStore(fusekiEndpoint, httpClient, graphName, data)
 }
