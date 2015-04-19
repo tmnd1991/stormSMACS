@@ -53,16 +53,17 @@ abstract class CloudFoundryNodePersisterBolt(persisterEndpoint : PersisterNodeCo
           else
             _persistedSamples(date) :+= sId
         }
+        logger.info("ack - persisted " + date)
         t ack
       }
       catch {
         case r: RuntimeException =>
           logger.error(r.getMessage, r)
-          logger.error("fail")
+          logger.error("fail - non persisted " + date)
           t fail
         case e: Throwable =>
           logger.error(e.getMessage, e)
-          logger.error("fail")
+          logger.error("fail - non persisted " + date)
           t fail
       }
     }

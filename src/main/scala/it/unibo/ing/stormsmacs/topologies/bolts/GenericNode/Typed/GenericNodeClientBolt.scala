@@ -32,15 +32,23 @@ class GenericNodeClientBolt(val node : GenericNodeConf, val pollTime: Long)
           val convertedData = data.content.parseJson.convertTo[Seq[SigarMeteredData]]
           for (d <- convertedData)
             using anchor t emit (node, date, d)
+          logger.info("ack " + date)
+          t ack
         }
-        else
+        else{
           logger error (url + ": response code not successful")
+          logger info ("fail " + date)
+          t fail
+        }
+
       }
       catch{
-        case r : RuntimeException => logger.error(r.getMessage,r)
-        case e : Throwable => logger.error(e.getMessage,e)
+        case e : Throwable =>
+          logger.error(e.getMessage,e)
+          logger info ("fail " + date)
+          t fail
       }
-      t ack
+
     }
   }
 }

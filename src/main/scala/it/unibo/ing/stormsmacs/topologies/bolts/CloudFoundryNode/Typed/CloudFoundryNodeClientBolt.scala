@@ -31,12 +31,16 @@ class CloudFoundryNodeClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
           for (d <- data)
             using anchor t emit(node, date, d)
         }
+        logger.info("ack - got samples " + date)
+        t ack
       }
       catch{
-        case r : RuntimeException => logger.error(r.getMessage, r)
-        case e : Throwable => logger.error(e.getMessage, e)
+        case e : Throwable =>
+          logger.error(e.getMessage, e)
+          logger.info("fail - no samples " + date)
+          t fail
       }
-      t ack
+
     }
   }
 }

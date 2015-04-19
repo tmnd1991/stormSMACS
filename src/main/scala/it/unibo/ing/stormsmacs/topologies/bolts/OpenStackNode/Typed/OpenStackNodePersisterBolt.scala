@@ -41,37 +41,34 @@ abstract class OpenStackNodePersisterBolt(persisterNode: PersisterNodeConf)
     override def execute(t : Tuple) : Unit ={ //try {
       t matchSeq {
         case Seq(node: OpenStackNodeConf, date: Date, resource: Resource, sample: Sample) => {
-          val sId = sample.id + resource.resource_id
-          if (!((_persistedSamples contains date) && (_persistedSamples(date) contains sId))) {
-            val graphName = GraphNamer.graphName(date)
-            val url = GraphNamer.cleanURL(node.ceilometerUrl)
-            val data = OpenStackSampleData(url, sample)
-            val model = data.toRdf
-            writeToRDF(graphName, model)
-            val res = OpenStackResourceData(GraphNamer.cleanURL(node.ceilometerUrl), resource, sample.meter, sample.unit, sample.`type`.toString)
-            if (!(_persistedResources contains res.hashCode)) {
-              val resModel = res.toRdf
-              writeToRDF(GraphNamer.resourcesGraphName, resModel)
-              _persistedResources += res.hashCode
+          try {
+            val sId = sample.id + resource.resource_id
+            if (!((_persistedSamples contains date) && (_persistedSamples(date) contains sId))) {
+              val graphName = GraphNamer.graphName(date)
+              val url = GraphNamer.cleanURL(node.ceilometerUrl)
+              val data = OpenStackSampleData(url, sample)
+              val model = data.toRdf
+              writeToRDF(graphName, model)
+              val res = OpenStackResourceData(GraphNamer.cleanURL(node.ceilometerUrl), resource, sample.meter, sample.unit, sample.`type`.toString)
+              if (!(_persistedResources contains res.hashCode)) {
+                val resModel = res.toRdf
+                writeToRDF(GraphNamer.resourcesGraphName, resModel)
+                _persistedResources += res.hashCode
+              }
+              if (!(_persistedSamples contains date))
+                _persistedSamples(date) = List(sId)
+              else
+                _persistedSamples(date) :+= sId
             }
-            if (!(_persistedSamples contains date))
-              _persistedSamples(date) = List(sId)
-            else
-              _persistedSamples(date) :+= sId
+            t ack
           }
-          t ack
+          catch{
+            case e : Throwable =>
+              logger.error(e.getMessage,e)
+              logger.info("fail " + date)
+              t fail
+          }
         }
       }
     }
-//    catch {
-//      case r: RuntimeException =>
-//        logger.error(r.getMessage,r)
-//        logger.error("fail")
-//        t fail
-//      case e: Throwable =>
-//        logger.error(e.getMessage,e)
-//        logger.error("fail")
-//        t fail
-//
-//    }
 }

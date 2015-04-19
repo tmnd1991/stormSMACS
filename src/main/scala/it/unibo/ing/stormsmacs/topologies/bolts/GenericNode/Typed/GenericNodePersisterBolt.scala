@@ -59,16 +59,17 @@ abstract class GenericNodePersisterBolt(persisterNode : PersisterNodeConf)
           else
             _persistedSamples(date) :+= sId
         }
+        logger.info("ack " + date)
         t ack
       }
       catch {
         case r: RuntimeException =>
           logger.error(r.getMessage,r)
-          logger.error("fail")
+          logger.error("fail " + date)
           t fail
         case e: Throwable =>
           logger.error(e.getMessage,e)
-          logger.error("fail")
+          logger.error("fail " + date)
           t fail
       }
     }
