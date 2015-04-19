@@ -14,7 +14,8 @@ import scala.language.postfixOps
  * @version 08/03/15
  * Adds to the current topology all the spouts and bolts needed to monitor the list of cloudfoundry node passed
  */
-class CloudFoundryBuilder(persister: PersisterNodeConf,
+class CloudFoundryBuilder(pollTime : Long,
+                          persister: PersisterNodeConf,
                           list: Seq[CloudFoundryNodeConf],
                           timerSpout : TimerSpout,
                           timerSpoutName : String,
@@ -28,11 +29,10 @@ class CloudFoundryBuilder(persister: PersisterNodeConf,
       }
       val boltReaderName = "cloudfoundryReader"
       val boltPersisterName = "cloudfoundryPersister"
-      val sampleClient = new CloudFoundryNodeClientBolt(list.head)
       val persisterDeclarer = builder.setBolt(boltPersisterName, persisterBolt, persisterTasks)
       for(cfn <- list){
         val name = boltReaderName + "_" + cfn.id
-        builder.setBolt(name, new CloudFoundryNodeClientBolt(cfn)).
+        builder.setBolt(name, new CloudFoundryNodeClientBolt(cfn, pollTime)).
           allGrouping(timerSpoutName)
         persisterDeclarer.shuffleGrouping(name)
       }

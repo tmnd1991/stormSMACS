@@ -41,8 +41,8 @@ object Topology {
 
 
       (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
-      (new GenericBuilder(conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
-      (new CloudFoundryBuilder(conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+      (new GenericBuilder(conf.pollTime, conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+      (new CloudFoundryBuilder(conf.pollTime, conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
 
       val config = new Config()
       config.setDebug(conf.debug)

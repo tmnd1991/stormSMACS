@@ -14,7 +14,8 @@ import scala.language.postfixOps
  * @version 08/03/15
  * Adds to the current topology all the spouts and bolts needed to monitor the list of generic node passed
  */
-class GenericBuilder(persisterNode : PersisterNodeConf,
+class GenericBuilder(pollTime : Long,
+                     persisterNode : PersisterNodeConf,
                      list: Seq[GenericNodeConf],
                      timerSpout : TimerSpout,
                      timerSpoutName : String,
@@ -24,7 +25,6 @@ class GenericBuilder(persisterNode : PersisterNodeConf,
       val persisterTasks =  calctasks(list.size, maxNodesPerTask)
       val boltReaderName = "genericReaderBolt"
       val boltPersisterName = "genericPersister"
-      val sampleClient = new GenericNodeClientBolt(list.head)
       val persisterBolt = persisterNode match{
         case x : FusekiNodeConf => new GenericNodePersisterFusekiBolt(x)
         case x : VirtuosoNodeConf => new GenericNodePersisterVirtuosoBolt(x)
@@ -32,7 +32,7 @@ class GenericBuilder(persisterNode : PersisterNodeConf,
       val persisterDeclarer = builder.setBolt(boltPersisterName,persisterBolt,persisterTasks)
       for(gn <- list){
         val name = boltReaderName + "_" + gn.id
-        builder.setBolt(name, new GenericNodeClientBolt(gn)).allGrouping(timerSpoutName)
+        builder.setBolt(name, new GenericNodeClientBolt(gn, pollTime)).allGrouping(timerSpoutName)
         persisterDeclarer.shuffleGrouping(name)
       }
     }
