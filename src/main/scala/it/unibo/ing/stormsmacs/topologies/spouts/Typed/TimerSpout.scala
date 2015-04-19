@@ -24,6 +24,7 @@ class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")) with Log
   }
   override def fail(messageId: Any) : Unit = {
     val dateToBeReplayed = new Date(messageId.asInstanceOf[Long])
+    logger info "replayed " + dateToBeReplayed
     using msgId(dateToBeReplayed.getTime) emit (dateToBeReplayed)
   }
 }
