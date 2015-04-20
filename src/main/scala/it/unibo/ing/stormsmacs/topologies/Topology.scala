@@ -9,9 +9,9 @@ import it.unibo.ing.monit.model.{MonitInfo, MonitProcessInfo, MonitSystemInfo}
 import it.unibo.ing.sigar.restful.model.SigarMeteredData
 import it.unibo.ing.stormsmacs.conf._
 import it.unibo.ing.stormsmacs.serializers._
-import it.unibo.ing.stormsmacs.topologies.reliable.builders.{CloudFoundryBuilder, GenericBuilder, OpenstackBuilder}
-import it.unibo.ing.stormsmacs.topologies.reliable.spouts.TimerSpout
-import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource, Meter, Statistics}
+
+
+import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
 import org.openstack.api.restful.elements.Link
 import org.slf4j.LoggerFactory
 
@@ -33,14 +33,28 @@ object Topology {
       val conf = readConfFromJsonFile(jsonConfFile)
       val builder = new TopologyBuilder()
       logger.info("starting stormsmacs with conf : \n" + conf)
-      val timerSpoutName = "timer"
-      val timerSpout = new TimerSpout(conf.pollTime)
-      builder.setSpout(timerSpoutName, timerSpout)
+      if (conf.reliable) {
+        import it.unibo.ing.stormsmacs.topologies.reliable.builders.{CloudFoundryBuilder, GenericBuilder, OpenstackBuilder}
+        import it.unibo.ing.stormsmacs.topologies.reliable.spouts.TimerSpout
+        val timerSpoutName = "timer"
+        val timerSpout = new TimerSpout(conf.pollTime)
+        builder.setSpout(timerSpoutName, timerSpout)
+        (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+        (new GenericBuilder(conf.pollTime, conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+        (new CloudFoundryBuilder(conf.pollTime, conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
 
-      (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
-      (new GenericBuilder(conf.pollTime, conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
-      (new CloudFoundryBuilder(conf.pollTime, conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+      }
+      else {
+        import it.unibo.ing.stormsmacs.topologies.unreliable.builders.{CloudFoundryBuilder, GenericBuilder, OpenstackBuilder}
+        import it.unibo.ing.stormsmacs.topologies.unreliable.spouts.TimerSpout
+        val timerSpoutName = "timer"
+        val timerSpout = new TimerSpout(conf.pollTime)
+        builder.setSpout(timerSpoutName, timerSpout)
+        (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+        (new GenericBuilder(conf.pollTime, conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+        (new CloudFoundryBuilder(conf.pollTime, conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
 
+      }
       val config = new Config()
       config.setDebug(conf.debug)
       registerSerializers(config)
