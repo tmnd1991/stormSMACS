@@ -7,5 +7,6 @@
   },
   "remote"            : false,
   "debug"             : true,
-  "pollTime"          : 60000
+  "pollTime"          : 60000,
+  "reliable"          : false
 }

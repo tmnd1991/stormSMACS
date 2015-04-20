@@ -15,6 +15,7 @@ abstract class Configuration{
   val remote            : Boolean
   val debug             : Boolean
   val pollTime          : Long
+  val reliable          : Boolean
   val openstackNodeList = openstackNodes.getOrElse(List.empty)
   val cloudfoundryNodeList = cloudfoundryNodes.getOrElse(List.empty)
   val genericNodeList = genericNodes.getOrElse(List.empty)

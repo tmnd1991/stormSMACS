@@ -23,7 +23,8 @@ case class JsonConfiguration(name              : String,
                              persisterNode     : PersisterNodeConf,
                              debug             : Boolean,
                              remote            : Boolean,
-                             pollTime          : Long) extends Configuration{
+                             pollTime          : Long,
+                             reliable          : Boolean) extends Configuration{
   require(openstackNodes == None || openstackNodes.get.nonEmpty)
   require(cloudfoundryNodes == None || cloudfoundryNodes.get.nonEmpty)
   require(genericNodes == None || genericNodes.get.nonEmpty)
@@ -50,7 +51,7 @@ object JsonConfigurationProtocol extends spray.json.DefaultJsonProtocol{
   import CloudFoundryNodeProtocol._
   import GenericNodeProtocol._
   import PersisterNodeProtocol._
-  implicit val jsonConfigurationFormat : JsonFormat[JsonConfiguration] = jsonFormat8(JsonConfiguration.apply)
+  implicit val jsonConfigurationFormat : JsonFormat[JsonConfiguration] = jsonFormat9(JsonConfiguration.apply)
   implicit object urlFormat extends JsonFormat[URL]{
     override def read(json: JsValue) = json match{
       case s : JsString => try{
