@@ -37,6 +37,7 @@ class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")) with Log
     }
     else{
       logger info "not replayed " + dateToBeReplayed
+      ack(messageId)
       failHandler acked msgId
     }
   }
