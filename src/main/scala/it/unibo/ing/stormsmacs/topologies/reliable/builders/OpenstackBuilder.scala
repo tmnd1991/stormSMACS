@@ -30,7 +30,7 @@ class OpenstackBuilder(pollTime : Long,
       val meterBolt = new OpenStackSampleBolt(pollTime)
       val meterBoltDeclarer = builder.setBolt(boltSamplesName, meterBolt, persisterTasks)
       for(osn <- list){
-        val name = boltClientName + "[ " + osn.id + " ]"
+        val name = boltClientName + " [" + osn.id + "] "
         builder.setBolt(name, new OpenStackClientBolt(osn)).allGrouping(timerSpoutName)
         meterBoltDeclarer.shuffleGrouping(name)
       }

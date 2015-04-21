@@ -30,7 +30,7 @@ class CloudFoundryBuilder(pollTime : Long,
       val boltPersisterName = "cfPersister"
       val persisterDeclarer = builder.setBolt(boltPersisterName, persisterBolt, persisterTasks)
       for(cfn <- list){
-        val name = boltReaderName + " [" + cfn.id + " ]"
+        val name = boltReaderName + " [" + cfn.id + "] "
         builder.setBolt(name, new CloudFoundryClientBolt(cfn, pollTime)).allGrouping(timerSpoutName)
         persisterDeclarer.shuffleGrouping(name)
       }

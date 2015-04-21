@@ -39,7 +39,6 @@ class CloudFoundryClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
           logger.info("fail - not successfully http " + date.getTime)
           t fail
         }
-
       }
       catch{
         case e : Throwable =>
@@ -47,7 +46,6 @@ class CloudFoundryClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
           logger.info("fail - http error " + date)
           t fail
       }
-
     }
   }
 }
