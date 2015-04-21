@@ -23,12 +23,12 @@ class CloudFoundryClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
   override def execute(t: Tuple) = t matchSeq{
     case Seq(date : Date) =>{
       try {
+        logger.info("match")
         val url: URI = node.url.toURI / (date.getTime - pollTime).toString / date.getTime.toString
         val response = httpClient.doGET(uri = url, timeout = node.readTimeout)
         if (response isSuccess) {
           import spray.json.DefaultJsonProtocol._
           val data = response.content.parseJson.convertTo[Seq[MonitInfo]]
-          var i = 0
           for (d <- data){
             using anchor t emit(node, date, d)
           }
