@@ -50,10 +50,10 @@ abstract class OpenStackPersisterBolt(persisterNode: PersisterNodeConf)
               val model = data.toRdf
               writeToRDF(graphName, model)
               val res = OpenStackResourceData(GraphNamer.cleanURL(node.ceilometerUrl), resource, sample.meter, sample.unit, sample.`type`.toString)
-              if (!(_persistedResources contains res.hashCode)) {
+              if (!(_persistedResources contains resource.resource_id.hashCode)) {
                 val resModel = res.toRdf
                 writeToRDF(GraphNamer.resourcesGraphName, resModel)
-                _persistedResources += res.hashCode
+                _persistedResources += resource.resource_id.hashCode
               }
               if (!(_persistedSamples contains date))
                 _persistedSamples(date) = List(sId)
