@@ -1,6 +1,6 @@
 package it.unibo.ing.stormsmacs.topologies.reliable.spouts
 
-import it.unibo.ing.stormsmacs.topologies.facilities.DefaultFailHandler
+import it.unibo.ing.stormsmacs.topologies.facilities.{FailHandler, DefaultFailHandler}
 import storm.scala.dsl.additions.Logging
 import storm.scala.dsl.{StormSpout}
 
@@ -14,7 +14,10 @@ import java.util.Date
  */
 
 class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")) with Logging{
-  val failHandler = new DefaultFailHandler(2)
+  private var failHandler : FailHandler[Long] = _
+  setup{
+    failHandler = new DefaultFailHandler(2)
+  }
   override def nextTuple = {
     Utils.sleep(pollTime)
     val now = new Date()
