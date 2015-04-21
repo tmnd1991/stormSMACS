@@ -31,9 +31,9 @@ class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")) with Log
     val msgId = messageId.asInstanceOf[Long]
     val dateToBeReplayed = new Date(msgId)
     if (failHandler shouldBeReplayed msgId){
+      logger info s"replay n ${failHandler.failCount(msgId)+1} $dateToBeReplayed"
       failHandler replayed msgId
       using msgId(dateToBeReplayed.getTime) emit (dateToBeReplayed)
-      logger info s"replay n° ${failHandler.failCount(msgId)+1} $dateToBeReplayed"
     }
     else{
       logger info "not replayed " + dateToBeReplayed

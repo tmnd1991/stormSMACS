@@ -17,7 +17,6 @@ import scala.language.postfixOps
 class CloudFoundryBuilder(pollTime : Long,
                           persister: PersisterNodeConf,
                           list: Seq[CloudFoundryNodeConf],
-                          timerSpout : TimerSpout,
                           timerSpoutName : String,
                           maxNodesPerTask : Int = 3) extends StormSmacsBuilder{
   override def build(builder: TopologyBuilder): TopologyBuilder = {

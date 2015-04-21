@@ -18,7 +18,6 @@ import scala.language.postfixOps
 class GenericBuilder(pollTime : Long,
                      persisterNode : PersisterNodeConf,
                      list: Seq[GenericNodeConf],
-                     timerSpout : TimerSpout,
                      timerSpoutName : String,
                      maxNodesPerTask : Int = 3) extends StormSmacsBuilder{
   override def build(builder: TopologyBuilder): TopologyBuilder = {

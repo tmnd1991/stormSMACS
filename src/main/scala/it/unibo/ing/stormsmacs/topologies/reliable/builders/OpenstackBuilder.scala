@@ -18,7 +18,6 @@ import scala.language.postfixOps
 class OpenstackBuilder(pollTime : Long,
                        persisterNode : PersisterNodeConf,
                        list: Seq[OpenStackNodeConf],
-                       timerSpout : TimerSpout,
                        timerSpoutName : String,
                        maxNodesPerTask : Int = 3) extends StormSmacsBuilder{
   override def build(builder: TopologyBuilder): TopologyBuilder = {

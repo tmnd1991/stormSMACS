@@ -59,7 +59,7 @@ abstract class GenericPersisterBolt(persisterNode : PersisterNodeConf)
           else
             _persistedSamples(date) :+= sId
         }
-        logger.info("ack " + date)
+        //logger.info("ack " + date)
         t ack
       }
       catch {

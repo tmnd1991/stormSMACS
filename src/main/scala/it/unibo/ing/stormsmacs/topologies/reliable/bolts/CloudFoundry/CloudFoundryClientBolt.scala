@@ -32,8 +32,8 @@ class CloudFoundryClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
           for (d <- data){
             using anchor t emit(node, date, d)
           }
+          t.ack
           logger.info("ack - got samples " + date)
-          _collector.ack(t)
         }
         else{
           logger.info("fail - not successfully http " + date.getTime)
