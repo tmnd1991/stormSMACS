@@ -1,6 +1,8 @@
 package it.unibo.ing.stormsmacs.topologies.reliable.spouts
 
 import java.util.concurrent.{LinkedBlockingQueue, BlockingQueue, TimeUnit, Executors}
+import backtype.storm.Config
+
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import it.unibo.ing.stormsmacs.topologies.facilities.{FailHandler, DefaultFailHandler}
@@ -52,4 +54,15 @@ class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")) with Log
       failHandler acked msgId
     }
   }
+  override def getComponentConfiguration() : java.util.Map[String, Object]= {
+    val conf = new Config()
+    conf.setMaxTaskParallelism(1)
+    conf
+  }
+  /*
+  public Map<String, Object> getComponentConfiguration() {
+    Config ret = new Config();
+    ret.setMaxTaskParallelism(1);
+    return ret;
+  }*/
 }
