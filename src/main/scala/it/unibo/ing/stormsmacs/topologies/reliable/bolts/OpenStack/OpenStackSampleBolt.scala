@@ -20,6 +20,8 @@ class OpenStackSampleBolt(pollTime: Long)
   override def execute(input: Tuple) = {
     input matchSeq {
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
+        logger.info("connectTimeout -> "+node.connectTimeout)
+        logger.info("readTimeout -> "+node.readTimeout)
         val cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
         val start = new Date(date.getTime - pollTime)
         cclient.tryGetSamplesOfResource(resource.resource_id, start, date) match {
