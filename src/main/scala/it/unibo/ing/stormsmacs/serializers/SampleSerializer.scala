@@ -20,13 +20,13 @@ class SampleSerializer extends Serializer[Sample]{
     output.writeString(t.id)
     myKryo.writeObject(output,t.metadata)
     output.writeString(t.meter)
-    output.writeString(t.project_id)
+    output.writeString(t.project_id.getOrElse(""))
     kryo.writeObject(output,t.recorded_at)
     output.writeString(t.resource_id)
     output.writeString(t.source)
     kryo.writeObject(output,t.timestamp)
     output.writeString(t.unit)
-    output.writeString(t.user_id)
+    output.writeString(t.user_id.getOrElse(""))
     output.writeFloat(t.volume)
   }
   override def read(kryo: Kryo, input: Input, aClass: Class[Sample]): Sample = {
@@ -34,13 +34,13 @@ class SampleSerializer extends Serializer[Sample]{
            id = input.readString(),
             metadata = myKryo.readObject(input, classOf[Map[String,String]]),
             meter = input.readString(),
-            project_id = input.readString(),
+            project_id = Some(input.readString()),
             recorded_at = kryo.readObject(input,classOf[Timestamp]),
             resource_id = input.readString(),
             source = input.readString(),
             timestamp = kryo.readObject(input,classOf[Timestamp]),
             unit = input.readString(),
-            user_id = input.readString(),
+            user_id = Some(input.readString()),
             volume = input.readFloat()
     )
   }

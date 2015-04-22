@@ -27,13 +27,13 @@ object OpenStackRdfFormats{
         addProperty(RDF.`type`, "Sample").
         addProperty(Properties.sampleType, "" + obj.info.`type`). //we can skip this
         addProperty(Properties.sampleId, "" + obj.info.id).       //this too
-        addProperty(Properties.projectId, obj.info.project_id).
+        addProperty(Properties.projectId, obj.info.project_id.getOrElse("")).
         addProperty(Properties.recordedAt, TimestampUtils.format(obj.info.recorded_at)).
         addProperty(Properties.resourceId, obj.info.resource_id).
         addProperty(Properties.source, obj.info.source).
         addProperty(Properties.timestamp, TimestampUtils.format(obj.info.timestamp)).
         addProperty(Properties.unit, obj.info.unit).
-        addProperty(Properties.userId, obj.info.user_id).
+        addProperty(Properties.userId, obj.info.user_id.getOrElse("")).
         addProperty(RDF.value, "" + obj.info.volume)
       return m
     }
