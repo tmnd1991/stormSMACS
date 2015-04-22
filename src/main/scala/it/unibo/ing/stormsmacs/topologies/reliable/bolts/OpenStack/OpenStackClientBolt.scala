@@ -29,8 +29,6 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
   override def execute(t : Tuple) : Unit = {
     t matchSeq{
       case Seq(date: Date)=>{
-        logger.info("connectTimeout -> "+node.connectTimeout)
-        logger.info("readTimeout -> "+node.readTimeout)
         cclient.tryListAllResources match{
           case Some(Nil) => t ack
           case Some(res : Seq[Resource]) =>
