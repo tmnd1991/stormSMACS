@@ -21,7 +21,7 @@ class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")) with Log
   override def nextTuple = {
     Utils.sleep(pollTime)
     val now = new Date()
-    using msgId(now.getTime) emit (now)
+    using.msgId(now.getTime).emit(now)
   }
   override def ack(messageId: Any): Unit = {
     failHandler.acked(messageId.asInstanceOf[Long])
