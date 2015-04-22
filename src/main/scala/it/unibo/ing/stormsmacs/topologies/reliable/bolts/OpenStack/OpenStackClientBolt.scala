@@ -39,7 +39,6 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
             t ack
           case _ =>
             logger info ("fail " + date)
-            t fail
         }
       }
     }

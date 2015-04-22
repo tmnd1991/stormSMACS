@@ -38,7 +38,6 @@ class GenericClientBolt(val node : GenericNodeConf, val pollTime: Long)
         else{
           logger error (url + ": response code not successful")
           logger info ("fail " + date)
-          t fail
         }
 
       }
@@ -46,7 +45,6 @@ class GenericClientBolt(val node : GenericNodeConf, val pollTime: Long)
         case e : Throwable =>
           logger.error(e.getMessage,e)
           logger info ("fail " + date)
-          t fail
       }
 
     }

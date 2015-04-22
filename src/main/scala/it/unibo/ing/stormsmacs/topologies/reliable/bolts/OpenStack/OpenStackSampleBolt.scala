@@ -34,7 +34,6 @@ class OpenStackSampleBolt(pollTime: Long)
           case _ =>
             //if we get None as a result, something bad happened, we need to replay the tuple
             logger.info("fail - ceilometerclient error")
-            input fail
         }
     }
   }

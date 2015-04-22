@@ -59,7 +59,6 @@ abstract class CloudFoundryPersisterBolt(persisterEndpoint : PersisterNodeConf)
         case r: RuntimeException =>
           logger.error(r.getMessage, r)
           logger.error("fail - non persisted " + date)
-          t fail
       }
     }
   }

@@ -59,10 +59,4 @@ class TimerSpout(pollTime : Long) extends StormSpout(List("GraphName")) with Log
     conf.setMaxTaskParallelism(1)
     conf
   }
-  /*
-  public Map<String, Object> getComponentConfiguration() {
-    Config ret = new Config();
-    ret.setMaxTaskParallelism(1);
-    return ret;
-  }*/
 }

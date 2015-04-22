@@ -37,14 +37,12 @@ class CloudFoundryClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
         }
         else{
           logger.info("fail - not successfully http " + date.getTime)
-          t fail
         }
       }
       catch{
         case e : Throwable =>
           logger.error(e.getMessage, e)
           logger.info("fail - http error " + date)
-          t fail
       }
     }
   }
