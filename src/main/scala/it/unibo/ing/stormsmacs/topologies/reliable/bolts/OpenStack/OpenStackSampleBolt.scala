@@ -31,7 +31,9 @@ class OpenStackSampleBolt(pollTime: Long)
               using anchor input emit(node, date, resource, s)
             input.ack
           }
-          case None => input.fail //if we get None as a result, something bad happened, we need to replay the tuple
+          case None =>
+            logger.error("cannot get samples " + date)
+            input.fail //if we get None as a result, something bad happened, we need to replay the tuple
         }
     }
   }
