@@ -23,15 +23,12 @@ class OpenStackSampleBolt(pollTime: Long)
         val cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
         val start = new Date(date.getTime - pollTime)
         cclient.tryGetSamplesOfResource(resource.resource_id, start, date) match {
-          case Some(Nil) =>
-            input ack //no samples for this resource, we just ack the tuple
-          case Some(samples: Seq[Sample]) =>
-            for (s <- samples)
-              using anchor input emit(node, date, resource, s)
-            input ack
-          case None =>
+          case Some(Nil) => input ack //no samples for this resource, we just ack the tuple
+          case Some(samples: Seq[Sample]) => for (s <- samples)
+                                                using anchor input emit(node, date, resource, s)
+                                             input ack
+          case None =>logger info (s"fail cannot read samples from $date to $start")
             //if we get None as a result, something bad happened, we need to replay the tuple
-            logger info (s"fail $date readTimeout->${node.readTimeout}")
         }
     }
   }
