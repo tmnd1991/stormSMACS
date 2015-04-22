@@ -34,8 +34,7 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
           case Some(res : Seq[Resource]) => {
             for (r <- res)
               using anchor t emit(node, date, r)
-            logger info ("ack " + date)
-            t ack
+              t ack
           }
           case _ =>
             logger info ("fail " + date)
