@@ -31,11 +31,10 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
       case Seq(date: Date)=>{
         cclient.tryListAllResources match{
           case Some(Nil) => t ack
-          case Some(res : Seq[Resource]) => {
+          case Some(res : Seq[Resource]) =>
             for (r <- res)
               using anchor t emit(node, date, r)
-              t ack
-          }
+            t ack
           case _ =>
             logger info ("fail " + date)
             t fail

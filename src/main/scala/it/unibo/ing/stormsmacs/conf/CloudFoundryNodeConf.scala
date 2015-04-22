@@ -12,13 +12,13 @@ import java.net.URL
 
 case class CloudFoundryNodeConf (id : String,
                         url : URL,
-                        private val connect_timeout : Option[Int],
-                        private val read_timeout : Option[Int]){
-  def connectTimeout = connect_timeout.getOrElse(2000)
-  def readTimeout = read_timeout.getOrElse(1000)
+                        connect_timeout : Int,
+                        read_timeout : Int){
+  def connectTimeout = connect_timeout
+  def readTimeout = read_timeout
   override def toString = "CloudFoundryNode[ " + id + " @ " + url.toString + "\n" +
-                                            "c timeout -> " + connectTimeout + "\n" +
-                                            "r timeout -> " + readTimeout + "]"
+                                            "c timeout -> " + connect_timeout + "\n" +
+                                            "r timeout -> " + read_timeout + "]"
 }
 object CloudFoundryNodeProtocol extends spray.json.DefaultJsonProtocol{
   import spray.json._
