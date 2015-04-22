@@ -66,9 +66,11 @@ abstract class GenericPersisterBolt(persisterNode : PersisterNodeConf)
         case r: RuntimeException =>
           logger.error(r.getMessage,r)
           logger.error("fail " + date)
+          t.fail
         case e: Throwable =>
           logger.error(e.getMessage,e)
           logger.error("fail " + date)
+          t.fail
       }
     }
   }

@@ -66,6 +66,7 @@ abstract class OpenStackPersisterBolt(persisterNode: PersisterNodeConf)
             case e : Throwable =>
               logger.error(e.getMessage,e)
               logger.info("fail " + date)
+              t.fail
           }
         }
       }

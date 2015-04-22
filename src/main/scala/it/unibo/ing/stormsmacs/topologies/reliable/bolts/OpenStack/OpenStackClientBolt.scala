@@ -37,6 +37,7 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
             t ack
           case None =>
             logger info (s"fail $date readTimeout->${node.readTimeout}")
+            t.fail
         }
       }
     }
