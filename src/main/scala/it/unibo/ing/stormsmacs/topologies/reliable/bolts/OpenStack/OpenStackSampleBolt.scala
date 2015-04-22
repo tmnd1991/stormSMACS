@@ -22,19 +22,16 @@ class OpenStackSampleBolt(pollTime: Long)
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
         val cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
         val start = new Date(date.getTime - pollTime)
-        logger info (s"reading samples from $start to $date")
         val maybeSamples = cclient.tryGetSamplesOfResource(resource.resource_id, start, date)
         maybeSamples match {
           case Some(Nil) =>
-            logger.info("matched with Some(Nil)")
             input.ack //no samples for this resource, we just ack the tuple
           case Some(samples: Seq[Sample]) => {
-            logger.info("matched with Some(samples: Seq[Sample])")
             for (s <- samples)
               using anchor input emit(node, date, resource, s)
             input.ack
           }
-          case None =>logger.info("matched with None") //if we get None as a result, something bad happened, we need to replay the tuple
+          case None => input.fail //if we get None as a result, something bad happened, we need to replay the tuple
         }
     }
   }
