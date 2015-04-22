@@ -35,6 +35,7 @@ class OpenStackSampleBolt(pollTime: Long)
             logger.error(s"cannot get samples of ${resource.resource_id} from $start to $date")
             input.fail //if we get None as a result, something bad happened, we need to replay the tuple
         }
+        cclient.shutdown()
     }
   }
 }
