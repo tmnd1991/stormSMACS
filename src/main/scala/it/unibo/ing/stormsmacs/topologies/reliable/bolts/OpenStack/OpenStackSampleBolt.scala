@@ -32,7 +32,7 @@ class OpenStackSampleBolt(pollTime: Long)
             input.ack
           }
           case None =>
-            logger.error("cannot get samples " + date)
+            logger.error(s"cannot get samples of ${resource.resource_id} from $start to $date")
             input.fail //if we get None as a result, something bad happened, we need to replay the tuple
         }
     }
