@@ -1,5 +1,6 @@
 package it.unibo.ing.stormsmacs.topologies.reliable.bolts.OpenStack
 
+import java.net.URL
 import java.util.Date
 
 import backtype.storm.tuple.Tuple
@@ -17,10 +18,9 @@ import storm.scala.dsl.StormBolt
 class OpenStackSampleBolt(pollTime: Long)
   extends StormBolt(List("NodeName", "GraphName", "Resource", "Sample"))
   with Logging {
-  override def execute(input: Tuple) = {
-    input matchSeq {
+  override def execute(input: Tuple) = input matchSeq {
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
-        val cclient = new CeilometerClient(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
+        val cclient = getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
         val start = new Date(date.getTime - pollTime)
         val maybeSamples = cclient.tryGetSamplesOfResource(resource.resource_id, start, date)
         maybeSamples match {
@@ -35,7 +35,18 @@ class OpenStackSampleBolt(pollTime: Long)
             logger.error(s"cannot get samples of ${resource.resource_id} from $start to $date")
             input.fail //if we get None as a result, something bad happened, we need to replay the tuple
         }
-        cclient.shutdown()
-    }
   }
+  setup{
+    instances = scala.collection.mutable.Map()
+  }
+  private var instances : scala.collection.mutable.Map[Int,CeilometerClient] = _
+  def getInstance(ceilometerUrl : URL, keystoneUrl : URL, tenantName : String,  username : String, password : String, connectTimeout: Int, readTimeout: Int) = {
+    this.synchronized{
+      val hashcode = getHashCode(ceilometerUrl,keystoneUrl,tenantName,username,password)
+      if (!instances.contains(hashCode))
+        instances(hashCode) = new CeilometerClient(ceilometerUrl, keystoneUrl, tenantName,  username, password, connectTimeout, readTimeout)
+    }
+    instances(hashCode)
+  }
+  private def getHashCode(vals : Any*) = vals.mkString("").hashCode
 }

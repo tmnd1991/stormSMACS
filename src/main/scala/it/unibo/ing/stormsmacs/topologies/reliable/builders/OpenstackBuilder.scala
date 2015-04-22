@@ -3,6 +3,7 @@ package it.unibo.ing.stormsmacs.topologies.reliable.builders
 import java.util.Date
 
 import backtype.storm.topology.TopologyBuilder
+import backtype.storm.tuple.{Fields, Values}
 import it.unibo.ing.stormsmacs.conf.{VirtuosoNodeConf, PersisterNodeConf, OpenStackNodeConf, FusekiNodeConf}
 import it.unibo.ing.stormsmacs.topologies.facilities.StormSmacsBuilder
 import it.unibo.ing.stormsmacs.topologies.reliable.bolts.OpenStack.{OpenStackClientBolt, OpenStackPersisterFusekiBolt, OpenStackPersisterVirtuosoBolt, OpenStackSampleBolt}
@@ -20,10 +21,9 @@ class OpenstackBuilder(pollTime : Long,
                        persisterNode : PersisterNodeConf,
                        list: Seq[OpenStackNodeConf],
                        timerSpoutName : String,
-                       maxNodesPerTask : Int = 3) extends StormSmacsBuilder{
+                       maxNodesPerTask : Int = 7) extends StormSmacsBuilder{
   override def build(builder: TopologyBuilder): TopologyBuilder = {
     if (list.nonEmpty){
-
       var nResources = 0
       for(osn <- list) {
         val cclient = CeilometerClient.getInstance(osn.ceilometerUrl, osn.keystoneUrl, osn.tenantName, osn.username, osn.password, 60000, 60000)
@@ -41,7 +41,7 @@ class OpenstackBuilder(pollTime : Long,
       for (osn <- list){
         val name = boltClientName + " [" + osn.id + "] "
         builder.setBolt(name, new OpenStackClientBolt(osn)).allGrouping(timerSpoutName)
-        sampleBoltDeclarer.shuffleGrouping(name)
+        sampleBoltDeclarer.fieldsGrouping(name, new Fields("Resource"))
       }
 
       persisterNode match{
