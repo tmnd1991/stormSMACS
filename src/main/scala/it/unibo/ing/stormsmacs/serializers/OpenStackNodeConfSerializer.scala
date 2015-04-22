@@ -28,8 +28,8 @@ class OpenStackNodeConfSerializer extends Serializer[OpenStackNodeConf]{
 
   override def read(kryo: Kryo, input: Input, aClass: Class[OpenStackNodeConf]): OpenStackNodeConf = {
     OpenStackNodeConf.apply(
-      connect_timeout = Some(input.readInt(true)),
-      read_timeout = Some(input.readInt(true)),
+      connect_timeout = input.readInt(true),
+      read_timeout = input.readInt(true),
       ceilometerUrl = new URL(input.readString()),
       id = input.readString(),
       keystoneUrl = new URL(input.readString()),

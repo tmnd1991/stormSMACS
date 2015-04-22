@@ -25,8 +25,8 @@ class GenericNodeConfSerializer extends Serializer[GenericNodeConf]{
 
   override def read(kryo: Kryo, input: Input, aClass: Class[GenericNodeConf]): GenericNodeConf = {
     GenericNodeConf(
-      connect_timeout = Some(input.readInt(true)),
-      read_timeout = Some(input.readInt(true)),
+      connect_timeout = input.readInt(true),
+      read_timeout = input.readInt(true),
       id = input.readString(),
       url = new URL(input.readString())
     )
