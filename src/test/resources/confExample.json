@@ -43,8 +43,8 @@
                                 "keystoneUrl" : "http://137.204.57.150:5000",
                                 "username" : "amurgia",
                                 "password" : "PUs3dAs?",
-                                "connect_timeout" : 10000,
-                                "read_timeout" : 10000
+                                "connect_timeout" : 30000,
+                                "read_timeout" : 30000
                             }],
       "persisterNode"     : {
                                 "id"  : "fuseki",
