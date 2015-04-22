@@ -57,6 +57,7 @@ object Topology {
       }
       val config = new Config()
       config.setDebug(conf.debug)
+      config.setMessageTimeoutSecs((conf.pollTime/1000).toInt)
       registerSerializers(config)
       if (conf.remote){
         config.setNumWorkers((math ceil (conf.nodesNumber.toFloat / 50)) toInt)
