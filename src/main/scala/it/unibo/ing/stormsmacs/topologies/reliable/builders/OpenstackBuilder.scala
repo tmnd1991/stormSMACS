@@ -8,6 +8,7 @@ import it.unibo.ing.stormsmacs.topologies.facilities.StormSmacsBuilder
 import it.unibo.ing.stormsmacs.topologies.reliable.bolts.OpenStack.{OpenStackClientBolt, OpenStackPersisterFusekiBolt, OpenStackPersisterVirtuosoBolt, OpenStackSampleBolt}
 import it.unibo.ing.stormsmacs.topologies.reliable.spouts.TimerSpout
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
+import org.openstack.clients.ceilometer.v2.CeilometerClient
 import scala.language.postfixOps
 
 /**
@@ -22,21 +23,31 @@ class OpenstackBuilder(pollTime : Long,
                        maxNodesPerTask : Int = 3) extends StormSmacsBuilder{
   override def build(builder: TopologyBuilder): TopologyBuilder = {
     if (list.nonEmpty){
-      val persisterTasks = calctasks(list.size, maxNodesPerTask)
+
+      var nResources = 0
+      for(osn <- list) {
+        val cclient = CeilometerClient.getInstance(osn.ceilometerUrl, osn.keystoneUrl, osn.tenantName, osn.username, osn.password, 60000, 60000)
+        cclient.tryListResources(Seq()) match {
+          case Some(x: Seq[Resource]) => nResources += x.size
+          case None => nResources += 0
+        }
+      }
+      val tasks = calctasks(nResources,maxNodesPerTask)
       val boltClientName = "openstackResourcesClient"
       val boltSamplesName = "openstackSamplesClient"
       val boltPersisterName = "openstackPersister"
-      val meterBolt = new OpenStackSampleBolt(pollTime)
-      val meterBoltDeclarer = builder.setBolt(boltSamplesName, meterBolt, persisterTasks)
-      for(osn <- list){
+      val sampleBolt = new OpenStackSampleBolt(pollTime)
+      val sampleBoltDeclarer = builder.setBolt(boltSamplesName, sampleBolt, tasks)
+      for (osn <- list){
         val name = boltClientName + " [" + osn.id + "] "
         builder.setBolt(name, new OpenStackClientBolt(osn)).allGrouping(timerSpoutName)
-        meterBoltDeclarer.shuffleGrouping(name)
+        sampleBoltDeclarer.shuffleGrouping(name)
       }
+
       persisterNode match{
-        case x : FusekiNodeConf => builder.setBolt(boltPersisterName, new OpenStackPersisterFusekiBolt(x),persisterTasks).
+        case x : FusekiNodeConf => builder.setBolt(boltPersisterName, new OpenStackPersisterFusekiBolt(x),tasks).
           shuffleGrouping(boltSamplesName)
-        case x : VirtuosoNodeConf => builder.setBolt(boltPersisterName, new OpenStackPersisterVirtuosoBolt(x),persisterTasks).
+        case x : VirtuosoNodeConf => builder.setBolt(boltPersisterName, new OpenStackPersisterVirtuosoBolt(x),tasks).
           shuffleGrouping(boltSamplesName)
       }
     }
