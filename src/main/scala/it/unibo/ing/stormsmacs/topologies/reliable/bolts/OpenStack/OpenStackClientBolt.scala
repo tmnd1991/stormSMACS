@@ -35,8 +35,8 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
             for (r <- res)
               using anchor t emit(node, date, r)
             t ack
-          case _ =>
-            logger info ("fail " + date)
+          case None =>
+            logger info (s"fail $date readTimeout->${node.readTimeout}")
         }
       }
     }

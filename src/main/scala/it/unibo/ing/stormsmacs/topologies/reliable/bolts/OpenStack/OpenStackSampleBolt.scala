@@ -29,9 +29,9 @@ class OpenStackSampleBolt(pollTime: Long)
             for (s <- samples)
               using anchor input emit(node, date, resource, s)
             input ack
-          case _ =>
+          case None =>
             //if we get None as a result, something bad happened, we need to replay the tuple
-            logger.info("fail - ceilometerclient error")
+            logger info (s"fail $date readTimeout->${node.readTimeout}")
         }
     }
   }
