@@ -20,7 +20,7 @@ class OpenStackSampleBolt(pollTime: Long)
   with Logging {
   override def execute(input: Tuple) = input matchSeq {
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
-        val cclient = getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
+        val cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
         val start = new Date(date.getTime - pollTime)
         val maybeSamples = cclient.tryGetSamplesOfResource(resource.resource_id, start, date)
         maybeSamples match {
@@ -36,17 +36,4 @@ class OpenStackSampleBolt(pollTime: Long)
             input.fail //if we get None as a result, something bad happened, we need to replay the tuple
         }
   }
-  setup{
-    instances = scala.collection.mutable.Map()
-  }
-  private var instances : scala.collection.mutable.Map[Int,CeilometerClient] = _
-  def getInstance(ceilometerUrl : URL, keystoneUrl : URL, tenantName : String,  username : String, password : String, connectTimeout: Int, readTimeout: Int) = {
-    this.synchronized{
-      val hashcode = getHashCode(ceilometerUrl,keystoneUrl,tenantName,username,password)
-      if (!instances.contains(hashCode))
-        instances(hashCode) = new CeilometerClient(ceilometerUrl, keystoneUrl, tenantName,  username, password, connectTimeout, readTimeout)
-    }
-    instances(hashCode)
-  }
-  private def getHashCode(vals : Any*) = vals.mkString("").hashCode
 }
