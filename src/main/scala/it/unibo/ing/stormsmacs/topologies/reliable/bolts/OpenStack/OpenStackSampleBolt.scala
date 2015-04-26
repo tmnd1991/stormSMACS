@@ -20,7 +20,10 @@ import scala.collection.mutable
 class OpenStackSampleBolt(pollTime: Long)
   extends StormBolt(List("NodeName", "GraphName", "Resource", "Sample"))
   with Logging {
-  private val _clients: mutable.Map[String, ICeilometerClient] = _
+  private var _clients: mutable.Map[String, ICeilometerClient] = _
+  setup{
+    _clients = mutable.Map[String,ICeilometerClient]()
+  }
   override def execute(input: Tuple) = input matchSeq {
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
         val cclient = getClient(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
