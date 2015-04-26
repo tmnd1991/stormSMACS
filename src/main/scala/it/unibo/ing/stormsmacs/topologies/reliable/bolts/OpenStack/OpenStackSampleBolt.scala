@@ -27,19 +27,21 @@ class OpenStackSampleBolt(pollTime: Long)
   override def execute(input: Tuple) = input matchSeq {
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
         val cclient = getClient(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
-        val start = new Date(date.getTime - pollTime)
-        val maybeSamples = cclient.tryGetSamplesOfResource(resource.resource_id, start, date)
-        maybeSamples match {
-          case Some(Nil) =>
-            input.ack //no samples for this resource, we just ack the tuple
-          case Some(samples: Seq[Sample]) => {
-            for (s <- samples)
-              using anchor input emit(node, date, resource, s)
-            input.ack
+        cclient.synchronized{
+          val start = new Date(date.getTime - pollTime)
+          val maybeSamples = cclient.tryGetSamplesOfResource(resource.resource_id, start, date)
+          maybeSamples match {
+            case Some(Nil) =>
+              input.ack //no samples for this resource, we just ack the tuple
+            case Some(samples: Seq[Sample]) => {
+              for (s <- samples)
+                using anchor input emit(node, date, resource, s)
+              input.ack
+            }
+            case None =>
+              logger.error(s"cannot get samples of ${resource.resource_id} from $start to $date")
+              input.fail //if we get None as a result, something bad happened, we need to replay the tuple
           }
-          case None =>
-            logger.error(s"cannot get samples of ${resource.resource_id} from $start to $date")
-            input.fail //if we get None as a result, something bad happened, we need to replay the tuple
         }
   }
   private def getClient(ceilometerUrl : URL, keystoneUrl : URL, tenantName : String,  username : String, password : String, connectTimeout: Int, readTimeout: Int) : ICeilometerClient = {
