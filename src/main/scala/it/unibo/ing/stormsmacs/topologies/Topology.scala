@@ -69,7 +69,7 @@ object Topology {
     }
     catch{
       case e : FileNotFoundException => logger.error("file " + jsonConfFile + " not Found")
-      case t : Throwable => logger.error(t.getMessage)
+      case t : Throwable => logger.error(t.getMessage,t)
     }
   }
 
