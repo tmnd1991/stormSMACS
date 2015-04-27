@@ -25,7 +25,8 @@ libraryDependencies += "com.github.velvia" %% "scala-storm" % "1.0" withSources(
 libraryDependencies += "it.unibo.ing" %% "utils" % "1.0" withSources() intransitive()
 
 //CEILOMETER JSON WRAPPER
-libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapi4s" % "0.7" withSources() intransitive()
+//libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapi4s" % "0.7" withSources() intransitive()
+libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapi4s" % "0.8" withSources() intransitive()
 
 //HTTP CLIENT
 //libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"

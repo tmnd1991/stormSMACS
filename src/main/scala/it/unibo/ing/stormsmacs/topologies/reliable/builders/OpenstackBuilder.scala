@@ -10,8 +10,9 @@ import it.unibo.ing.stormsmacs.topologies.reliable.bolts.OpenStack.{OpenStackCli
 import it.unibo.ing.stormsmacs.topologies.reliable.spouts.TimerSpout
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
 import org.openstack.clients.ceilometer.v2.CeilometerClient
+import scala.concurrent.Await
 import scala.language.postfixOps
-
+import scala.concurrent.duration._
 /**
  * @author Antonio Murgia
  * @version 08/03/15
@@ -27,9 +28,8 @@ class OpenstackBuilder(pollTime : Long,
       var nResources = 0
       for(osn <- list) {
         val cclient = CeilometerClient.getInstance(osn.ceilometerUrl, osn.keystoneUrl, osn.tenantName, osn.username, osn.password, 60000, 60000)
-        cclient.tryListResources(Seq()) match {
-          case Some(x: Seq[Resource]) => nResources += x.size
-          case None => nResources += 0
+        Await.result(cclient.listResources(Seq()),pollTime.millis) match {
+          case x: Seq[Resource] => nResources += x.size
         }
       }
       val tasks = calctasks(nResources,maxNodesPerTask)
