@@ -35,7 +35,7 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
           case Success(Nil) => logger info ("ack no samples " + date)
           case Success(res : Seq[Resource]) =>
             for (r <- res)
-              using anchor t emit(node, date, r)
+              _collector.synchronized(using no anchor emit(node, date, r))
           case Failure(e) => logger.info(e.getMessage,e)
         }
     }

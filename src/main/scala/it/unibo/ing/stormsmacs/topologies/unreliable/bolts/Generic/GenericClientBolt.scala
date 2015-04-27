@@ -31,7 +31,7 @@ class GenericClientBolt(val node : GenericNodeConf, val pollTime: Long)
              import spray.json.DefaultJsonProtocol._
              val convertedData = data.content.parseJson.convertTo[Seq[SigarMeteredData]]
              for (d <- convertedData)
-               using anchor t emit (node, date, d)
+               using no anchor emit (node, date, d)
              logger.info("ack " + date)
            }
            else{

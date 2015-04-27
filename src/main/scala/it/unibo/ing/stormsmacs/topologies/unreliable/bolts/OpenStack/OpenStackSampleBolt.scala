@@ -28,7 +28,7 @@ class OpenStackSampleBolt(pollTime: Long)
           case Success(Nil) => logger.info("ack - no samples " + date)
           case Success(samples: Seq[Sample]) =>
             for (s <- samples)
-              using anchor input emit(node, date, resource, s)
+              _collector.synchronized(using no anchor emit(node, date, resource, s))
           case Failure(e) => logger.info(e.getMessage,e)
         }
     }

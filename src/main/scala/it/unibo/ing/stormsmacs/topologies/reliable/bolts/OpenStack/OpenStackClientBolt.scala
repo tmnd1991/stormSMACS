@@ -33,14 +33,14 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
     t matchSeq{
       case Seq(date: Date)=>
         cclient.listResources(Seq()).onComplete{
-          case Success(Nil) => t.ack
+          case Success(Nil) => _collector.synchronized(t.ack)
           case Success(res: Seq[Resource]) =>
             for (r <- res)
-              using anchor t emit(node, date, r)
-            t.ack
+              _collector.synchronized(using anchor t emit(node, date, r))
+            _collector.synchronized(t.ack)
           case Failure(e) =>
             logger.error(e.getMessage,e)
-            t.fail
+            _collector.synchronized(t.fail)
         }
     }
   }

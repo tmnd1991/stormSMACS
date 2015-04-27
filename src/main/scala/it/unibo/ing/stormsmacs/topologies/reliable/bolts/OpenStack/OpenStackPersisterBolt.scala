@@ -60,13 +60,13 @@ abstract class OpenStackPersisterBolt(persisterNode: PersisterNodeConf)
               else
                 _persistedSamples(date) :+= sId
             }
-            t ack
+            _collector.synchronized(t ack)
           }
           catch{
             case e : Throwable =>
               logger.error(e.getMessage,e)
               logger.info("fail " + date)
-              t.fail
+              _collector.synchronized(t.fail)
           }
         }
       }

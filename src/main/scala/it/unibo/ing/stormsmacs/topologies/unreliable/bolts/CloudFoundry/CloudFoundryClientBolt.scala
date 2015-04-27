@@ -30,9 +30,9 @@ class CloudFoundryClientBolt(node : CloudFoundryNodeConf, pollTime: Long)
              import spray.json.DefaultJsonProtocol._
              val data = response.content.parseJson.convertTo[Seq[MonitInfo]]
              var i = 0
-             for (d <- data){
-               using anchor t emit(node, date, d)
-             }
+             for (d <- data)
+               using no anchor emit(node, date, d)
+
            }
            else{
              logger.info("fail - not successfully http " + date.getTime)
