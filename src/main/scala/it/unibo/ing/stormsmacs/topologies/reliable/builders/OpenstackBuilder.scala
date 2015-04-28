@@ -24,7 +24,7 @@ class OpenstackBuilder(pollTime : Long,
                        persisterNode : PersisterNodeConf,
                        list: Seq[OpenStackNodeConf],
                        timerSpoutName : String,
-                       maxNodesPerTask : Int = 7) extends StormSmacsBuilder{
+                       maxNodesPerTask : Int = 20) extends StormSmacsBuilder{
   override def build(builder: TopologyBuilder): TopologyBuilder = {
     if (list.nonEmpty){
       var nResources = 0

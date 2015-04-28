@@ -18,7 +18,7 @@ class OpenstackBuilder(pollTime : Long,
                        list: Seq[OpenStackNodeConf],
                        timerSpout : TimerSpout,
                        timerSpoutName : String,
-                       maxNodesPerTask : Int = 3) extends StormSmacsBuilder{
+                       maxNodesPerTask : Int = 20) extends StormSmacsBuilder{
   override def build(builder: TopologyBuilder): TopologyBuilder = {
     if (list.nonEmpty){
       val persisterTasks = calctasks(list.size, maxNodesPerTask)
