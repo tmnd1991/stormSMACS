@@ -25,15 +25,13 @@ class OpenStackSampleBolt(pollTime: Long)
       case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
         val cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
         val start = new Date(date.getTime - pollTime)
-        Future{
-            cclient.tryGetSamplesOfResource(resource.resource_id, start, date) match {
-              case Success(Nil) => logger.info("ack - no samples " + date)
-              case Success(samples: Seq[Sample]) =>
-                for (s <- samples)
-                  _collector.synchronized(using no anchor emit(node, date, resource, s))
-              case Failure(e) => logger.info(e.getMessage, e)
-            }
-          }
+        cclient.tryGetSamplesOfResource(resource.resource_id, start, date) match {
+          case Success(Nil) => logger.info("ack - no samples " + date)
+          case Success(samples: Seq[Sample]) =>
+            for (s <- samples)
+              _collector.synchronized(using no anchor emit(node, date, resource, s))
+          case Failure(e) => logger.info(e.getMessage, e)
+        }
     }
   }
 }

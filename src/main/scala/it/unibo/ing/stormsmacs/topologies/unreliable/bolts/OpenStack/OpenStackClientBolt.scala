@@ -32,14 +32,12 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
   override def execute(t : Tuple) : Unit = {
     t matchSeq{
       case Seq(date: Date)=>
-        Future{
-          cclient.tryListAllResources match{
-            case Success(Nil) => logger info ("ack no samples " + date)
-            case Success(res : Seq[Resource]) =>
-              for (r <- res)
-                _collector.synchronized(using no anchor emit(node, date, r))
-            case Failure(e) => logger.info(e.getMessage,e)
-          }
+        cclient.tryListAllResources match{
+          case Success(Nil) => logger info ("ack no samples " + date)
+          case Success(res : Seq[Resource]) =>
+            for (r <- res)
+              _collector.synchronized(using no anchor emit(node, date, r))
+          case Failure(e) => logger.info(e.getMessage,e)
         }
     }
   }
