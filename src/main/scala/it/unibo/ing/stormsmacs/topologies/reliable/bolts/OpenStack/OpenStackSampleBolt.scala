@@ -6,7 +6,7 @@ import java.util.Date
 import backtype.storm.tuple.Tuple
 import it.unibo.ing.stormsmacs.conf.OpenStackNodeConf
 import org.openstack.api.restful.ceilometer.v2.elements.{Sample, Resource}
-import org.openstack.clients.ceilometer.v2.{ICeilometerClient2, ICeilometerClient, CeilometerClient}
+import org.openstack.clients.ceilometer.v2.{ICeilometerClient, CeilometerClient}
 import storm.scala.dsl.additions.Logging
 import storm.scala.dsl.StormBolt
 
@@ -21,12 +21,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class OpenStackSampleBolt(pollTime: Long)
   extends StormBolt(List("NodeName", "GraphName", "Resource", "Sample"))
   with Logging {
-  private var _clients: mutable.Map[String, ICeilometerClient2] = _
+
   override def execute(input: Tuple) = input matchSeq {
     case Seq(node: OpenStackNodeConf, date: Date, resource: Resource) =>
       val cclient = CeilometerClient.getInstance(node.ceilometerUrl, node.keystoneUrl, node.tenantName, node.username, node.password, node.connectTimeout, node.readTimeout)
       val start = new Date(date.getTime - pollTime)
-      cclient.getSamplesOfResource(resource.resource_id, start, date) onComplete {
+      cclient.tryGetSamplesOfResource(resource.resource_id, start, date) match {
         case Success(Nil) => _collector.synchronized(input.ack)
         case Success(samples: Seq[Sample]) =>
           for (s <- samples)

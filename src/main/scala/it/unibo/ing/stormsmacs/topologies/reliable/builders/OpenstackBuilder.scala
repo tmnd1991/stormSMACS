@@ -13,6 +13,8 @@ import org.openstack.clients.ceilometer.v2.CeilometerClient
 import scala.concurrent.Await
 import scala.language.postfixOps
 import scala.concurrent.duration._
+import scala.util.{Success, Failure}
+
 /**
  * @author Antonio Murgia
  * @version 08/03/15
@@ -28,8 +30,10 @@ class OpenstackBuilder(pollTime : Long,
       var nResources = 0
       for(osn <- list) {
         val cclient = CeilometerClient.getInstance(osn.ceilometerUrl, osn.keystoneUrl, osn.tenantName, osn.username, osn.password, 60000, 60000)
-        Await.result(cclient.listResources(Seq()),pollTime.millis) match {
-          case x: Seq[Resource] => nResources += x.size
+        cclient.tryListAllResources match {
+          case Failure(e) => nResources += 0
+          case Success(Nil) => nResources += 0
+          case Success(x: Seq[Resource]) => nResources += x.size
         }
       }
       val tasks = calctasks(nResources,maxNodesPerTask)

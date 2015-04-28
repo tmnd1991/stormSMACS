@@ -26,7 +26,7 @@ libraryDependencies += "it.unibo.ing" %% "utils" % "1.0" withSources() intransit
 
 //CEILOMETER JSON WRAPPER
 //libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapi4s" % "0.7" withSources() intransitive()
-libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapi4s" % "0.8" withSources()
+libraryDependencies += "it.unibo.ing.smacs" %% "ceilometerapi4s" % "1.0" withSources()
 
 //HTTP CLIENT
 //libraryDependencies += "org.eclipse.jetty" % "jetty-client" % "9.3.0.M1"
