@@ -26,7 +26,6 @@ import scala.language.postfixOps
 object Topology {
   val logger = LoggerFactory.getLogger(this.getClass)
   def main(args: Array[String]) = {
-    val maxNodesPerTask = 3
     require(args.length == 1)
     val jsonConfFile = args(0)
     try{
@@ -39,9 +38,9 @@ object Topology {
         val timerSpoutName = "timer"
         val timerSpout = new TimerSpout(conf.pollTime)
         builder.setSpout(timerSpoutName, timerSpout)
-        (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpoutName, maxNodesPerTask)).build(builder)
-        (new GenericBuilder(conf.pollTime, conf.persisterNode, conf.genericNodeList, timerSpoutName, maxNodesPerTask)).build(builder)
-        (new CloudFoundryBuilder(conf.pollTime, conf.persisterNode, conf.cloudfoundryNodeList,timerSpoutName, maxNodesPerTask)).build(builder)
+        (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpoutName)).build(builder)
+        (new GenericBuilder(conf.pollTime, conf.persisterNode, conf.genericNodeList, timerSpoutName)).build(builder)
+        (new CloudFoundryBuilder(conf.pollTime, conf.persisterNode, conf.cloudfoundryNodeList,timerSpoutName)).build(builder)
 
       }
       else {
@@ -50,9 +49,9 @@ object Topology {
         val timerSpoutName = "timer"
         val timerSpout = new TimerSpout(conf.pollTime)
         builder.setSpout(timerSpoutName, timerSpout)
-        (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
-        (new GenericBuilder(conf.pollTime, conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
-        (new CloudFoundryBuilder(conf.pollTime, conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName, maxNodesPerTask)).build(builder)
+        (new OpenstackBuilder(conf.pollTime, conf.persisterNode, conf.openstackNodeList, timerSpout, timerSpoutName)).build(builder)
+        (new GenericBuilder(conf.pollTime, conf.persisterNode, conf.genericNodeList, timerSpout, timerSpoutName)).build(builder)
+        (new CloudFoundryBuilder(conf.pollTime, conf.persisterNode, conf.cloudfoundryNodeList, timerSpout, timerSpoutName)).build(builder)
 
       }
       val config = new Config()
