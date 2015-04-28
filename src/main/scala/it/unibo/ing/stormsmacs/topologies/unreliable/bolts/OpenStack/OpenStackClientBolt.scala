@@ -15,6 +15,7 @@ import org.openstack.clients.ceilometer.v2.{ICeilometerClient, CeilometerClient}
 import storm.scala.dsl.StormBolt
 import storm.scala.dsl.additions.Logging
 
+import scala.concurrent.Future
 import scala.util.{Success, Failure}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -31,12 +32,14 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
   override def execute(t : Tuple) : Unit = {
     t matchSeq{
       case Seq(date: Date)=>
-        cclient.tryListAllResources match{
-          case Success(Nil) => logger info ("ack no samples " + date)
-          case Success(res : Seq[Resource]) =>
-            for (r <- res)
-              _collector.synchronized(using no anchor emit(node, date, r))
-          case Failure(e) => logger.info(e.getMessage,e)
+        Future{
+          cclient.tryListAllResources match{
+            case Success(Nil) => logger info ("ack no samples " + date)
+            case Success(res : Seq[Resource]) =>
+              for (r <- res)
+                _collector.synchronized(using no anchor emit(node, date, r))
+            case Failure(e) => logger.info(e.getMessage,e)
+          }
         }
     }
   }

@@ -16,6 +16,7 @@ import storm.scala.dsl.additions.Logging
 import storm.scala.dsl.StormBolt
 import it.unibo.ing.utils._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 import scala.util.{Failure, Success}
 
@@ -32,15 +33,17 @@ class OpenStackClientBolt(node : OpenStackNodeConf)
   override def execute(t : Tuple) : Unit = {
     t matchSeq{
       case Seq(date: Date)=>
-        cclient.tryListAllResources match{
-          case Success(Nil) => _collector.synchronized(t.ack)
-          case Success(res: Seq[Resource]) =>
-            for (r <- res)
-              _collector.synchronized(using anchor t emit(node, date, r))
-            _collector.synchronized(t.ack)
-          case Failure(e) =>
-            logger.error(e.getMessage,e)
-            _collector.synchronized(t.fail)
+        Future{
+          cclient.tryListAllResources match{
+            case Success(Nil) => _collector.synchronized(t.ack)
+            case Success(res: Seq[Resource]) =>
+              for (r <- res)
+                _collector.synchronized(using anchor t emit(node, date, r))
+              _collector.synchronized(t.ack)
+            case Failure(e) =>
+              logger.error(e.getMessage,e)
+              _collector.synchronized(t.fail)
+          }
         }
     }
   }
