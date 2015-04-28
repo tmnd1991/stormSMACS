@@ -34,7 +34,6 @@ class OpenStackSampleBolt(pollTime: Long)
               case Failure(e) => logger.info(e.getMessage, e)
             }
           }
-        }
     }
   }
 }
