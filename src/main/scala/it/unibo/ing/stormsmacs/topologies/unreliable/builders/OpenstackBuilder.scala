@@ -1,12 +1,17 @@
 package it.unibo.ing.stormsmacs.topologies.unreliable.builders
 
 import backtype.storm.topology.TopologyBuilder
+import backtype.storm.tuple.Fields
 import it.unibo.ing.stormsmacs.conf.{FusekiNodeConf, OpenStackNodeConf, PersisterNodeConf, VirtuosoNodeConf}
 import it.unibo.ing.stormsmacs.topologies.facilities.StormSmacsBuilder
+import it.unibo.ing.stormsmacs.topologies.unreliable.bolts.OpenStack.{OpenStackPersisterVirtuosoBolt, OpenStackPersisterFusekiBolt, OpenStackClientBolt, OpenStackSampleBolt}
 import it.unibo.ing.stormsmacs.topologies.unreliable.bolts.OpenStack.{OpenStackClientBolt, OpenStackPersisterFusekiBolt, OpenStackPersisterVirtuosoBolt, OpenStackSampleBolt}
 import it.unibo.ing.stormsmacs.topologies.unreliable.spouts.TimerSpout
+import org.openstack.api.restful.ceilometer.v2.elements.Resource
+import org.openstack.clients.ceilometer.v2.CeilometerClient
 
 import scala.language.postfixOps
+import scala.util.{Success, Failure}
 
 /**
  * @author Antonio Murgia
@@ -21,21 +26,31 @@ class OpenstackBuilder(pollTime : Long,
                        maxNodesPerTask : Int = 20) extends StormSmacsBuilder{
   override def build(builder: TopologyBuilder): TopologyBuilder = {
     if (list.nonEmpty){
-      val persisterTasks = calctasks(list.size, maxNodesPerTask)
+      var nResources = 0
+      for(osn <- list) {
+        val cclient = CeilometerClient.getInstance(osn.ceilometerUrl, osn.keystoneUrl, osn.tenantName, osn.username, osn.password, 60000, 60000)
+        cclient.tryListAllResources match {
+          case Failure(e) => nResources += 0
+          case Success(Nil) => nResources += 0
+          case Success(x: Seq[Resource]) => nResources += x.size
+        }
+      }
+      val tasks = calctasks(nResources,maxNodesPerTask)
       val boltClientName = "openstackResourcesClient"
       val boltSamplesName = "openstackSamplesClient"
       val boltPersisterName = "openstackPersister"
-      val meterBolt = new OpenStackSampleBolt(pollTime)
-      val meterBoltDeclarer = builder.setBolt(boltSamplesName, meterBolt, persisterTasks)
-      for(osn <- list){
+      val sampleBolt = new OpenStackSampleBolt(pollTime)
+      val sampleBoltDeclarer = builder.setBolt(boltSamplesName, sampleBolt, tasks)
+      for (osn <- list){
         val name = boltClientName + " [" + osn.id + "] "
         builder.setBolt(name, new OpenStackClientBolt(osn)).allGrouping(timerSpoutName)
-        meterBoltDeclarer.shuffleGrouping(name)
+        sampleBoltDeclarer.fieldsGrouping(name, new Fields("Resource"))
       }
+
       persisterNode match{
-        case x : FusekiNodeConf => builder.setBolt(boltPersisterName, new OpenStackPersisterFusekiBolt(x),persisterTasks).
+        case x : FusekiNodeConf => builder.setBolt(boltPersisterName, new OpenStackPersisterFusekiBolt(x),tasks).
           shuffleGrouping(boltSamplesName)
-        case x : VirtuosoNodeConf => builder.setBolt(boltPersisterName, new OpenStackPersisterVirtuosoBolt(x),persisterTasks).
+        case x : VirtuosoNodeConf => builder.setBolt(boltPersisterName, new OpenStackPersisterVirtuosoBolt(x),tasks).
           shuffleGrouping(boltSamplesName)
       }
     }
